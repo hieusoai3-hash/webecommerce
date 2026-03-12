@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = '';
     }
 
-    if (cartBtn) cartBtn.addEventListener('click', openCheckout); // Changed from openCart to openCheckout
+    if (cartBtn) cartBtn.addEventListener('click', openCart);
     if (cartClose) cartClose.addEventListener('click', closeCart);
     if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
     if (cartShopNow) {
@@ -149,8 +149,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateCartUI();
 
-        // Directly open the checkout modal
-        openCheckout();
+        // Open the cart sidebar to show items
+        openCart();
 
         // Bump animation on the cart icon
         cartCount.classList.add('bump');
