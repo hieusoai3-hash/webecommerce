@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ví Da Nam Cao Cấp - NB2 Boxer Men</title>
+    <title>Thắt Lưng Nam - NB2 Boxer Men</title>
     <meta name="description" content="NB2 Boxer Men - Thương hiệu đồ lót nam cao cấp.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -105,281 +105,307 @@
         </div>
     </header>
 
+    
+    <!-- Custom Styles for Belt Page -->
+    <style>
+        .belt-hero { position: relative; width: 100%; overflow: hidden; height: clamp(420px, 60vh, 620px); margin-top: 70px; }
+        .belt-hero-bg { position: absolute; inset: 0; background-image: url('images/belt_hero_banner.png'); background-size: cover; background-position: center; }
+        .belt-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgba(26,26,46,0.85) 0%, rgba(26,26,46,0.6) 50%, rgba(26,26,46,0.2) 100%); }
+        .belt-hero-content { position: relative; z-index: 10; max-width: 1280px; margin: 0 auto; padding: 0 24px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+        .belt-hero-sub { font-size: 13px; font-weight: 600; letter-spacing: 3px; color: #e94560; text-transform: uppercase; margin-bottom: 16px; font-family: 'Inter', sans-serif; }
+        .belt-hero-title { font-family: 'Inter', sans-serif; font-weight: 900; font-size: clamp(40px, 6vw, 72px); line-height: 1.05; color: #ffffff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 4px 20px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        .belt-hero-desc { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 400; line-height: 1.6; color: rgba(255,255,255,0.75); max-width: 440px; margin-bottom: 32px; }
+        .belt-hero-btns { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+        
+        .belt-btn-primary { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: #ffffff; background-color: #e94560; border: none; border-radius: 6px; padding: 14px 32px; cursor: pointer; box-shadow: 0 4px 14px rgba(233, 69, 96, 0.35); transition: all 0.25s ease; }
+        .belt-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5); }
+        .belt-btn-outline { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: #ffffff; background-color: transparent; border: 2px solid rgba(255,255,255,0.5); border-radius: 6px; padding: 12px 32px; cursor: pointer; transition: all 0.25s ease; }
+        .belt-btn-outline:hover { border-color: #ffffff; transform: translateY(-2px); }
+
+        .belt-features { background-color: #ffffff; padding: 64px 0; }
+        .belt-features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+        .belt-feat-item { text-align: center; }
+        .belt-feat-icon-wrap { margin: 0 auto 16px; width: 56px; height: 56px; border-radius: 12px; background-color: rgba(233, 69, 96, 0.08); display: flex; align-items: center; justify-content: center; color: #e94560; }
+        .belt-feat-title { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 13px; color: #1a1a2e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .belt-feat-desc { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 400; line-height: 1.6; color: #737373; }
+
+        .belt-section-header { text-align: center; margin-bottom: 48px; }
+        .belt-section-sub { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 3px; color: #e94560; text-transform: uppercase; margin-bottom: 12px; }
+        .belt-section-title { font-family: 'Inter', sans-serif; font-weight: 800; font-size: clamp(28px, 4vw, 36px); color: #1a1a2e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .belt-section-desc { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 400; line-height: 1.6; color: #737373; max-width: 500px; margin: 0 auto; }
+
+        .belt-collections { background-color: #ffffff; padding: 80px 0; }
+        .belt-col-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+        .belt-col-card { background-color: #f9f9f9; border-radius: 12px; padding: 30px; transition: all 0.3s ease; overflow: hidden; cursor: pointer; display: flex; gap: 24px; align-items: flex-start; }
+        .belt-col-card:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transform: translateY(-4px); }
+        .belt-col-img-wrap { width: 180px; height: 180px; flex-shrink: 0; border-radius: 10px; background-color: #f5f5f5; overflow: hidden; }
+        .belt-col-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .belt-col-card:hover .belt-col-img { transform: scale(1.05); }
+        .belt-col-info { display: flex; flex-direction: column; justify-content: space-between; flex: 1; min-height: 160px; }
+        .belt-col-count { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 2px; color: #a3a3a3; text-transform: uppercase; }
+        .belt-col-title { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 22px; color: #1a1a2e; text-transform: uppercase; letter-spacing: 1px; margin: 8px 0 10px; }
+        .belt-col-desc { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 400; line-height: 1.6; color: #737373; }
+        .belt-col-link { font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 8px; margin-top: 16px; color: #e94560; font-size: 14px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; transition: gap 0.3s; }
+        .belt-col-card:hover .belt-col-link { gap: 12px; }
+
+        .belt-products { background-color: #f9f9f9; padding: 80px 0; }
+        .belt-prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+        .b-prod-card { display: flex; flex-direction: column; background-color: #ffffff; border-radius: 0; transition: all 0.3s ease; cursor: pointer; }
+        .b-prod-card:hover { transform: translateY(-6px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .b-prod-img-wrap { position: relative; overflow: hidden; background-color: #f5f5f5; border-radius: 10px; aspect-ratio: 1 / 1; }
+        .b-prod-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .b-prod-card:hover .b-prod-img { transform: scale(1.05); }
+        .b-prod-badges { position: absolute; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 6px; z-index: 2; }
+        .b-badge { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: #ffffff; background-color: #e94560; border-radius: 50px; padding: 4px 12px; display: inline-block; }
+        .b-prod-actions { position: absolute; top: 12px; right: 12px; display: flex; flex-direction: column; gap: 8px; opacity: 0; transform: translateX(8px); transition: all 0.3s ease; z-index: 2; }
+        .b-prod-card:hover .b-prod-actions { opacity: 1; transform: translateX(0); }
+        .b-action-btn { width: 36px; height: 36px; border-radius: 50%; background-color: #ffffff; color: #1a1a2e; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .b-action-btn:hover { background-color: #1a1a2e; color: #ffffff; }
+        .b-prod-info { padding: 16px 4px 8px; text-align: left; }
+        .b-prod-mat { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; color: #a3a3a3; margin-bottom: 6px; letter-spacing: 0.3px; text-transform: uppercase;}
+        .b-prod-name { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; color: #171717; line-height: 1.4; margin-bottom: 10px; min-height: 42px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .b-prod-price-row { display: flex; align-items: center; gap: 10px; }
+        .b-price-cur { font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 800; color: #e94560; }
+        .b-price-old { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 400; color: #a3a3a3; text-decoration: line-through; }
+        .b-view-all { display: block; width: max-content; margin: 48px auto 0; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: #1a1a2e; background-color: transparent; border: 2px solid #1a1a2e; border-radius: 6px; padding: 14px 40px; cursor: pointer; transition: all 0.25s ease; text-decoration: none;}
+        .b-view-all:hover { background-color: #1a1a2e; color: #ffffff; transform: translateY(-2px); }
+        
+        @media (max-width: 768px) {
+            .belt-col-card { flex-direction: column; }
+            .belt-col-img-wrap { width: 100%; height: 240px; }
+            .belt-hero-title { font-size: 32px; }
+        }
+    </style>
+
     <!-- Hero Section -->
-    <section class="vida-header" style="position: relative; background: url('images/wallet_hero_bg.png') center/cover no-repeat; padding: 180px 0; text-align: center; margin-top: 70px;">
-        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.65); z-index: 1;"></div>
-        <div class="container" style="position: relative; z-index: 2; color: #fff;">
-            <h1 style="font-size: 3.5rem; font-weight: 800; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">VÍ DA NAM</h1>
-            <p style="max-width: 800px; margin: 0 auto; color: #eee; line-height: 1.6; font-size: 1.1rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">Tất cả các dòng ví của NB2 đều được sử dụng bằng da với nhiều mẫu mã và chất liệu da khác nhau từ da bò thật, đến da microfiber bảo vệ môi trường. Ví lớn, ví card, ví dài, ví dài khóa kéo sẽ giúp bạn vừa có một chiếc ví đầy đủ công năng, vừa phù hợp với mọi phong cách.</p>
-        </div>
-    </section>
-
-    <!-- Best Seller Section -->
-    <section class="categories" id="bestseller" style="padding-top: 60px;">
-        <div class="container">
-            <div class="section-header" style="text-align: left;">
-                <h2 class="section-title" style="font-size: 2rem;">BEST SELLER</h2>
-                <div style="width: 60px; height: 3px; background: #000; margin-top: 10px;"></div>
-            </div>
-            <div class="product-grid" style="margin-top: 30px;">
-                <div class="product-card reveal">
-                    <div class="product-image">
-                        <img src="images/wallet_premium_brown.png" alt="Ví Card Mini Monogram" class="img-primary">
-                    </div>
-                    <div class="product-info">
-                        <a href="product-detail.html?id=vi-card-mini" class="product-name-link"><h3 class="product-name" style="font-size: 1.1rem; margin-bottom: 5px;">Ví Card Mini Monogram Neo</h3></a>
-                        <p class="product-material" style="font-size: 13px; color: #777; margin-bottom: 8px;">Da cao cấp & Microfiber</p>
-                        <div class="product-price">
-                            <span class="price-current">450.000₫</span>
-                        </div>
-                        <button class="size-btn wallet-add-btn" data-size="Free Size">Thêm vào giỏ</button>
-                    </div>
-                </div>
-                <div class="product-card reveal">
-                    <div class="product-image">
-                        <img src="images/wallet_premium_navy.png" alt="Ví Mini Monogram Neo RFID" class="img-primary">
-                    </div>
-                    <div class="product-info">
-                        <a href="product-detail.html?id=vi-monogram-rfid" class="product-name-link"><h3 class="product-name" style="font-size: 1.1rem; margin-bottom: 5px;">Ví Mini Monogram Neo RFID</h3></a>
-                        <p class="product-material" style="font-size: 13px; color: #777; margin-bottom: 8px;">Da cao cấp & Microfiber</p>
-                        <div class="product-price">
-                            <span class="price-current">550.000₫</span>
-                        </div>
-                        <button class="size-btn wallet-add-btn" data-size="Free Size">Thêm vào giỏ</button>
-                    </div>
-                </div>
-                <div class="product-card reveal">
-                    <div class="product-image">
-                        <img src="images/wallet_premium_black.png" alt="Ví Card Monogram Neo" class="img-primary">
-                    </div>
-                    <div class="product-info">
-                        <a href="product-detail.html?id=vi-card-mini" class="product-name-link"><h3 class="product-name" style="font-size: 1.1rem; margin-bottom: 5px;">Ví Card Monogram Neo</h3></a>
-                        <p class="product-material" style="font-size: 13px; color: #777; margin-bottom: 8px;">Da cao cấp & Microfiber</p>
-                        <div class="product-price">
-                            <span class="price-current">350.000₫</span>
-                        </div>
-                        <button class="size-btn wallet-add-btn" data-size="Free Size">Thêm vào giỏ</button>
-                    </div>
-                </div>
-                <div class="product-card reveal">
-                    <div class="product-badges"><span class="badge badge-hot">Hot</span></div>
-                    <div class="product-image">
-                        <img src="images/wallet_premium_green.png" alt="Ví Mini Mercury" class="img-primary">
-                    </div>
-                    <div class="product-info">
-                        <a href="product-detail.html?id=vi-mercury" class="product-name-link"><h3 class="product-name" style="font-size: 1.1rem; margin-bottom: 5px;">Ví Khắc Tên Mercury</h3></a>
-                        <p class="product-material" style="font-size: 13px; color: #777; margin-bottom: 8px;">Da cao cấp & Microfiber</p>
-                        <div class="product-price">
-                            <span class="price-current">600.000₫</span>
-                        </div>
-                        <button class="size-btn wallet-add-btn" data-size="Free Size">Thêm vào giỏ</button>
-                    </div>
-                </div>
+    <section class="belt-hero">
+        <div class="belt-hero-bg"></div>
+        <div class="belt-hero-overlay"></div>
+        <div class="belt-hero-content">
+            <p class="belt-hero-sub">BỘ SƯU TẬP 2026</p>
+            <h1 class="belt-hero-title">THẮT LƯNG<br><span style="color: #e94560">NAM</span></h1>
+            <p class="belt-hero-desc">Được chế tác từ da bò thật cao cấp. Khẳng định phong cách đàn ông hiện đại với từng chi tiết tinh tế.</p>
+            <div class="belt-hero-btns">
+                <a href="#products" class="belt-btn-primary">MUA NGAY</a>
+                <a href="#collections" class="belt-btn-outline">XEM BỘ SƯU TẬP</a>
             </div>
         </div>
     </section>
 
-    <!-- Collection Hot Section -->
-    <section class="products" id="collection-hot" style="padding-top: 60px; padding-bottom: 80px;">
-        <div class="container">
-            <div class="section-header" style="text-align: left;">
-                <h2 class="section-title" style="font-size: 2rem;">COLLECTION HOT</h2>
-                <div style="width: 60px; height: 3px; background: #000; margin-top: 10px;"></div>
+    <!-- Features Section -->
+    <section class="belt-features">
+        <div class="belt-features-grid">
+            <div class="belt-feat-item">
+                <div class="belt-feat-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+                <h4 class="belt-feat-title">DA BÒ THẬT 100%</h4>
+                <p class="belt-feat-desc">Cam kết chất liệu da thật, bền đẹp theo thời gian</p>
+            </div>
+            <div class="belt-feat-item">
+                <div class="belt-feat-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg></div>
+                <h4 class="belt-feat-title">GIAO HÀNG MIỄN PHÍ</h4>
+                <p class="belt-feat-desc">Miễn phí vận chuyển toàn quốc cho đơn từ 500K</p>
+            </div>
+            <div class="belt-feat-item">
+                <div class="belt-feat-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></div>
+                <h4 class="belt-feat-title">ĐỔI TRẢ 60 NGÀY</h4>
+                <p class="belt-feat-desc">Đổi trả miễn phí trong vòng 60 ngày nếu lỗi sản phẩm</p>
+            </div>
+            <div class="belt-feat-item">
+                <div class="belt-feat-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg></div>
+                <h4 class="belt-feat-title">HỖ TRỢ 24/7</h4>
+                <p class="belt-feat-desc">Đội ngũ tư vấn luôn sẵn sàng hỗ trợ mọi lúc</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Collections Section -->
+    <section id="collections" class="belt-collections">
+        <div class="belt-section-header">
+            <p class="belt-section-sub">KHÁM PHÁ</p>
+            <h2 class="belt-section-title">BỘ SƯU TẬP NỔI BẬT</h2>
+            <p class="belt-section-desc">Lựa chọn phong cách phù hợp với cá tính của bạn</p>
+        </div>
+        <div class="belt-col-grid">
+            <div class="belt-col-card" onclick="window.location.href='product-detail.html?id=that-lung-duc-lo'">
+                <div class="belt-col-img-wrap"><img src="images/belt_brown_classic.png" alt="Classic" class="belt-col-img"></div>
+                <div class="belt-col-info">
+                    <div>
+                        <span class="belt-col-count">12 sản phẩm</span>
+                        <h3 class="belt-col-title">CLASSIC COLLECTION</h3>
+                        <p class="belt-col-desc">Dòng thắt lưng truyền thống với khóa kim loại sang trọng, phù hợp vest &amp; công sở.</p>
+                    </div>
+                    <div class="belt-col-link">XEM NGAY <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+                </div>
+            </div>
+            <div class="belt-col-card" onclick="window.location.href='product-detail.html?id=that-lung-tu-dong'">
+                <div class="belt-col-img-wrap"><img src="images/belt_black_auto.png" alt="Modern" class="belt-col-img"></div>
+                <div class="belt-col-info">
+                    <div>
+                        <span class="belt-col-count">8 sản phẩm</span>
+                        <h3 class="belt-col-title">MODERN SLIM</h3>
+                        <p class="belt-col-desc">Dáng mỏng hiện đại, thiết kế tối giản cho phong cách casual &amp; streetwear.</p>
+                    </div>
+                    <div class="belt-col-link">XEM NGAY <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Grid Section -->
+    <section id="products" class="belt-products">
+        <div class="belt-section-header">
+            <p class="belt-section-sub">SẢN PHẨM</p>
+            <h2 class="belt-section-title">THẮT LƯNG BÁN CHẠY</h2>
+            <p class="belt-section-desc">Những mẫu thắt lưng được khách hàng yêu thích nhất</p>
+        </div>
+        <div class="belt-prod-grid">
+            <!-- Product 1 -->
+            <div class="b-prod-card product-card" onclick="window.location.href='product-detail.html?id=that-lung-tu-dong'">
+                <div class="b-prod-img-wrap">
+                    <img src="images/belt_black_auto.png" alt="Thắt Lưng" class="b-prod-img">
+                    <div class="b-prod-badges"><span class="b-badge">Hot</span><span class="b-badge">-15%</span></div>
+                    <div class="b-prod-actions">
+                        <button class="b-action-btn like-btn" onclick="event.stopPropagation();"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <button class="b-action-btn add-btn size-btn" data-size="Free Size" onclick="event.stopPropagation(); addToCart('Thắt Lưng Nam Tự Động Neo', 550000, 'Free Size');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></button>
+                    </div>
+                </div>
+                <div class="b-prod-info">
+                    <p class="b-prod-mat">Da bò thật 100%</p>
+                    <a href="product-detail.html?id=that-lung-tu-dong" class="product-name-link"><h3 class="b-prod-name">Thắt Lưng Nam Tự Động Neo</h3></a>
+                    <div class="b-prod-price-row">
+                        <span class="b-price-cur">550.000đ</span>
+                        <span class="b-price-old">650.000đ</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Product 2 -->
+            <div class="b-prod-card product-card" onclick="window.location.href='product-detail.html?id=that-lung-xoay-chieu'">
+                <div class="b-prod-img-wrap">
+                    <img src="images/belt_brown_classic.png" alt="Thắt Lưng" class="b-prod-img">
+                    <div class="b-prod-actions">
+                        <button class="b-action-btn like-btn" onclick="event.stopPropagation();"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <button class="b-action-btn add-btn size-btn" data-size="Free Size" onclick="event.stopPropagation(); addToCart('Thắt Lưng Xoay Chiều Reversible', 650000, 'Free Size');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></button>
+                    </div>
+                </div>
+                <div class="b-prod-info">
+                    <p class="b-prod-mat">Da bò Saffiano</p>
+                    <a href="product-detail.html?id=that-lung-xoay-chieu" class="product-name-link"><h3 class="b-prod-name">Thắt Lưng Xoay Chiều Reversible</h3></a>
+                    <div class="b-prod-price-row">
+                        <span class="b-price-cur">650.000đ</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Product 3 -->
+            <div class="b-prod-card product-card" onclick="window.location.href='product-detail.html?id=that-lung-duc-lo'">
+                <div class="b-prod-img-wrap">
+                    <img src="images/belt_brown_classic.png" alt="Thắt Lưng" class="b-prod-img">
+                    <div class="b-prod-actions">
+                        <button class="b-action-btn like-btn" onclick="event.stopPropagation();"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <button class="b-action-btn add-btn size-btn" data-size="Free Size" onclick="event.stopPropagation(); addToCart('Thắt Lưng Đục Lỗ Cổ Điển', 450000, 'Free Size');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></button>
+                    </div>
+                </div>
+                <div class="b-prod-info">
+                    <p class="b-prod-mat">Da bò Mill</p>
+                    <a href="product-detail.html?id=that-lung-duc-lo" class="product-name-link"><h3 class="b-prod-name">Thắt Lưng Đục Lỗ Cổ Điển</h3></a>
+                    <div class="b-prod-price-row">
+                        <span class="b-price-cur">450.000đ</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Product 4 -->
+            <div class="b-prod-card product-card" onclick="window.location.href='product-detail.html?id=that-lung-khoa-kim'">
+                <div class="b-prod-img-wrap">
+                    <img src="images/belt_black_auto.png" alt="Thắt Lưng" class="b-prod-img">
+                    <div class="b-prod-badges"><span class="b-badge">Hot</span></div>
+                    <div class="b-prod-actions">
+                        <button class="b-action-btn like-btn" onclick="event.stopPropagation();"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <button class="b-action-btn add-btn size-btn" data-size="Free Size" onclick="event.stopPropagation(); addToCart('Thắt Lưng Khóa Kim Loại Tinh Tế', 700000, 'Free Size');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></button>
+                    </div>
+                </div>
+                <div class="b-prod-info">
+                    <p class="b-prod-mat">Da bò Nappa</p>
+                    <a href="product-detail.html?id=that-lung-khoa-kim" class="product-name-link"><h3 class="b-prod-name">Thắt Lưng Khóa Kim Loại Tinh Tế</h3></a>
+                    <div class="b-prod-price-row">
+                        <span class="b-price-cur">700.000đ</span>
+                    </div>
+                </div>
             </div>
             
-            <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; margin-bottom: 40px;">
-                <div style="padding: 30px; background: #f9f9f9; border-radius: 12px;">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">ALVIN COLLECTION</h3>
-                    <p style="color: #555; line-height: 1.6;">Sự cuốn hút còn thể hiện qua sắc đen huyền bí, là biểu tượng của thời trang tối giản và hiện đại, không phai mờ cùng thời gian.</p>
-                </div>
-                <div style="padding: 30px; background: #f9f9f9; border-radius: 12px;">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">FRANKIE COLLECTION</h3>
-                    <p style="color: #555; line-height: 1.6;">Sản phẩm được làm từ da Microfiber cao cấp nên có độ bền cao, không nổ da, bong tróc trong suốt quá trình sử dụng.</p>
-                </div>
-            </div>
-
-            <div class="product-grid">
-                <div class="product-card reveal">
-                    <div class="product-image">
-                        <img src="images/wallet_premium_navy.png" alt="Ví Bifold Monogram Carlos" class="img-primary">
-                    </div>
-                    <div class="product-info">
-                        <a href="product-detail.html?id=vi-card-mini" class="product-name-link"><h3 class="product-name" style="font-size: 1.1rem; margin-bottom: 5px;">Ví Bifold Monogram Carlos</h3></a>
-                        <p class="product-material" style="font-size: 13px; color: #777; margin-bottom: 8px;">Da cao cấp & Microfiber</p>
-                        <div class="product-price">
-                            <span class="price-current">490.000₫</span>
-                        </div>
-                        <button class="size-btn wallet-add-btn" data-size="Free Size">Thêm vào giỏ</button>
+             <!-- Product 5 -->
+            <div class="b-prod-card product-card" onclick="window.location.href='product-detail.html?id=that-lung-hayden'">
+                <div class="b-prod-img-wrap">
+                    <img src="images/belt_black_auto.png" alt="Thắt Lưng" class="b-prod-img">
+                    <div class="b-prod-actions">
+                        <button class="b-action-btn like-btn" onclick="event.stopPropagation();"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <button class="b-action-btn add-btn size-btn" data-size="Free Size" onclick="event.stopPropagation(); addToCart('Thắt Lưng Khóa Tự Động Hayden', 550000, 'Free Size');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></button>
                     </div>
                 </div>
-                <div class="product-card reveal">
-                    <div class="product-image">
-                        <img src="images/wallet_premium_brown.png" alt="Ví Henry Đứng" class="img-primary">
-                    </div>
-                    <div class="product-info">
-                        <a href="product-detail.html?id=vi-mercury" class="product-name-link"><h3 class="product-name" style="font-size: 1.1rem; margin-bottom: 5px;">Ví Henry Đứng Cao Cấp</h3></a>
-                        <p class="product-material" style="font-size: 13px; color: #777; margin-bottom: 8px;">Da bò nguyên tấm</p>
-                        <div class="product-price">
-                            <span class="price-current">580.000₫</span>
-                        </div>
-                        <button class="size-btn wallet-add-btn" data-size="Free Size">Thêm vào giỏ</button>
-                    </div>
-                </div>
-                <div class="product-card reveal">
-                    <div class="product-image">
-                        <img src="images/wallet_premium_black.png" alt="Ví Da Đeo Chéo Trey Leonardo" class="img-primary">
-                    </div>
-                    <div class="product-info">
-                        <a href="product-detail.html?id=vi-hayden-rfid" class="product-name-link"><h3 class="product-name" style="font-size: 1.1rem; margin-bottom: 5px;">Ví Da Đeo Chéo Trey</h3></a>
-                        <p class="product-material" style="font-size: 13px; color: #777; margin-bottom: 8px;">Da PU chống xước</p>
-                        <div class="product-price">
-                            <span class="price-current">850.000₫</span>
-                        </div>
-                        <button class="size-btn wallet-add-btn" data-size="Free Size">Thêm vào giỏ</button>
-                    </div>
-                </div>
-                <div class="product-card reveal">
-                    <div class="product-image">
-                        <img src="images/wallet_premium_black.png" alt="Ví Da Hayden RFID" class="img-primary">
-                    </div>
-                    <div class="product-info">
-                        <a href="product-detail.html?id=vi-hayden-rfid" class="product-name-link"><h3 class="product-name" style="font-size: 1.1rem; margin-bottom: 5px;">Ví Da Hayden RFID</h3></a>
-                        <p class="product-material" style="font-size: 13px; color: #777; margin-bottom: 8px;">Da cao cấp & Microfiber</p>
-                        <div class="product-price">
-                            <span class="price-current">620.000₫</span>
-                        </div>
-                        <button class="size-btn wallet-add-btn" data-size="Free Size">Thêm vào giỏ</button>
+                <div class="b-prod-info">
+                    <p class="b-prod-mat">Da cao cấp</p>
+                    <a href="product-detail.html?id=that-lung-hayden" class="product-name-link"><h3 class="b-prod-name">Thắt Lưng Khóa Tự Động Hayden</h3></a>
+                    <div class="b-prod-price-row">
+                        <span class="b-price-cur">550.000đ</span>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-<!-- Features Section -->
-    <section class="features" id="features">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">TẠI SAO CHỌN COMFY?</span>
-                <h2 class="section-title">Cam Kết Chất Lượng</h2>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card reveal" id="feature-1">
-                    <div class="feature-icon">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                        </svg>
+            
+            <!-- Product 6 -->
+            <div class="b-prod-card product-card" onclick="window.location.href='product-detail.html?id=that-lung-henry'">
+                <div class="b-prod-img-wrap">
+                    <img src="images/belt_brown_classic.png" alt="Thắt Lưng" class="b-prod-img">
+                    <div class="b-prod-actions">
+                        <button class="b-action-btn like-btn" onclick="event.stopPropagation();"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <button class="b-action-btn add-btn size-btn" data-size="Free Size" onclick="event.stopPropagation(); addToCart('Thắt Lưng Henry Cao Cấp', 800000, 'Free Size');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></button>
                     </div>
-                    <h3>Chất Liệu Cao Cấp</h3>
-                    <p>Sử dụng sợi Bamboo, Lenzing Modal và Cotton Compact nhập khẩu, mang lại cảm giác mềm mại tối đa
-                    </p>
                 </div>
-                <div class="feature-card reveal" id="feature-2">
-                    <div class="feature-icon">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5">
-                            <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z" />
-                        </svg>
+                <div class="b-prod-info">
+                    <p class="b-prod-mat">Da bò thật 100%</p>
+                    <a href="product-detail.html?id=that-lung-henry" class="product-name-link"><h3 class="b-prod-name">Thắt Lưng Henry Cao Cấp</h3></a>
+                    <div class="b-prod-price-row">
+                        <span class="b-price-cur">800.000đ</span>
                     </div>
-                    <h3>Thoáng Mát 24/7</h3>
-                    <p>Công nghệ Excool độc quyền, thoát ẩm nhanh gấp 3 lần, giữ cho bạn luôn khô thoáng cả ngày</p>
-                </div>
-                <div class="feature-card reveal" id="feature-3">
-                    <div class="feature-icon">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5">
-                            <path
-                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                    </div>
-                    <h3>Về NB2 Boxer Men</h3>
-                    <p>NB2 Boxer Men Việt Nam tự hào là thương hiệu mang đến những sản phẩm đồ da nam giới chất lượng
-                        cao cấp, thiết kế tỉ mỉ vì sự tự tin và lịch lãm của bạn mỗi ngày.</p>
-                </div>
-                <div class="feature-card reveal" id="feature-4">
-                    <div class="feature-icon">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.5">
-                            <path
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                    </div>
-                    <h3>Đổi Trả 60 Ngày</h3>
-                    <p>Cam kết đổi trả miễn phí trong 60 ngày nếu bạn không hài lòng. Không cần lý do, không câu hỏi</p>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Promo Banner -->
-    <section class="promo-banner" id="promo-banner">
-        <div class="container">
-            <div class="promo-content reveal">
-                <div class="promo-text">
-                    <span class="promo-tag">ƯU ĐÃI ĐẶC BIỆT</span>
-                    <h2>Mua 3 Tặng 1</h2>
-                    <p>Áp dụng cho tất cả sản phẩm quần lót nam. Thêm 4 sản phẩm vào giỏ hàng, chiếc rẻ nhất sẽ được
-                        miễn phí!</p>
-                    <a href="#products" class="btn btn-primary btn-lg">Mua ngay</a>
+            
+            <!-- Product 7 -->
+            <div class="b-prod-card product-card" onclick="window.location.href='product-detail.html?id=that-lung-trey'">
+                <div class="b-prod-img-wrap">
+                    <img src="images/belt_black_auto.png" alt="Thắt Lưng" class="b-prod-img">
+                    <div class="b-prod-actions">
+                        <button class="b-action-btn like-btn" onclick="event.stopPropagation();"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <button class="b-action-btn add-btn size-btn" data-size="Free Size" onclick="event.stopPropagation(); addToCart('Thắt Lưng Bản Nhỏ Trey', 500000, 'Free Size');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></button>
+                    </div>
                 </div>
-                <div class="promo-visual">
-                    <div class="promo-circle">
-                        <span class="promo-big-text">3+1</span>
-                        <span class="promo-small-text">FREE</span>
+                <div class="b-prod-info">
+                    <p class="b-prod-mat">Da cao cấp</p>
+                    <a href="product-detail.html?id=that-lung-trey" class="product-name-link"><h3 class="b-prod-name">Thắt Lưng Bản Nhỏ Trey</h3></a>
+                    <div class="b-prod-price-row">
+                        <span class="b-price-cur">500.000đ</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product 8 -->
+            <div class="b-prod-card product-card" onclick="window.location.href='product-detail.html?id=that-lung-outlet'">
+                <div class="b-prod-img-wrap">
+                    <img src="images/belt_brown_classic.png" alt="Thắt Lưng" class="b-prod-img">
+                    <div class="b-prod-actions">
+                        <button class="b-action-btn like-btn" onclick="event.stopPropagation();"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <button class="b-action-btn add-btn size-btn" data-size="Free Size" onclick="event.stopPropagation(); addToCart('Thắt Lưng Khóa Kim Outline', 350000, 'Free Size');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></button>
+                    </div>
+                </div>
+                <div class="b-prod-info">
+                    <p class="b-prod-mat">Da thật</p>
+                    <a href="product-detail.html?id=that-lung-outlet" class="product-name-link"><h3 class="b-prod-name">Thắt Lưng Khóa Kim Outline</h3></a>
+                    <div class="b-prod-price-row">
+                        <span class="b-price-cur">350.000đ</span>
                     </div>
                 </div>
             </div>
         </div>
+        <a href="san-pham.html" class="b-view-all">XEM TẤT CẢ SẢN PHẨM</a>
     </section>
-
-    <!-- Testimonials -->
-    <section class="testimonials" id="testimonials">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">ĐÁNH GIÁ</span>
-                <h2 class="section-title">Khách Hàng Nói Gì?</h2>
-            </div>
-            <div class="testimonials-grid">
-                <div class="testimonial-card reveal">
-                    <div class="testimonial-stars">★★★★★</div>
-                    <p class="testimonial-text">"Chất liệu Bamboo mềm mại cực kỳ, mặc cả ngày mà vẫn thoáng mát. Mình đã
-                        chuyển sang dùng hoàn toàn NB2 Boxer Men Việt Nam rồi!"</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">TM</div>
-                        <div class="author-info">
-                            <span class="author-name">Trần Minh</span>
-                            <span class="author-detail">Đã mua Trunk Bamboo</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card reveal">
-                    <div class="testimonial-stars">★★★★★</div>
-                    <p class="testimonial-text">"Deal combo 3 chiếc rất hời, giao hàng nhanh, đóng gói cẩn thận. Sẽ mua
-                        thêm cho cả gia đình."</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">NH</div>
-                        <div class="author-info">
-                            <span class="author-name">Nguyễn Hoàng</span>
-                            <span class="author-detail">Đã mua Combo 3 Cotton</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card reveal">
-                    <div class="testimonial-stars">★★★★★</div>
-                    <p class="testimonial-text">"Dùng thử rồi thì không muốn quay lại hàng cũ nữa. Chất Modal mềm mịn,
-                        co giãn tốt, đường may tinh tế."</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">PD</div>
-                        <div class="author-info">
-                            <span class="author-name">Phạm Đức</span>
-                            <span class="author-detail">Đã mua Brief Modal</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Newsletter -->
+<!-- Newsletter -->
     <section class="newsletter" id="newsletter">
         <div class="container">
             <div class="newsletter-inner reveal">

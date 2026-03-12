@@ -82,7 +82,7 @@
                     <li class="nav-item">
                         <a href="san-pham.html" class="nav-link active">SẢN PHẨM</a>
                         <div class="mega-menu"><div class="mega-menu-inner">
-                            <div class="mega-col"><h4>Danh Mục</h4><a href="quan-sip.html">Quần sịp</a><a href="vi-da.html">Ví da</a><a href="#">Thắt lưng</a></div>
+                            <div class="mega-col"><h4>Danh Mục</h4><a href="quan-sip.html">Quần sịp</a><a href="vi-da.html">Ví da</a><a href="that-lung.html">Thắt lưng</a></div>
                             <div class="mega-col"><h4>Chất Liệu</h4><a href="#">Cotton Compact</a><a href="#">Da bò thật</a><a href="#">Da PU cao cấp</a></div>
                             <div class="mega-col"><h4>Bộ Sưu Tập</h4><a href="#">Sản phẩm mới</a><a href="#">Bán chạy nhất</a><a href="sale.html">Sale</a></div>
                         </div></div>
@@ -631,6 +631,73 @@
     <script>
 
 const PRODUCTS = {
+
+    "that-lung-tu-dong": {
+        name: "Thắt Lưng Nam Tự Động Neo",
+        material: "Da bò thật 100%",
+        price: 550000,
+        originalPrice: 650000,
+        discount: 15,
+        rating: 5,
+        reviews: 420,
+        colors: [
+            {name:"Đen",hex:"#1a1a1a",img:"images/belt_black_auto.png"},
+            {name:"Nâu",hex:"#8B4513",img:"images/belt_brown_classic.png"}
+        ],
+        sizes: ["Free Size"],
+        desc: "Thắt lưng nam tự động với khóa hợp kim cao cấp không gỉ. Thiết kế tối giản, nam tính, phù hợp cho dân công sở.",
+        features: ["Da bò nguyên tấm","Khóa tự động hợp kim","Bảo hành da 12 tháng","Thiết kế tinh tế"],
+        category: "that-lung"
+    },
+    "that-lung-xoay-chieu": {
+        name: "Thắt Lưng Xoay Chiều Reversible",
+        material: "Da bò Saffiano",
+        price: 650000,
+        originalPrice: 0,
+        discount: 0,
+        rating: 5,
+        reviews: 315,
+        colors: [
+            {name:"Đen/Nâu",hex:"#333",img:"images/belt_black_auto.png"}
+        ],
+        sizes: ["Free Size"],
+        desc: "Thắt lưng xoay chiều 2 mặt Đen - Nâu linh hoạt, mua 1 được 2. Phù hợp thay đổi trang phục dễ dàng.",
+        features: ["Khóa đúc nguyên khối","Sử dụng 2 mặt Đen/Nâu","Chất da Saffiano chống xước","Tiện lợi, tiết kiệm"],
+        category: "that-lung"
+    },
+    "that-lung-duc-lo": {
+        name: "Thắt Lưng Đục Lỗ Cổ Điển",
+        material: "Da bò Mill",
+        price: 450000,
+        originalPrice: 0,
+        discount: 0,
+        rating: 4,
+        reviews: 150,
+        colors: [
+            {name:"Nâu sáp",hex:"#A0522D",img:"images/belt_brown_classic.png"}
+        ],
+        sizes: ["Free Size"],
+        desc: "Thiết kế đục lỗ cổ điển dập vân tự nhiên, mang đậm phong cách vintage và phóng khoáng.",
+        features: ["Da bò dập vân","Phong cách Vintage","Khóa kim đồng thau","Bền bỉ vượt thời gian"],
+        category: "that-lung"
+    },
+    "that-lung-khoa-kim": {
+        name: "Thắt Lưng Khóa Kim Loại",
+        material: "Da bò Nappa",
+        price: 700000,
+        originalPrice: 0,
+        discount: 0,
+        rating: 5,
+        reviews: 512,
+        colors: [
+            {name:"Đen bóng",hex:"#000",img:"images/belt_black_auto.png"}
+        ],
+        sizes: ["Free Size"],
+        desc: "Dòng thắt lưng cực kì sang trọng với khóa kim đúc nguyên khối xước mờ. Hoàn hảo khi kết hợp suit dự tiệc.",
+        features: ["Khóa kim loại xước mờ","Chất da Nappa mềm","Thiết kế đẳng cấp","Tạo điểm nhấn mạnh mẽ"],
+        category: "that-lung"
+    },
+
     "trunk-bamboo": {
         name: "Quần Lót Nam Trunk Bamboo",
         material: "Bamboo",
@@ -781,8 +848,8 @@ const PRODUCTS = {
         rating: 5,
         reviews: 320,
         colors: [
-            {name:"Nâu",hex:"#8B4513",img:"images/wallet_premium_brown.png"},
-            {name:"Đen",hex:"#1a1a1a",img:"images/wallet_premium_black.png"}
+            {name:"Nâu",hex:"#8B4513",img:"images/belt_brown_classic.png"},
+            {name:"Đen",hex:"#1a1a1a",img:"images/belt_black_auto.png"}
         ],
         sizes: ["Free Size"],
         desc: "Ví card mini với thiết kế nhỏ gọn, đựng vừa thẻ và tiền mặt. Chất liệu da Microfiber bền đẹp.",
@@ -798,8 +865,8 @@ const PRODUCTS = {
         rating: 5,
         reviews: 215,
         colors: [
-            {name:"Xanh navy",hex:"#1e3a5f",img:"images/wallet_premium_navy.png"},
-            {name:"Đen",hex:"#1a1a1a",img:"images/wallet_premium_black.png"}
+            {name:"Xanh navy",hex:"#1e3a5f",img:"images/belt_black_auto.png"},
+            {name:"Đen",hex:"#1a1a1a",img:"images/belt_black_auto.png"}
         ],
         sizes: ["Free Size"],
         desc: "Ví Mini Monogram Neo tích hợp công nghệ chặn RFID bảo vệ thông tin thẻ ngân hàng.",
@@ -815,8 +882,8 @@ const PRODUCTS = {
         rating: 5,
         reviews: 410,
         colors: [
-            {name:"Xanh rêu",hex:"#556B2F",img:"images/wallet_premium_green.png"},
-            {name:"Nâu",hex:"#8B4513",img:"images/wallet_premium_brown.png"}
+            {name:"Xanh rêu",hex:"#556B2F",img:"images/belt_brown_classic.png"},
+            {name:"Nâu",hex:"#8B4513",img:"images/belt_brown_classic.png"}
         ],
         sizes: ["Free Size"],
         desc: "Ví Mercury cao cấp với dịch vụ khắc tên miễn phí, món quà ý nghĩa cho người thân.",
@@ -832,8 +899,8 @@ const PRODUCTS = {
         rating: 5,
         reviews: 180,
         colors: [
-            {name:"Đen",hex:"#1a1a1a",img:"images/wallet_premium_black.png"},
-            {name:"Xanh navy",hex:"#1e3a5f",img:"images/wallet_premium_navy.png"}
+            {name:"Đen",hex:"#1a1a1a",img:"images/belt_black_auto.png"},
+            {name:"Xanh navy",hex:"#1e3a5f",img:"images/belt_black_auto.png"}
         ],
         sizes: ["Free Size"],
         desc: "Ví Hayden RFID với thiết kế ngang cổ điển, tích hợp công nghệ chặn RFID hiện đại.",
