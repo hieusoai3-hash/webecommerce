@@ -617,3 +617,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+\n(function(){\n
+// Set active state for mobile nav
+function updateMobileNav() {
+    const mobileNavItems = document.querySelectorAll('.mb-nav-item');
+    if (!mobileNavItems.length) return;
+    
+    let currentPath = window.location.pathname.split('/').pop() || 'index.html';
+    const currentHash = window.location.hash;
+    
+    let foundMatch = false;
+    
+    // First try to match exact path + hash
+    mobileNavItems.forEach(item => {
+        item.classList.remove('active');
+        const href = item.getAttribute('href');
+        if (href === currentPath + currentHash || (currentPath === '' && href === 'index.html' + currentHash)) {
+            item.classList.add('active');
+            foundMatch = true;
+        }
+    });
+    
+    // If no exact match with hash, just match on path
+    if (!foundMatch) {
+         mobileNavItems.forEach(item => {
+            const href = item.getAttribute('href');
+            // Ignore items with hash if we are just matching path
+            if (!href.includes('#') && (href === currentPath || (currentPath === '' && href === 'index.html'))) {
+                item.classList.add('active');
+            }
+        });
+    }
+    
+    // Center the active item in the scroll view
+    const activeItem = document.querySelector('.mb-nav-item.active');
+    if (activeItem) {
+        activeItem.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', updateMobileNav);
+window.addEventListener('hashchange', updateMobileNav);
+\n})();\n

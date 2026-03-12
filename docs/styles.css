@@ -2980,3 +2980,66 @@ button {
         grid-template-columns: 1fr;
     }
 }
+/* === Mobile Bottom Navigation === */
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--color-white);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+    z-index: 1000;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 16px;
+}
+.mobile-bottom-nav::-webkit-scrollbar {
+    display: none;
+}
+.mobile-bottom-nav {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.mb-nav-item {
+    display: inline-block;
+    padding: 18px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-gray-800);
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.mb-nav-item.active {
+    color: var(--color-accent);
+}
+
+.mb-nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 11px;
+    left: 14px;
+    right: 14px;
+    height: 2px;
+    background-color: var(--color-accent);
+    border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+    .mobile-bottom-nav {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    /* Add padding so content is not hidden behind the nav */
+    body {
+        padding-bottom: 60px;
+    }
+}
