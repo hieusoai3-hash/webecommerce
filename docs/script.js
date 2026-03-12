@@ -594,12 +594,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Product name links to open checkout
-    const productNameLinks = document.querySelectorAll('.product-name-link');
-    productNameLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            openCheckout();
-        });
+    // Make product cards clickable — clicking image or name navigates to detail page
+    const productCards2 = document.querySelectorAll('.product-card');
+    productCards2.forEach(card => {
+        const link = card.querySelector('.product-name-link');
+        if (link && link.href && !link.href.endsWith('#')) {
+            // Make the product image area clickable
+            const imgArea = card.querySelector('.product-image');
+            if (imgArea) {
+                imgArea.style.cursor = 'pointer';
+                imgArea.addEventListener('click', (e) => {
+                    // Don't navigate if clicking a size button or color swatch
+                    if (e.target.closest('.size-btn') || e.target.closest('.color-swatch')) return;
+                    window.location.href = link.href;
+                });
+            }
+            // Also make the whole card clickable (except buttons)
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.size-btn') || e.target.closest('.color-swatch') || e.target.closest('button') || e.target.closest('.product-name-link')) return;
+                window.location.href = link.href;
+            });
+        }
     });
 });
