@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ===== Add to Cart =====
-    function addToCart(productCard, size) {
+    function addToCart(productCard, size, silent = false) {
         const name = productCard.querySelector('.product-name').textContent;
         const priceText = productCard.querySelector('.price-current').textContent;
         const price = parseInt(priceText.replace(/[^\d]/g, ''));
@@ -268,26 +268,74 @@ document.addEventListener('DOMContentLoaded', () => {
         const color = activeColor ? activeColor.getAttribute('data-color') : 'Mặc định';
         const productId = productCard.dataset.productId || '';
 
+        // Store available options for in-cart editing
+        const sizes = Array.from(productCard.querySelectorAll('.size-btn')).map(b => b.dataset.size);
+        const colors = Array.from(productCard.querySelectorAll('.color-swatch')).map(b => ({
+            name: b.dataset.color, hex: b.style.background, img: b.dataset.img || ''
+        }));
+
         const existingItem = cart.find(item => item.name === name && item.size === size && item.color === color);
 
         if (existingItem) {
             existingItem.qty += 1;
         } else {
-            cart.push({ productId, name, price, image, size, color, qty: 1 });
+            cart.push({ productId, name, price, image, size, color, qty: 1, sizes, colors });
         }
 
         updateCartUI();
 
-        // Open the cart sidebar to show items
-        openCart();
-
-        // Bump animation on the cart icon
-        cartCount.classList.add('bump');
-        setTimeout(() => cartCount.classList.remove('bump'), 400);
+        if (!silent) {
+            openCart();
+            cartCount.classList.add('bump');
+            setTimeout(() => cartCount.classList.remove('bump'), 400);
+        }
     }
 
     function removeFromCart(index) {
         cart.splice(index, 1);
+        updateCartUI();
+    }
+
+    function changeQty(index, delta) {
+        cart[index].qty = Math.max(1, cart[index].qty + delta);
+        updateCartUI();
+    }
+
+    function toggleCartEdit(index) {
+        const panel = document.getElementById(`cart-edit-${index}`);
+        if (!panel) return;
+        const isOpen = panel.classList.contains('open');
+        document.querySelectorAll('.cart-edit-panel').forEach(p => p.classList.remove('open'));
+        document.querySelectorAll('.cart-item-edit').forEach(b => b.classList.remove('active'));
+        if (!isOpen) {
+            panel.classList.add('open');
+            document.querySelector(`.cart-item-edit[data-index="${index}"]`).classList.add('active');
+        }
+    }
+
+    function setCartItemSize(index, size) {
+        // Merge with existing item of same name+color+newSize if any
+        const item = cart[index];
+        const existing = cart.find((it, i) => i !== index && it.name === item.name && it.color === item.color && it.size === size);
+        if (existing) {
+            existing.qty += item.qty;
+            cart.splice(index, 1);
+        } else {
+            item.size = size;
+        }
+        updateCartUI();
+    }
+
+    function setCartItemColor(index, colorName, img) {
+        const item = cart[index];
+        const existing = cart.find((it, i) => i !== index && it.name === item.name && it.size === item.size && it.color === colorName);
+        if (existing) {
+            existing.qty += item.qty;
+            cart.splice(index, 1);
+        } else {
+            item.color = colorName;
+            if (img) item.image = img;
+        }
         updateCartUI();
     }
 
@@ -311,30 +359,67 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>`;
             cartFooter.style.display = 'none';
         } else {
-            cartBody.innerHTML = cart.map((item, idx) => `
+            cartBody.innerHTML = cart.map((item, idx) => {
+                const sizesHtml = (item.sizes || []).map(s =>
+                    `<button class="cart-edit-size-btn${s === item.size ? ' active' : ''}" data-action="set-size" data-index="${idx}" data-size="${s}">${s}</button>`
+                ).join('');
+                const colorsHtml = (item.colors || []).map(c =>
+                    `<button class="cart-edit-color-btn${c.name === item.color ? ' active' : ''}" data-action="set-color" data-index="${idx}" data-color="${c.name}" data-img="${c.img}" style="background:${c.hex}" title="${c.name}"></button>`
+                ).join('');
+                const hasOptions = sizesHtml || colorsHtml;
+                return `
                 <div class="cart-item">
                     <div class="cart-item-img">
                         <img src="${item.image}" alt="${item.name}">
                     </div>
                     <div class="cart-item-info">
-                        <div class="cart-item-name">${item.name}</div>
-                        <div class="cart-item-variant">${item.color} | Size ${item.size} | SL: ${item.qty}</div>
-                        <div class="cart-item-price">${item.price.toLocaleString('vi-VN')}₫</div>
+                        <div class="cart-item-top">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-top-btns">
+                                ${hasOptions ? `<button class="cart-item-edit" data-action="toggle-edit" data-index="${idx}" title="Chỉnh sửa">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                </button>` : ''}
+                                <button class="cart-item-remove" data-action="remove" data-index="${idx}" aria-label="Xóa">✕</button>
+                            </div>
+                        </div>
+                        <div class="cart-item-variant">${item.color} | Size ${item.size}</div>
+                        <div class="cart-item-bottom">
+                            <div class="cart-item-price">${item.price.toLocaleString('vi-VN')}₫</div>
+                            <div class="qty-control">
+                                <button class="qty-btn" data-action="qty-dec" data-index="${idx}">−</button>
+                                <span class="qty-val">${item.qty}</span>
+                                <button class="qty-btn" data-action="qty-inc" data-index="${idx}">+</button>
+                            </div>
+                        </div>
+                        ${hasOptions ? `
+                        <div class="cart-edit-panel" id="cart-edit-${idx}">
+                            ${sizesHtml ? `<div class="cart-edit-label">SIZE:</div><div class="cart-edit-sizes">${sizesHtml}</div>` : ''}
+                            ${colorsHtml ? `<div class="cart-edit-label">MÀU:</div><div class="cart-edit-colors">${colorsHtml}</div>` : ''}
+                            <button class="cart-edit-confirm-btn" data-action="confirm-edit" data-index="${idx}">Xác nhận</button>
+                        </div>` : ''}
                     </div>
-                    <button class="cart-item-remove" data-index="${idx}" aria-label="Xóa">✕</button>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
             cartFooter.style.display = 'block';
             cartTotalPrice.textContent = totalPrice.toLocaleString('vi-VN') + '₫';
-
-            // Attach remove listeners
-            cartBody.querySelectorAll('.cart-item-remove').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    removeFromCart(parseInt(btn.dataset.index));
-                });
-            });
         }
     }
+
+    // Cart body event delegation — handles qty, edit, remove, set-size, set-color
+    cartBody.addEventListener('click', e => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const idx = parseInt(btn.dataset.index);
+        switch (btn.dataset.action) {
+            case 'remove':      removeFromCart(idx); break;
+            case 'qty-dec':     changeQty(idx, -1); break;
+            case 'qty-inc':     changeQty(idx, 1); break;
+            case 'toggle-edit': toggleCartEdit(idx); break;
+            case 'set-size':    setCartItemSize(idx, btn.dataset.size); break;
+            case 'set-color':   setCartItemColor(idx, btn.dataset.color, btn.dataset.img); break;
+            case 'confirm-edit': toggleCartEdit(idx); break;
+        }
+    });
 
     // Size button clicks
     sizeBtns.forEach(btn => {
@@ -933,6 +1018,81 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = link.href;
             });
         }
+    });
+
+    // ===== Quick Buy (card Mua ngay) =====
+    document.querySelectorAll('.card-buy-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const card   = btn.closest('.product-card');
+            const picker = card.querySelector('.card-size-picker');
+            const sizes  = (btn.dataset.sizes || '').split(',').filter(Boolean);
+
+            if (sizes.length === 1) {
+                addToCart(card, sizes[0], true);
+                openCheckout();
+            } else {
+                const isOpen = picker.classList.contains('open');
+                // Close all pickers
+                document.querySelectorAll('.card-size-picker').forEach(p => p.classList.remove('open'));
+                document.querySelectorAll('.card-buy-btn').forEach(b => b.classList.remove('active'));
+                if (!isOpen) {
+                    picker.classList.add('open');
+                    btn.classList.add('active');
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('.card-size-opt').forEach(opt => {
+        opt.addEventListener('click', e => {
+            e.stopPropagation();
+            const card = opt.closest('.product-card');
+            card.querySelector('.card-size-picker').classList.remove('open');
+            card.querySelector('.card-buy-btn').classList.remove('active');
+            addToCart(card, opt.dataset.size, true);
+            openCheckout();
+        });
+    });
+
+    // Close pickers when clicking elsewhere
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.card-size-picker').forEach(p => p.classList.remove('open'));
+        document.querySelectorAll('.card-buy-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.card-cart-size-picker').forEach(p => p.classList.remove('open'));
+        document.querySelectorAll('.card-cart-btn').forEach(b => b.classList.remove('active'));
+    });
+
+    // ===== Add to Cart icon button =====
+    document.querySelectorAll('.card-cart-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const card   = btn.closest('.product-card');
+            const picker = card.querySelector('.card-cart-size-picker');
+            const sizes  = (btn.dataset.sizes || '').split(',').filter(Boolean);
+
+            if (sizes.length === 1) {
+                addToCart(card, sizes[0], false);
+            } else {
+                const isOpen = picker.classList.contains('open');
+                document.querySelectorAll('.card-cart-size-picker').forEach(p => p.classList.remove('open'));
+                document.querySelectorAll('.card-cart-btn').forEach(b => b.classList.remove('active'));
+                if (!isOpen) {
+                    picker.classList.add('open');
+                    btn.classList.add('active');
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('.card-cart-size-opt').forEach(opt => {
+        opt.addEventListener('click', e => {
+            e.stopPropagation();
+            const card = opt.closest('.product-card');
+            card.querySelector('.card-cart-size-picker').classList.remove('open');
+            card.querySelector('.card-cart-btn').classList.remove('active');
+            addToCart(card, opt.dataset.size, false);
+        });
     });
 
     // ===== Sort Select =====
