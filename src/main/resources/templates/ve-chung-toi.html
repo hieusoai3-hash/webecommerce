@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Về Chúng Tôi - NB2 Boxer Men Việt Nam</title>
+    <meta name="description" content="NB2 Boxer Men Việt Nam - Thương hiệu đồ nam cao cấp được hàng nghìn khách hàng tin dùng.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        /* ── Hero ── */
+        .about-hero {
+            background: linear-gradient(135deg, var(--color-primary) 0%, #0f3460 50%, #16213e 100%);
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .about-hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 70% 50%, rgba(233,69,96,.18) 0%, transparent 65%);
+            pointer-events: none;
+        }
+        .about-hero-tag {
+            display: inline-block;
+            background: rgba(233,69,96,.15);
+            border: 1px solid rgba(233,69,96,.4);
+            color: #e94560;
+            font-size: .75rem; font-weight: 700;
+            letter-spacing: .12em; text-transform: uppercase;
+            padding: 6px 18px; border-radius: var(--radius-full);
+            margin-bottom: 20px;
+        }
+        .about-hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            font-weight: 900; color: #fff;
+            line-height: 1.15; margin-bottom: 20px;
+        }
+        .about-hero h1 span { color: var(--color-accent); }
+        .about-hero p {
+            font-size: 1.1rem; color: rgba(255,255,255,.7);
+            max-width: 600px; margin: 0 auto 36px;
+            line-height: 1.8;
+        }
+        .hero-scroll-down {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 8px; color: rgba(255,255,255,.4); font-size: .75rem;
+            letter-spacing: .08em; text-transform: uppercase; margin-top: 60px;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)}
+        }
+
+        /* ── Stats ── */
+        .stats-band {
+            background: var(--color-accent);
+            padding: 40px 0;
+        }
+        .stats-band .container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+        }
+        .stat-item {
+            text-align: center; padding: 0 20px;
+            border-right: 1px solid rgba(255,255,255,.2);
+        }
+        .stat-item:last-child { border-right: none; }
+        .stat-number {
+            font-size: 2.4rem; font-weight: 900; color: #fff;
+            line-height: 1; display: block;
+        }
+        .stat-label {
+            font-size: .82rem; color: rgba(255,255,255,.8);
+            font-weight: 500; margin-top: 6px; display: block;
+            text-transform: uppercase; letter-spacing: .08em;
+        }
+
+        /* ── Story ── */
+        .story-section {
+            padding: 100px 0;
+            background: var(--color-white);
+        }
+        .story-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px; align-items: center;
+        }
+        .story-img-wrap {
+            position: relative;
+        }
+        .story-img-box {
+            width: 100%; aspect-ratio: 4/3;
+            background: linear-gradient(135deg, var(--color-primary) 0%, #0f3460 100%);
+            border-radius: var(--radius-xl);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; position: relative;
+        }
+        .story-img-pattern {
+            position: absolute; inset: 0;
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(255,255,255,.03) 0px, rgba(255,255,255,.03) 1px,
+                transparent 1px, transparent 20px
+            );
+        }
+        .story-img-icon {
+            font-size: 6rem; z-index: 1;
+            filter: drop-shadow(0 0 40px rgba(233,69,96,.4));
+        }
+        .story-badge {
+            position: absolute; bottom: -20px; right: -20px;
+            background: var(--color-accent);
+            color: #fff; border-radius: var(--radius-lg);
+            padding: 20px 24px; text-align: center;
+            box-shadow: var(--shadow-xl);
+        }
+        .story-badge strong { font-size: 2rem; font-weight: 900; display: block; line-height:1; }
+        .story-badge span { font-size: .75rem; opacity: .85; text-transform: uppercase; letter-spacing:.06em; }
+
+        .story-text .section-tag { margin-bottom: 12px; display: inline-block; }
+        .story-text h2 {
+            font-size: 2.4rem; font-weight: 900;
+            color: var(--color-primary); line-height: 1.2; margin-bottom: 20px;
+        }
+        .story-text p {
+            color: var(--color-gray-600); line-height: 1.85;
+            font-size: 1rem; margin-bottom: 16px;
+        }
+        .story-checks {
+            display: flex; flex-direction: column; gap: 10px; margin-top: 28px;
+        }
+        .story-check {
+            display: flex; align-items: center; gap: 12px;
+            font-size: .95rem; color: var(--color-gray-700);
+        }
+        .story-check-icon {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--color-accent-light); color: var(--color-accent);
+            display: flex; align-items: center; justify-content: center;
+            font-size: .85rem; flex-shrink: 0; font-weight: 700;
+        }
+
+        /* ── Values ── */
+        .values-section {
+            padding: 100px 0;
+            background: var(--color-gray-50);
+        }
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px; margin-top: 56px;
+        }
+        .value-card {
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            padding: 40px 28px;
+            border: 1px solid var(--color-gray-200);
+            text-align: center;
+            transition: transform var(--transition-base), box-shadow var(--transition-base);
+            position: relative; overflow: hidden;
+        }
+        .value-card::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+            background: var(--color-accent);
+            transform: scaleX(0); transform-origin: left;
+            transition: transform var(--transition-base);
+        }
+        .value-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-xl); }
+        .value-card:hover::after { transform: scaleX(1); }
+        .value-icon {
+            width: 72px; height: 72px;
+            background: var(--color-accent-light); border-radius: var(--radius-lg);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 24px; font-size: 2rem;
+            transition: transform var(--transition-spring);
+        }
+        .value-card:hover .value-icon { transform: scale(1.12) rotate(-4deg); }
+        .value-card h3 {
+            font-size: 1.1rem; font-weight: 800;
+            color: var(--color-primary); margin-bottom: 12px;
+        }
+        .value-card p {
+            font-size: .9rem; color: var(--color-gray-500);
+            line-height: 1.7;
+        }
+
+        /* ── Timeline ── */
+        .timeline-section {
+            padding: 100px 0;
+            background: var(--color-white);
+        }
+        .timeline {
+            position: relative; margin-top: 60px;
+            max-width: 780px; margin-left: auto; margin-right: auto;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute; left: 50%; top: 0; bottom: 0;
+            width: 2px; background: var(--color-gray-200);
+            transform: translateX(-50%);
+        }
+        .timeline-item {
+            display: flex; gap: 40px; margin-bottom: 56px;
+            position: relative;
+        }
+        .timeline-item:nth-child(odd) { flex-direction: row; }
+        .timeline-item:nth-child(even) { flex-direction: row-reverse; }
+        .timeline-content {
+            flex: 1;
+            background: var(--color-gray-50);
+            border: 1px solid var(--color-gray-200);
+            border-radius: var(--radius-lg);
+            padding: 28px 32px;
+            transition: box-shadow var(--transition-base);
+        }
+        .timeline-content:hover { box-shadow: var(--shadow-lg); }
+        .timeline-item:nth-child(odd) .timeline-content { text-align: right; }
+        .timeline-item:nth-child(even) .timeline-content { text-align: left; }
+        .timeline-year {
+            font-size: .75rem; font-weight: 700; color: var(--color-accent);
+            text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px;
+        }
+        .timeline-content h3 {
+            font-size: 1.1rem; font-weight: 800;
+            color: var(--color-primary); margin-bottom: 8px;
+        }
+        .timeline-content p {
+            font-size: .9rem; color: var(--color-gray-500); line-height: 1.6;
+        }
+        .timeline-dot {
+            position: absolute; left: 50%; top: 28px;
+            width: 16px; height: 16px; border-radius: 50%;
+            background: var(--color-accent);
+            border: 3px solid var(--color-white);
+            box-shadow: 0 0 0 3px rgba(233,69,96,.25);
+            transform: translateX(-50%);
+        }
+        .timeline-spacer { flex: 1; }
+
+        /* ── Commitments ── */
+        .commit-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--color-primary) 0%, #0f3460 100%);
+            position: relative; overflow: hidden;
+        }
+        .commit-section::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 30% 50%, rgba(233,69,96,.15) 0%, transparent 60%);
+        }
+        .commit-section .section-tag { color: rgba(233,69,96,.9); border-color: rgba(233,69,96,.3); background: rgba(233,69,96,.1); }
+        .commit-section .section-title { color: #fff; }
+        .commit-section .section-desc { color: rgba(255,255,255,.6); }
+        .commit-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px; margin-top: 56px;
+        }
+        .commit-card {
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: var(--radius-xl);
+            padding: 36px 28px;
+            transition: background var(--transition-base), transform var(--transition-base);
+        }
+        .commit-card:hover { background: rgba(255,255,255,.09); transform: translateY(-4px); }
+        .commit-icon {
+            width: 56px; height: 56px;
+            background: rgba(233,69,96,.15); border-radius: var(--radius-md);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; margin-bottom: 20px;
+        }
+        .commit-card h3 {
+            font-size: 1.05rem; font-weight: 800; color: #fff;
+            margin-bottom: 10px;
+        }
+        .commit-card p {
+            font-size: .88rem; color: rgba(255,255,255,.55); line-height: 1.7;
+        }
+
+        /* ── Contact CTA ── */
+        .cta-section {
+            padding: 100px 0;
+            background: var(--color-gray-50);
+        }
+        .cta-box {
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            padding: 70px 60px;
+            text-align: center;
+            border: 1px solid var(--color-gray-200);
+            box-shadow: var(--shadow-lg);
+            position: relative; overflow: hidden;
+        }
+        .cta-box::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--color-accent), #f59e0b, var(--color-accent));
+        }
+        .cta-box h2 {
+            font-size: 2.2rem; font-weight: 900;
+            color: var(--color-primary); margin-bottom: 16px;
+        }
+        .cta-box p {
+            font-size: 1.05rem; color: var(--color-gray-500);
+            max-width: 520px; margin: 0 auto 36px; line-height: 1.7;
+        }
+        .cta-actions {
+            display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+        }
+        .contact-row {
+            display: flex; justify-content: center; gap: 40px;
+            margin-top: 48px; flex-wrap: wrap;
+        }
+        .contact-item {
+            display: flex; align-items: center; gap: 12px;
+            font-size: .95rem; color: var(--color-gray-600);
+        }
+        .contact-item-icon {
+            width: 42px; height: 42px; border-radius: var(--radius-md);
+            background: var(--color-accent-light); color: var(--color-accent);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+        .contact-item strong { display: block; color: var(--color-primary); font-size: .85rem; }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .story-grid { grid-template-columns: 1fr; gap: 48px; }
+            .values-grid { grid-template-columns: repeat(2, 1fr); }
+            .commit-grid { grid-template-columns: 1fr; }
+            .stats-band .container { grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255,255,255,.2); }
+            .stat-item { border-right: none; background: var(--color-accent); padding: 24px 20px; }
+        }
+        @media (max-width: 640px) {
+            .values-grid { grid-template-columns: 1fr; }
+            .timeline::before { left: 16px; }
+            .timeline-item, .timeline-item:nth-child(even) { flex-direction: column; padding-left: 48px; }
+            .timeline-dot { left: 16px; }
+            .timeline-item:nth-child(odd) .timeline-content { text-align: left; }
+            .timeline-spacer { display: none; }
+            .cta-box { padding: 40px 24px; }
+            .stats-band .container { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: top}"></div>
+
+<!-- Hero -->
+<section class="about-hero">
+    <div class="container">
+        <span class="about-hero-tag">Về NB2 Boxer Men Việt Nam</span>
+        <h1>Khẳng Định Phong Cách<br><span>Đàn Ông Việt</span></h1>
+        <p>Chúng tôi tin rằng sự tự tin bắt đầu từ bên trong — từ chất liệu cao cấp, thiết kế tinh tế và sự thoải mái tuyệt đối mỗi ngày.</p>
+        <div class="hero-actions">
+            <a th:href="@{/san-pham}" class="btn btn-primary btn-lg">Khám phá sản phẩm</a>
+            <a th:href="@{/#features}" class="btn btn-outline btn-lg" style="color:#fff;border-color:rgba(255,255,255,.35);">Giá trị cốt lõi</a>
+        </div>
+        <div class="hero-scroll-down">
+            <span>Cuộn để tìm hiểu</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14m-7-7 7 7 7-7"/>
+            </svg>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Band -->
+<div class="stats-band">
+    <div class="container">
+        <div class="stat-item">
+            <span class="stat-number">50K+</span>
+            <span class="stat-label">Khách hàng tin dùng</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">4.9★</span>
+            <span class="stat-label">Đánh giá trung bình</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">60 ngày</span>
+            <span class="stat-label">Chính sách đổi trả</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">Chất liệu cao cấp</span>
+        </div>
+    </div>
+</div>
+
+<!-- Brand Story -->
+<section class="story-section">
+    <div class="container">
+        <div class="story-grid">
+            <div class="story-img-wrap">
+                <div class="story-img-box">
+                    <div class="story-img-pattern"></div>
+                    <span class="story-img-icon">🧵</span>
+                </div>
+                <div class="story-badge">
+                    <strong>2021</strong>
+                    <span>Thành lập</span>
+                </div>
+            </div>
+            <div class="story-text">
+                <span class="section-tag">Câu Chuyện Của Chúng Tôi</span>
+                <h2>Từ Đam Mê Đến<br>Thương Hiệu</h2>
+                <p>NB2 Boxer Men Việt Nam ra đời từ một nhận thức đơn giản: đàn ông Việt xứng đáng được mặc những sản phẩm cao cấp, thoải mái và đẹp mắt ngay từ lớp đồ bên trong nhất.</p>
+                <p>Chúng tôi bắt đầu với một xưởng nhỏ tại Hà Nội, nghiên cứu kỹ lưỡng từng loại chất liệu — từ Bamboo, Lenzing Modal đến Cotton Compact — để tạo ra những sản phẩm hoàn hảo nhất dành cho phái mạnh.</p>
+                <p>Sau hơn 3 năm phát triển, NB2 Boxer Men tự hào phục vụ hơn 50.000 khách hàng trên toàn quốc với cam kết không thay đổi: <strong>Chất lượng trên hết.</strong></p>
+                <div class="story-checks">
+                    <div class="story-check">
+                        <span class="story-check-icon">✓</span>
+                        <span>Sản xuất và kiểm định chất lượng 100% tại Việt Nam</span>
+                    </div>
+                    <div class="story-check">
+                        <span class="story-check-icon">✓</span>
+                        <span>Chất liệu nhập khẩu cao cấp từ các nhà cung cấp uy tín</span>
+                    </div>
+                    <div class="story-check">
+                        <span class="story-check-icon">✓</span>
+                        <span>Đội ngũ thiết kế am hiểu nhu cầu người dùng Việt</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Core Values -->
+<section class="values-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">Giá Trị Cốt Lõi</span>
+            <h2 class="section-title">Những Điều Chúng Tôi Tin</h2>
+            <p class="section-desc">Mỗi sản phẩm đều được tạo ra dựa trên bốn giá trị cốt lõi này</p>
+        </div>
+        <div class="values-grid">
+            <div class="value-card reveal">
+                <div class="value-icon">🏆</div>
+                <h3>Chất Lượng Tối Thượng</h3>
+                <p>Mỗi sản phẩm trải qua 12 bước kiểm định chất lượng nghiêm ngặt trước khi đến tay khách hàng. Không có sản phẩm lỗi nào được phép xuất xưởng.</p>
+            </div>
+            <div class="value-card reveal">
+                <div class="value-icon">🌬️</div>
+                <h3>Thoải Mái Tuyệt Đối</h3>
+                <p>Công nghệ Excool độc quyền giúp thoát ẩm nhanh gấp 3 lần vải thông thường. Bạn sẽ cảm nhận sự khác biệt từ lần mặc đầu tiên.</p>
+            </div>
+            <div class="value-card reveal">
+                <div class="value-icon">💚</div>
+                <h3>Thân Thiện Môi Trường</h3>
+                <p>Sợi Bamboo và Lenzing Modal được sản xuất theo quy trình khép kín, tiết kiệm nước và không sử dụng hóa chất độc hại — tốt cho bạn và trái đất.</p>
+            </div>
+            <div class="value-card reveal">
+                <div class="value-icon">🤝</div>
+                <h3>Khách Hàng Là Số 1</h3>
+                <p>Chính sách đổi trả 60 ngày không cần lý do. Đội ngũ hỗ trợ 24/7 sẵn sàng giải quyết mọi vấn đề của bạn trong vòng 30 phút.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Timeline -->
+<section class="timeline-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">Hành Trình Phát Triển</span>
+            <h2 class="section-title">Từng Bước Vươn Xa</h2>
+            <p class="section-desc">Những cột mốc đánh dấu sự trưởng thành của NB2 Boxer Men</p>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2021</div>
+                    <h3>Khởi Đầu</h3>
+                    <p>Thành lập NB2 Boxer Men với xưởng sản xuất nhỏ tại Hà Nội và 5 sản phẩm đầu tiên. Ra mắt dòng quần sịp Bamboo được thị trường đón nhận nồng nhiệt.</p>
+                </div>
+                <div class="timeline-dot"></div>
+                <div class="timeline-spacer"></div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-spacer"></div>
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2022</div>
+                    <h3>Mở Rộng Danh Mục</h3>
+                    <p>Ra mắt dòng Ví Da Cao Cấp và Thắt Lưng Da bò thật. Đạt mốc 5.000 khách hàng thân thiết và mở rộng phân phối toàn quốc qua các sàn thương mại điện tử.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2023</div>
+                    <h3>Công Nghệ Excool</h3>
+                    <p>Ứng dụng thành công công nghệ Excool độc quyền vào toàn bộ dòng quần sịp. Đạt chứng nhận chất lượng ISO và được bình chọn top 10 thương hiệu thời trang nam được yêu thích.</p>
+                </div>
+                <div class="timeline-dot"></div>
+                <div class="timeline-spacer"></div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-spacer"></div>
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2024 – Nay</div>
+                    <h3>50.000+ Khách Hàng</h3>
+                    <p>Vượt mốc 50.000 khách hàng trên toàn quốc. Ra mắt website thương mại điện tử riêng và tiếp tục nghiên cứu phát triển các dòng sản phẩm cao cấp mới.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Commitments -->
+<section class="commit-section">
+    <div class="container" style="position:relative;">
+        <div class="section-header">
+            <span class="section-tag">Cam Kết Của Chúng Tôi</span>
+            <h2 class="section-title">Vì Sao Chọn NB2?</h2>
+            <p class="section-desc">Mỗi cam kết là một lời hứa chúng tôi giữ với từng khách hàng</p>
+        </div>
+        <div class="commit-grid">
+            <div class="commit-card reveal">
+                <div class="commit-icon">🔬</div>
+                <h3>Chất Liệu Được Kiểm Nghiệm</h3>
+                <p>Bamboo, Lenzing Modal và Cotton Compact nhập khẩu từ các nhà cung cấp được chứng nhận quốc tế. An toàn da nhạy cảm, không gây dị ứng.</p>
+            </div>
+            <div class="commit-card reveal">
+                <div class="commit-icon">🚚</div>
+                <h3>Giao Hàng Toàn Quốc</h3>
+                <p>Hợp tác với đối tác vận chuyển hàng đầu Việt Nam. Đơn hàng được xử lý trong 2 giờ, giao tới tay bạn trong 2-3 ngày làm việc.</p>
+            </div>
+            <div class="commit-card reveal">
+                <div class="commit-icon">🔄</div>
+                <h3>Đổi Trả 60 Ngày</h3>
+                <p>Không hài lòng? Đổi ngay, không cần lý do, không câu hỏi. Chúng tôi chịu toàn bộ phí vận chuyển hoàn hàng.</p>
+            </div>
+            <div class="commit-card reveal">
+                <div class="commit-icon">💬</div>
+                <h3>Hỗ Trợ 24/7</h3>
+                <p>Đội ngũ chăm sóc khách hàng luôn sẵn sàng qua Zalo, Facebook, email và điện thoại. Phản hồi trong vòng 30 phút.</p>
+            </div>
+            <div class="commit-card reveal">
+                <div class="commit-icon">🏷️</div>
+                <h3>Giá Minh Bạch</h3>
+                <p>Không phí ẩn, không tăng giá đột ngột. Cam kết giá niêm yết đồng nhất trên tất cả kênh bán hàng. Ưu đãi thành viên rõ ràng.</p>
+            </div>
+            <div class="commit-card reveal">
+                <div class="commit-icon">🌱</div>
+                <h3>Sản Xuất Bền Vững</h3>
+                <p>Quy trình sản xuất thân thiện với môi trường, giảm thiểu rác thải và sử dụng bao bì tái chế. Chúng tôi chịu trách nhiệm với thế hệ tương lai.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-box">
+            <h2>Bắt Đầu Trải Nghiệm Ngay Hôm Nay</h2>
+            <p>Hàng nghìn đàn ông Việt đã chọn NB2 Boxer Men cho sự thoải mái và tự tin mỗi ngày. Đến lượt bạn.</p>
+            <div class="cta-actions">
+                <a th:href="@{/san-pham}" class="btn btn-primary btn-lg">
+                    Mua ngay
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14m-7-7 7 7-7 7"/>
+                    </svg>
+                </a>
+                <a th:href="@{/sale}" class="btn btn-outline btn-lg">Xem ưu đãi</a>
+            </div>
+            <div class="contact-row">
+                <div class="contact-item">
+                    <div class="contact-item-icon">📞</div>
+                    <div>
+                        <strong>Hotline</strong>
+                        <a href="tel:0975481356" style="color:var(--color-gray-600);">0975.481.356</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-item-icon">✉️</div>
+                    <div>
+                        <strong>Email</strong>
+                        <a href="mailto:support@nb2boxermen.vn" style="color:var(--color-gray-600);">support@nb2boxermen.vn</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-item-icon">📍</div>
+                    <div>
+                        <strong>Địa chỉ</strong>
+                        <span>72 Nguyễn Trãi, Thanh Xuân, Hà Nội</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>
