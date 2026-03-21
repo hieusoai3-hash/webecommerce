@@ -24,7 +24,7 @@
             <span th:text="${error}"></span>
         </div>
 
-        <form th:action="@{/admin/products/save}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/admin/products/save(_csrf=${_csrf.token})}" method="post" enctype="multipart/form-data">
             <div class="row-2-1" style="align-items: start;">
 
                 <!-- Left: main fields -->

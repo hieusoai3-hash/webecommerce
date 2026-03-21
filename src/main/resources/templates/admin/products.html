@@ -392,6 +392,7 @@
 
 <!-- ══ Shared row fragment ══════════════════════════════════════════════ -->
 <tr th:fragment="productRow(p, salesByProduct, revByProduct)"
+    th:if="${p != null}"
     th:with="sold=${salesByProduct != null and salesByProduct.containsKey(p.id) ? salesByProduct[p.id] : 0},
              rev=${revByProduct  != null and revByProduct.containsKey(p.id)  ? revByProduct[p.id]  : 0},
              pct=${p.completenessPct}"

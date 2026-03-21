@@ -61,6 +61,12 @@ public class PageController {
         return "sale";
     }
 
+    @GetMapping("/ve-chung-toi")
+    public String veChungToi(Model model) {
+        model.addAttribute("activePage", "ve-chung-toi");
+        return "ve-chung-toi";
+    }
+
     @GetMapping("/search")
     public String search(@RequestParam(required = false) String q, Model model) {
         model.addAttribute("products", productService.search(q));
