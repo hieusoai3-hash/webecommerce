@@ -45,7 +45,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="order : ${orders}">
+                    <tr th:each="order : ${orders}" style="cursor:pointer;"
+                        th:attr="onclick=|window.location.href='@{/admin/orders/{id}(id=${order.id})}'|">
                         <td><strong th:text="${order.id}"></strong></td>
                         <td>
                             <div th:text="${order.customerName}"></div>
@@ -74,10 +75,10 @@
                         <td>
                             <div style="display:flex; align-items:center; gap:8px;">
                                 <span class="badge"
-                                      th:classappend="${order.status == 'PENDING'} ? 'badge-pending' : (${order.status == 'SHIPPED'} ? 'badge-shipped' : 'badge-completed')"
-                                      th:text="${order.status == 'PENDING'} ? 'Chờ xử lý' : (${order.status == 'SHIPPED'} ? 'Đang giao' : 'Hoàn thành')">
+                                      th:classappend="${order.status == 'PENDING'} ? 'badge-pending' : (${order.status == 'PAID'} ? 'badge-paid' : (${order.status == 'SHIPPED'} ? 'badge-shipped' : 'badge-completed'))"
+                                      th:text="${order.status == 'PENDING'} ? 'Chờ xử lý' : (${order.status == 'PAID'} ? 'Đã thanh toán' : (${order.status == 'SHIPPED'} ? 'Đang giao' : 'Hoàn thành'))">
                                 </span>
-                                <div class="dropdown">
+                                <div class="dropdown" onclick="event.stopPropagation()">
                                     <button class="btn-nb2 btn-outline btn-sm dropdown-toggle">
                                         <i class="bi bi-chevron-down"></i>
                                     </button>
@@ -86,6 +87,13 @@
                                             <input type="hidden" name="status" value="PENDING">
                                             <button type="submit" class="dropdown-item">
                                                 <i class="bi bi-clock" style="color:var(--warning);"></i> Chờ xử lý
+                                            </button>
+                                        </form>
+                                        <form th:if="${order.paymentMethod == 'cod'}"
+                                              th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post">
+                                            <input type="hidden" name="status" value="PAID">
+                                            <button type="submit" class="dropdown-item">
+                                                <i class="bi bi-cash-coin" style="color:#7c3aed;"></i> Đã thanh toán (COD)
                                             </button>
                                         </form>
                                         <form th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post">
@@ -113,15 +121,32 @@
 </div>
 
 <script>
+let activeMenu = null;
+
+function closeAll() {
+    document.querySelectorAll('.dropdown-menu.open').forEach(m => m.classList.remove('open'));
+    activeMenu = null;
+}
+
 document.querySelectorAll('.dropdown-toggle').forEach(btn => {
     btn.addEventListener('click', e => {
         e.stopPropagation();
-        btn.closest('.dropdown').classList.toggle('open');
+        const menu = btn.closest('.dropdown').querySelector('.dropdown-menu');
+        if (menu === activeMenu) { closeAll(); return; }
+        closeAll();
+
+        const rect = btn.getBoundingClientRect();
+        menu.style.top  = (rect.bottom + 6) + 'px';
+        menu.style.right = (window.innerWidth - rect.right) + 'px';
+        menu.style.left = 'auto';
+        menu.classList.add('open');
+        activeMenu = menu;
     });
 });
-document.addEventListener('click', () => {
-    document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
-});
+
+document.addEventListener('click', closeAll);
+window.addEventListener('scroll', closeAll, true);
+window.addEventListener('resize', closeAll);
 </script>
 </body>
 </html>

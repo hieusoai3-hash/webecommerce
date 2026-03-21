@@ -51,10 +51,10 @@ public class AdminController {
         List<Product> products = productService.getAll();
 
         // ── Order stats ───────────────────────────────────────────────────
-        long totalRevenue   = orders.stream().mapToLong(web.ecommerce.model.Order::getTotal).sum();
-        long completedRev   = orders.stream().filter(o -> "COMPLETED".equals(o.getStatus()))
+        long totalRevenue   = orders.stream().filter(o -> "COMPLETED".equals(o.getStatus()))
                                     .mapToLong(web.ecommerce.model.Order::getTotal).sum();
         long pendingCount   = orders.stream().filter(o -> "PENDING".equals(o.getStatus())).count();
+        long paidCount      = orders.stream().filter(o -> "PAID".equals(o.getStatus())).count();
         long shippedCount   = orders.stream().filter(o -> "SHIPPED".equals(o.getStatus())).count();
         long completedCount = orders.stream().filter(o -> "COMPLETED".equals(o.getStatus())).count();
 
@@ -114,7 +114,8 @@ public class AdminController {
         topProducts.forEach(row -> row.put("soldPct", (int)((Long) row.get("sold") * 100 / maxSoldFinal)));
 
         // ── Avg order value ───────────────────────────────────────────────
-        long avgOrderValue = orders.isEmpty() ? 0L : totalRevenue / orders.size();
+        long allOrdersTotal = orders.stream().mapToLong(web.ecommerce.model.Order::getTotal).sum();
+        long avgOrderValue = orders.isEmpty() ? 0L : allOrdersTotal / orders.size();
 
         // ── Revenue by category ───────────────────────────────────────────
         Map<String, String> prodCatMap = products.stream()
@@ -137,8 +138,8 @@ public class AdminController {
         model.addAttribute("totalProducts",   products.size());
         model.addAttribute("totalOrders",     orders.size());
         model.addAttribute("totalRevenue",    String.format("%,d", totalRevenue).replace(",", ".") + "₫");
-        model.addAttribute("completedRev",    String.format("%,d", completedRev).replace(",", ".") + "₫");
         model.addAttribute("pendingOrders",   pendingCount);
+        model.addAttribute("paidOrders",      paidCount);
         model.addAttribute("shippedOrders",   shippedCount);
         model.addAttribute("completedOrders", completedCount);
         model.addAttribute("hotCount",        hotCount);
@@ -307,13 +308,20 @@ public class AdminController {
         return "admin/orders";
     }
 
+    @GetMapping("/orders/{id}")
+    public String orderDetail(@PathVariable String id, Model model) {
+        orderService.getById(id).ifPresent(order -> model.addAttribute("order", order));
+        return "admin/order-detail";
+    }
+
     @PostMapping("/orders/{id}/status")
     public String updateOrderStatus(@PathVariable String id,
                                     @RequestParam String status,
+                                    @RequestParam(required = false) String from,
                                     RedirectAttributes redirectAttributes) {
         orderService.updateStatus(id, status);
         redirectAttributes.addFlashAttribute("success", "Đã cập nhật trạng thái đơn hàng.");
-        return "redirect:/admin/orders";
+        return "detail".equals(from) ? "redirect:/admin/orders/" + id : "redirect:/admin/orders";
     }
 
     // ── Combos ───────────────────────────────────────────────────────────
@@ -328,6 +336,7 @@ public class AdminController {
     public String newComboForm(Model model) {
         model.addAttribute("combo", new Combo());
         model.addAttribute("isNew", true);
+        model.addAttribute("allProducts", productService.getAll());
         return "admin/combo-form";
     }
 
@@ -337,6 +346,7 @@ public class AdminController {
                 .orElseThrow(() -> new IllegalArgumentException("Combo not found: " + id));
         model.addAttribute("combo", combo);
         model.addAttribute("isNew", false);
+        model.addAttribute("allProducts", productService.getAll());
         return "admin/combo-form";
     }
 

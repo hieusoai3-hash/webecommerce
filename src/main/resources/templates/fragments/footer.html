@@ -148,6 +148,7 @@
         <div class="size-guide-body p-0">
             <div class="combo-selection-container">
                 <div class="selection-group">
+                    <div style="font-size:.75rem; font-weight:700; color:var(--color-gray-500); text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px;">Chọn combo</div>
                     <label class="selection-item">
                         <input type="radio" name="order_combo" value="combo_3">
                         <span class="custom-checkbox"></span>
@@ -160,6 +161,7 @@
                     </label>
                 </div>
                 <div class="selection-group size-group">
+                    <div style="grid-column:1/-1; font-size:.75rem; font-weight:700; color:var(--color-gray-500); text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px;">Chọn size</div>
                     <label class="selection-item"><input type="radio" name="order_size" value="XL"><span class="custom-checkbox"></span><span class="selection-text">Size XL: (40-50kg)</span></label>
                     <label class="selection-item"><input type="radio" name="order_size" value="2XL"><span class="custom-checkbox"></span><span class="selection-text">Size 2XL: (51-64kg)</span></label>
                     <label class="selection-item"><input type="radio" name="order_size" value="3XL"><span class="custom-checkbox"></span><span class="selection-text">Size 3XL: (65-75kg)</span></label>
@@ -168,6 +170,13 @@
                     <label class="selection-item"><input type="radio" name="order_size" value="Special"><span class="custom-checkbox"></span><span class="selection-text">Size đặc biệt: 105-120kg<br><span class="extra-fee">(+90K/combo)</span></span></label>
                 </div>
                 <div class="free-shipping-banner">&#128666; Miễn Phí Giao Hàng</div>
+                <button id="drawer-order-btn" class="btn btn-primary btn-block"
+                        style="margin-top:4px; width:100%; justify-content:center; display:flex; gap:8px;">
+                    ĐẶT HÀNG NGAY
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14m-7-7 7 7-7 7"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
@@ -376,7 +385,13 @@
                 </div>
                 <p class="success-note">Chúng tôi sẽ liên hệ xác nhận đơn hàng trong vòng 30 phút. Giao hàng dự kiến 2-5 ngày làm việc.</p>
                 <div class="success-actions">
-                    <button class="btn btn-primary btn-lg" id="success-continue-btn">Tiếp tục mua sắm</button>
+                    <a id="track-order-link" href="/tra-don-hang"
+                       class="btn btn-primary btn-lg"
+                       style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        🔍 Tra cứu đơn hàng
+                    </a>
+                    <button class="btn btn-outline btn-lg" id="success-continue-btn"
+                            style="margin-top:10px;">Tiếp tục mua sắm</button>
                 </div>
             </div>
         </div>

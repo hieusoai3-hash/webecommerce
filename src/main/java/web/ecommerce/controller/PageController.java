@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import web.ecommerce.model.Product;
 import web.ecommerce.service.ComboService;
+import web.ecommerce.service.OrderService;
 import web.ecommerce.service.ProductService;
 
 import java.util.List;
@@ -16,15 +17,18 @@ public class PageController {
 
     private final ProductService productService;
     private final ComboService comboService;
+    private final OrderService orderService;
 
-    public PageController(ProductService productService, ComboService comboService) {
+    public PageController(ProductService productService, ComboService comboService, OrderService orderService) {
         this.productService = productService;
         this.comboService = comboService;
+        this.orderService = orderService;
     }
 
     @GetMapping("/")
     public String home(Model model) {
         model.addAttribute("products", productService.getAll());
+        model.addAttribute("combos", comboService.getActive());
         model.addAttribute("activePage", "home");
         return "index";
     }
@@ -75,6 +79,19 @@ public class PageController {
     public String veChungToi(Model model) {
         model.addAttribute("activePage", "ve-chung-toi");
         return "ve-chung-toi";
+    }
+
+    @GetMapping("/tra-don-hang")
+    public String traDonHang(@RequestParam(required = false) String id, Model model) {
+        if (id != null && !id.isBlank()) {
+            orderService.getById(id.trim()).ifPresentOrElse(
+                order -> model.addAttribute("order", order),
+                () -> model.addAttribute("notFound", true)
+            );
+            model.addAttribute("query", id.trim());
+        }
+        model.addAttribute("activePage", "tra-don-hang");
+        return "tra-don-hang";
     }
 
     @GetMapping("/search")

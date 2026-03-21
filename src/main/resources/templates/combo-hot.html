@@ -237,13 +237,14 @@
                     </div>
                     <div th:if="${combo.details != null and !combo.details.isEmpty()}"
                          class="mix-desc" th:text="${combo.details}"></div>
-                    <a th:href="@{/san-pham}" class="btn btn-primary"
-                       style="width:100%; justify-content:center; display:flex;">
+                    <button onclick="window.openSizeGuide && window.openSizeGuide()"
+                            class="btn btn-primary"
+                            style="width:100%; justify-content:center; display:flex; gap:8px; cursor:pointer; border:none;">
                         Đặt combo này
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M5 12h14m-7-7 7 7-7 7"/>
                         </svg>
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>

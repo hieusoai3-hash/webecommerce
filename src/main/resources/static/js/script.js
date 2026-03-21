@@ -637,6 +637,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Show success with real order ID from server
                 document.getElementById('success-order-id').textContent = savedOrder.id;
+                const trackLink = document.getElementById('track-order-link');
+                if (trackLink) trackLink.href = '/tra-don-hang?id=' + encodeURIComponent(savedOrder.id);
                 document.getElementById('success-payment-method').textContent = paymentMethodNames[selectedPayment] || 'COD';
                 document.getElementById('success-total').textContent = total.toLocaleString('vi-VN') + '₫';
 
@@ -715,6 +717,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (sizeGuideCloseBtn) sizeGuideCloseBtn.addEventListener('click', closeSizeGuide);
     if (sizeGuideOverlay) sizeGuideOverlay.addEventListener('click', closeSizeGuide);
+    window.openSizeGuide = openSizeGuide;
+
+    // Drawer "Đặt hàng ngay" button — add combo+size to cart then open checkout
+    const drawerOrderBtn = document.getElementById('drawer-order-btn');
+    if (drawerOrderBtn) {
+        drawerOrderBtn.addEventListener('click', () => {
+            const comboInput = document.querySelector('input[name="order_combo"]:checked');
+            const sizeInput  = document.querySelector('input[name="order_size"]:checked');
+            if (!comboInput) { showToast('Vui lòng chọn combo!'); return; }
+            if (!sizeInput)  { showToast('Vui lòng chọn size!'); return; }
+
+            const comboLabels = {
+                'combo_3': { name: 'Combo Mua 3 Tặng 1', price: 199000 },
+                'combo_5': { name: 'Combo Mua 5 Tặng 2', price: 299000 }
+            };
+            const chosen = comboLabels[comboInput.value] || { name: comboInput.value, price: 0 };
+            const existing = cart.find(i => i.name === chosen.name && i.size === sizeInput.value);
+            if (existing) { existing.qty += 1; }
+            else { cart.push({ productId: '', name: chosen.name, price: chosen.price, image: '', size: sizeInput.value, color: '', qty: 1 }); }
+            updateCartUI();
+            closeSizeGuide();
+            setTimeout(openCheckout, 200);
+        });
+    }
 
     // ===== Product Description Drawer =====
     const productDescDrawer = document.getElementById('product-desc-drawer');

@@ -78,15 +78,56 @@
                                           placeholder="vd: Tiết kiệm 25% so với mua lẻ. Miễn phí vận chuyển."></textarea>
                             </div>
 
+                            <!-- Product picker -->
                             <div class="form-group">
-                                <label class="form-label">
-                                    Sản phẩm trong combo
-                                    <span class="hint">(cách nhau bằng dấu phẩy)</span>
-                                </label>
-                                <input type="text" name="comboItems" class="form-control"
-                                       th:value="${combo.comboItems}"
-                                       placeholder="vd: 3 quần sịp, 1 ví da, 1 thắt lưng">
-                                <div class="form-hint">Để trống nếu là combo mua N tặng N đơn giản.</div>
+                                <label class="form-label">Sản phẩm trong combo</label>
+                                <div class="form-hint" style="margin-bottom:8px;">
+                                    Chọn sản phẩm và nhập số lượng. Để trống nếu là combo mua N tặng N đơn giản.
+                                </div>
+
+                                <!-- Search -->
+                                <input type="text" id="productSearch" class="form-control"
+                                       placeholder="Tìm sản phẩm..." autocomplete="off"
+                                       style="margin-bottom:8px;"
+                                       oninput="filterProducts(this.value)">
+
+                                <!-- Product list -->
+                                <div id="productPickerList" style="max-height:240px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg);">
+                                    <div th:each="p : ${allProducts}"
+                                         class="picker-row"
+                                         th:attr="data-name=${p.name.toLowerCase()}, data-cat=${p.category}">
+                                        <div style="display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid var(--border);">
+                                            <img th:if="${p.colors != null and !p.colors.isEmpty() and p.colors[0].imageUrl != null}"
+                                                 th:src="@{${p.colors[0].imageUrl}}"
+                                                 style="width:34px;height:34px;object-fit:cover;border-radius:6px;flex-shrink:0;"
+                                                 alt="">
+                                            <div th:unless="${p.colors != null and !p.colors.isEmpty() and p.colors[0].imageUrl != null}"
+                                                 style="width:34px;height:34px;background:var(--surface);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                                                <i class="bi bi-box" style="color:var(--text-muted);font-size:.8rem;"></i>
+                                            </div>
+                                            <div style="flex:1; min-width:0;">
+                                                <div style="font-size:.85rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
+                                                     th:text="${p.name}"></div>
+                                                <div style="font-size:.72rem;color:var(--text-muted);"
+                                                     th:text="${p.category} + ' · ' + ${p.formattedPrice}"></div>
+                                            </div>
+                                            <input type="number" min="0" max="99" value="0"
+                                                   class="product-qty-input"
+                                                   th:attr="data-product-name=${p.name}"
+                                                   style="width:54px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;text-align:center;font-size:.85rem;background:var(--surface);color:var(--text);"
+                                                   oninput="rebuildComboItems()">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Hidden field holding the generated value -->
+                                <input type="hidden" name="comboItems" id="comboItemsHidden"
+                                       th:value="${combo.comboItems}">
+
+                                <!-- Preview -->
+                                <div id="comboPreview" style="margin-top:8px; font-size:.8rem; color:var(--text-muted);">
+                                    <span id="comboPreviewText" th:text="${combo.comboItems != null and !combo.comboItems.isEmpty()} ? 'Đã chọn: ' + ${combo.comboItems} : 'Chưa chọn sản phẩm nào'"></span>
+                                </div>
                             </div>
 
                             <div class="form-group">
@@ -153,5 +194,48 @@
         </form>
     </div>
 </div>
+<script>
+// Rebuild the hidden comboItems field from all qty inputs > 0
+function rebuildComboItems() {
+    const parts = [];
+    document.querySelectorAll('.product-qty-input').forEach(input => {
+        const qty = parseInt(input.value) || 0;
+        if (qty > 0) {
+            parts.push(qty + ' ' + input.dataset.productName);
+        }
+    });
+    const val = parts.join(', ');
+    document.getElementById('comboItemsHidden').value = val;
+    const preview = document.getElementById('comboPreviewText');
+    preview.textContent = val ? 'Đã chọn: ' + val : 'Chưa chọn sản phẩm nào';
+}
+
+// Search filter
+function filterProducts(q) {
+    const lq = q.toLowerCase();
+    document.querySelectorAll('.picker-row').forEach(row => {
+        const name = row.dataset.name || '';
+        row.style.display = name.includes(lq) ? '' : 'none';
+    });
+}
+
+// Pre-fill quantities from existing comboItems value
+(function() {
+    const existing = document.getElementById('comboItemsHidden').value;
+    if (!existing) return;
+    // Parse "3 Product Name, 1 Another" format
+    existing.split(',').forEach(part => {
+        const m = part.trim().match(/^(\d+)\s+(.+)$/);
+        if (!m) return;
+        const qty = parseInt(m[1]);
+        const name = m[2].trim();
+        document.querySelectorAll('.product-qty-input').forEach(input => {
+            if (input.dataset.productName === name) {
+                input.value = qty;
+            }
+        });
+    });
+})();
+</script>
 </body>
 </html>

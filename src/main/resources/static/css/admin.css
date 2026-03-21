@@ -343,6 +343,7 @@ body {
 .badge-that-lung { background: var(--success-light); color: #065f46; }
 
 .badge-pending   { background: var(--warning-light); color: #92400e; }
+.badge-paid      { background: #f5f3ff;              color: #6d28d9; }
 .badge-shipped   { background: var(--info-light);     color: #1d4ed8; }
 .badge-completed { background: var(--success-light);  color: #065f46; }
 .badge-cancelled { background: var(--danger-light);   color: #991b1b; }
@@ -526,19 +527,17 @@ textarea.form-control { resize: vertical; min-height: 80px; line-height: 1.5; }
 /* ── Dropdown ────────────────────────────────────────────────── */
 .dropdown { position: relative; display: inline-block; }
 .dropdown-menu {
-    position: absolute;
-    top: calc(100% + 6px);
-    right: 0;
-    min-width: 150px;
+    position: fixed;
+    min-width: 160px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    box-shadow: var(--shadow-md);
-    z-index: 500;
+    box-shadow: var(--shadow-lg);
+    z-index: 9999;
     overflow: hidden;
     display: none;
 }
-.dropdown.open .dropdown-menu { display: block; }
+.dropdown-menu.open { display: block; }
 .dropdown-item {
     display: block;
     width: 100%;

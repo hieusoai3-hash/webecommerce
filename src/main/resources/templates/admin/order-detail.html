@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết đơn hàng - NB2 Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        /* ── Two-column detail layout ── */
+        .order-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 16px;
+            align-items: start;
+        }
+        @media(max-width:900px) {
+            .order-layout { grid-template-columns: 1fr; }
+        }
+
+        /* ── Timeline ── */
+        .tl {
+            display: flex;
+            align-items: flex-start;
+            gap: 0;
+            padding: 8px 0 4px;
+        }
+        .tl-step {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .tl-step::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: calc(50% + 15px);
+            right: calc(-50% + 15px);
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+        }
+        .tl-step:last-child::after { display: none; }
+        .tl-dot {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: var(--surface);
+            color: var(--text-soft);
+            display: flex; align-items: center; justify-content: center;
+            font-size: .78rem; font-weight: 700;
+            position: relative; z-index: 1;
+            flex-shrink: 0;
+        }
+        .tl-dot.done   { background: var(--success); border-color: var(--success); color: #fff; }
+        .tl-dot.active { background: var(--accent);  border-color: var(--accent);  color: #fff; }
+        .tl-dot.paid   { background: #7c3aed;         border-color: #7c3aed;         color: #fff; }
+        .tl-dot.done::after, .tl-dot.active::after, .tl-dot.paid::after {
+            /* fill connector to the right */
+        }
+        .tl-label {
+            font-size: .66rem;
+            color: var(--text-soft);
+            font-weight: 500;
+            margin-top: 5px;
+            text-align: center;
+            line-height: 1.3;
+        }
+        .tl-label.done   { color: var(--success); font-weight: 700; }
+        .tl-label.active { color: var(--accent);  font-weight: 700; }
+        .tl-label.paid   { color: #7c3aed;         font-weight: 700; }
+
+        /* ── Info table (key / value rows) ── */
+        .kv-table { width: 100%; }
+        .kv-row {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            gap: 8px;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: .875rem;
+            align-items: start;
+        }
+        .kv-row:last-child { border-bottom: none; }
+        .kv-key { color: var(--text-muted); font-weight: 500; }
+        .kv-val { color: var(--text); font-weight: 600; word-break: break-word; }
+
+        /* ── Action buttons ── */
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding-top: 16px;
+            margin-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .action-bar form { margin: 0; }
+
+        /* ── Items table ── */
+        .items-table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+        .items-table thead th {
+            background: var(--bg);
+            padding: 9px 14px;
+            text-align: left;
+            font-size: .72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+        .items-table thead th:last-child,
+        .items-table thead th:nth-last-child(2) { text-align: right; }
+        .items-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+        .items-table tr:last-child td { border-bottom: none; }
+        .items-table td:last-child,
+        .items-table td:nth-last-child(2) { text-align: right; }
+
+        .total-bar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 20px;
+            padding: 14px 14px 6px;
+            border-top: 2px solid var(--border);
+        }
+        .total-bar .total-label { font-size: .875rem; font-weight: 600; color: var(--text-muted); }
+        .total-bar .total-value { font-size: 1.25rem; font-weight: 900; color: var(--accent); }
+    </style>
+</head>
+<body>
+<div th:replace="~{admin/layout :: sidebar}" th:with="activePage='orders'"></div>
+
+<div class="admin-wrapper">
+
+    <!-- Topbar -->
+    <div class="topbar">
+        <a th:href="@{/admin/orders}" class="btn-nb2 btn-outline btn-sm">
+            <i class="bi bi-arrow-left"></i> Quay lại
+        </a>
+        <h1 th:text="${order != null} ? ('Đơn hàng ' + ${order.id}) : 'Chi tiết đơn hàng'"></h1>
+        <span th:if="${order != null}" class="badge"
+              th:classappend="${order.status == 'PENDING'} ? 'badge-pending' :
+                             (${order.status == 'PAID'}    ? 'badge-paid'    :
+                             (${order.status == 'SHIPPED'} ? 'badge-shipped' : 'badge-completed'))"
+              th:text="${order.status == 'PENDING'} ? 'Chờ xử lý' :
+                       (${order.status == 'PAID'}    ? 'Đã thanh toán' :
+                       (${order.status == 'SHIPPED'} ? 'Đang giao'    : 'Hoàn thành'))">
+        </span>
+    </div>
+
+    <div class="content-area">
+
+        <!-- Success flash -->
+        <div th:if="${success}" class="alert alert-success" style="margin-bottom:16px;">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${success}"></span>
+        </div>
+
+        <!-- Not found -->
+        <div th:if="${order == null}" class="admin-card">
+            <div class="admin-card-body">
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <p>Không tìm thấy đơn hàng.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main layout -->
+        <div th:if="${order != null}" class="order-layout">
+
+            <!-- ── Left: Items ── -->
+            <div>
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h6><i class="bi bi-bag me-2" style="color:var(--accent)"></i>Sản phẩm đã đặt</h6>
+                        <span style="font-size:.8rem; color:var(--text-muted);"
+                              th:text="${#lists.size(order.items)} + ' sản phẩm'"></span>
+                    </div>
+                    <div class="admin-card-body no-pad">
+                        <table class="items-table">
+                            <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Size</th>
+                                <th style="text-align:center;">SL</th>
+                                <th>Đơn giá</th>
+                                <th>Thành tiền</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="item : ${order.items}">
+                                <td style="font-weight:600;" th:text="${item.productName}"></td>
+                                <td>
+                                    <span style="display:inline-block; padding:2px 8px; background:var(--bg);
+                                                 border-radius:4px; font-size:.78rem; font-weight:600;"
+                                          th:text="${item.size}"></span>
+                                </td>
+                                <td style="text-align:center; font-weight:700;" th:text="${item.quantity}"></td>
+                                <td style="color:var(--text-muted);"
+                                    th:text="${#numbers.formatInteger(item.price,0,'COMMA').replace(',','.')} + '₫'"></td>
+                                <td style="font-weight:700; color:var(--text);"
+                                    th:text="${#numbers.formatInteger(item.price*item.quantity,0,'COMMA').replace(',','.')} + '₫'"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="total-bar">
+                            <span class="total-label">Tổng cộng</span>
+                            <span class="total-value" th:text="${order.formattedTotal}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Right: Status + Info ── -->
+            <div style="display:flex; flex-direction:column; gap:16px;">
+
+                <!-- Status timeline -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h6><i class="bi bi-diagram-3 me-2" style="color:var(--accent)"></i>Trạng thái</h6>
+                    </div>
+                    <div class="admin-card-body" style="padding:16px 20px 20px;">
+
+                        <div class="tl">
+                            <!-- Step 1: Đặt hàng -->
+                            <div class="tl-step">
+                                <div class="tl-dot done"><i class="bi bi-check"></i></div>
+                                <div class="tl-label done">Đặt hàng</div>
+                            </div>
+                            <!-- Step 2: Xác nhận -->
+                            <div class="tl-step">
+                                <div class="tl-dot"
+                                     th:classappend="${order.status == 'PENDING'} ? 'active' :
+                                                    (${order.status != 'PENDING'} ? 'done' : '')">
+                                    <i class="bi bi-check"
+                                       th:if="${order.status != 'PENDING'}"></i>
+                                    <span th:unless="${order.status != 'PENDING'}">2</span>
+                                </div>
+                                <div class="tl-label"
+                                     th:classappend="${order.status == 'PENDING'} ? 'active' :
+                                                    (${order.status != 'PENDING'} ? 'done' : '')">Xác nhận</div>
+                            </div>
+                            <!-- Step 3: Đang giao -->
+                            <div class="tl-step">
+                                <div class="tl-dot"
+                                     th:classappend="${order.status == 'SHIPPED'} ? 'active' :
+                                                    (${order.status == 'PAID' or order.status == 'COMPLETED'} ? 'done' : '')">
+                                    <i class="bi bi-check"
+                                       th:if="${order.status == 'PAID' or order.status == 'COMPLETED'}"></i>
+                                    <i class="bi bi-truck"
+                                       th:if="${order.status == 'SHIPPED'}" style="font-size:.7rem;"></i>
+                                    <span th:unless="${order.status == 'SHIPPED' or order.status == 'PAID' or order.status == 'COMPLETED'}">3</span>
+                                </div>
+                                <div class="tl-label"
+                                     th:classappend="${order.status == 'SHIPPED'} ? 'active' :
+                                                    (${order.status == 'PAID' or order.status == 'COMPLETED'} ? 'done' : '')">Đang giao</div>
+                            </div>
+                            <!-- Step 4: Đã thanh toán (COD only) -->
+                            <div class="tl-step" th:if="${order.paymentMethod == 'cod'}">
+                                <div class="tl-dot"
+                                     th:classappend="${order.status == 'PAID'} ? 'paid' :
+                                                    (${order.status == 'COMPLETED'} ? 'done' : '')">
+                                    <i class="bi bi-check"
+                                       th:if="${order.status == 'COMPLETED'}"></i>
+                                    <i class="bi bi-cash-coin"
+                                       th:if="${order.status == 'PAID'}" style="font-size:.7rem;"></i>
+                                    <span th:unless="${order.status == 'PAID' or order.status == 'COMPLETED'}">4</span>
+                                </div>
+                                <div class="tl-label"
+                                     th:classappend="${order.status == 'PAID'} ? 'paid' :
+                                                    (${order.status == 'COMPLETED'} ? 'done' : '')">Đã TT</div>
+                            </div>
+                            <!-- Step last: Hoàn thành -->
+                            <div class="tl-step">
+                                <div class="tl-dot"
+                                     th:classappend="${order.status == 'COMPLETED'} ? 'done' : ''">
+                                    <i class="bi bi-check"
+                                       th:if="${order.status == 'COMPLETED'}"></i>
+                                    <span th:unless="${order.status == 'COMPLETED'}"
+                                          th:text="${order.paymentMethod == 'cod'} ? '5' : '4'">5</span>
+                                </div>
+                                <div class="tl-label"
+                                     th:classappend="${order.status == 'COMPLETED'} ? 'done' : ''">Hoàn thành</div>
+                            </div>
+                        </div>
+
+                        <!-- Action buttons -->
+                        <div class="action-bar">
+                            <form th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post">
+                                <input type="hidden" name="status" value="PENDING">
+                                <input type="hidden" name="from" value="detail">
+                                <button type="submit" class="btn-nb2 btn-outline btn-sm"
+                                        th:classappend="${order.status == 'PENDING'} ? ' btn-disabled' : ''"
+                                        th:disabled="${order.status == 'PENDING'}">
+                                    <i class="bi bi-clock" style="color:var(--warning);"></i> Chờ xử lý
+                                </button>
+                            </form>
+                            <form th:if="${order.paymentMethod == 'cod'}"
+                                  th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post">
+                                <input type="hidden" name="status" value="PAID">
+                                <input type="hidden" name="from" value="detail">
+                                <button type="submit" class="btn-nb2 btn-outline btn-sm"
+                                        th:disabled="${order.status == 'PAID'}">
+                                    <i class="bi bi-cash-coin" style="color:#7c3aed;"></i> Đã thanh toán
+                                </button>
+                            </form>
+                            <form th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post">
+                                <input type="hidden" name="status" value="SHIPPED">
+                                <input type="hidden" name="from" value="detail">
+                                <button type="submit" class="btn-nb2 btn-outline btn-sm"
+                                        th:disabled="${order.status == 'SHIPPED'}">
+                                    <i class="bi bi-truck" style="color:var(--info);"></i> Đang giao
+                                </button>
+                            </form>
+                            <form th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post">
+                                <input type="hidden" name="status" value="COMPLETED">
+                                <input type="hidden" name="from" value="detail">
+                                <button type="submit" class="btn-nb2 btn-accent btn-sm"
+                                        th:disabled="${order.status == 'COMPLETED'}">
+                                    <i class="bi bi-check-circle"></i> Hoàn thành
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer info -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h6><i class="bi bi-person me-2" style="color:var(--accent)"></i>Khách hàng</h6>
+                    </div>
+                    <div class="admin-card-body" style="padding:14px 20px;">
+                        <div class="kv-table">
+                            <div class="kv-row">
+                                <span class="kv-key">Họ tên</span>
+                                <span class="kv-val" th:text="${order.customerName}"></span>
+                            </div>
+                            <div class="kv-row">
+                                <span class="kv-key">Điện thoại</span>
+                                <span class="kv-val">
+                                    <a th:href="'tel:' + ${order.customerPhone}"
+                                       th:text="${order.customerPhone}"
+                                       style="color:var(--accent); text-decoration:none; font-weight:700;"></a>
+                                </span>
+                            </div>
+                            <div class="kv-row">
+                                <span class="kv-key">Địa chỉ</span>
+                                <span class="kv-val" th:text="${order.customerAddress}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order meta -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h6><i class="bi bi-receipt me-2" style="color:var(--accent)"></i>Thông tin đơn</h6>
+                    </div>
+                    <div class="admin-card-body" style="padding:14px 20px;">
+                        <div class="kv-table">
+                            <div class="kv-row">
+                                <span class="kv-key">Mã đơn</span>
+                                <span class="kv-val" style="font-family:monospace;" th:text="${order.id}"></span>
+                            </div>
+                            <div class="kv-row">
+                                <span class="kv-key">Thời gian</span>
+                                <span class="kv-val"
+                                      th:text="${#temporals.format(order.createdAt, 'HH:mm · dd/MM/yyyy')}"></span>
+                            </div>
+                            <div class="kv-row">
+                                <span class="kv-key">Thanh toán</span>
+                                <span class="kv-val"
+                                      th:text="${order.paymentMethod == 'cod'}  ? 'COD' :
+                                               (${order.paymentMethod == 'momo'} ? 'MoMo' :
+                                               (${order.paymentMethod == 'bank'} ? 'Chuyển khoản' : 'Thẻ'))">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- end right -->
+        </div><!-- end order-layout -->
+    </div><!-- end content-area -->
+</div>
+</body>
+</html>

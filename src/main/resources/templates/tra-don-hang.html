@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra Cứu Đơn Hàng - NB2 Boxer Men</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .track-hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            padding: 80px 0 60px; text-align: center;
+        }
+        .track-hero h1 { font-size: clamp(1.8rem,4vw,2.8rem); font-weight: 900; color: #fff; margin-bottom: 10px; }
+        .track-hero p  { color: rgba(255,255,255,.65); font-size: 1rem; }
+
+        .track-section { padding: 60px 0 80px; background: #f7f8fc; min-height: 50vh; }
+
+        .track-box {
+            max-width: 560px; margin: 0 auto;
+            background: #fff; border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,.08);
+            padding: 40px;
+        }
+
+        .track-form { display: flex; gap: 10px; }
+        .track-input {
+            flex: 1; height: 50px; padding: 0 16px;
+            border: 1.5px solid #e5e7eb; border-radius: 10px;
+            font-size: 1rem; font-family: inherit;
+            transition: border-color .2s;
+            outline: none;
+        }
+        .track-input:focus { border-color: var(--color-accent, #e94560); }
+        .track-btn {
+            height: 50px; padding: 0 24px;
+            background: var(--color-accent, #e94560); color: #fff;
+            border: none; border-radius: 10px;
+            font-size: .95rem; font-weight: 700; font-family: inherit;
+            cursor: pointer; white-space: nowrap;
+            transition: background .2s;
+        }
+        .track-btn:hover { background: #d63851; }
+
+        .track-hint {
+            font-size: .8rem; color: #9ca3af;
+            margin-top: 10px; text-align: center;
+        }
+
+        /* ── Not found ── */
+        .track-not-found {
+            text-align: center; padding: 40px 0 10px;
+            color: #6b7280;
+        }
+        .track-not-found .icon { font-size: 3rem; margin-bottom: 12px; }
+        .track-not-found h3 { font-size: 1.1rem; font-weight: 700; color: #374151; margin-bottom: 6px; }
+
+        /* ── Result card ── */
+        .track-result { margin-top: 32px; }
+
+        .result-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+        }
+        .result-id { font-size: 1.1rem; font-weight: 800; color: #1a1a2e; }
+        .result-date { font-size: .82rem; color: #9ca3af; }
+
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 16px; border-radius: 99px;
+            font-size: .82rem; font-weight: 700;
+        }
+        .status-PENDING   { background: #fef3c7; color: #d97706; }
+        .status-PAID      { background: #f5f3ff; color: #6d28d9; }
+        .status-SHIPPED   { background: #eff6ff; color: #3b82f6; }
+        .status-COMPLETED { background: #d1fae5; color: #059669; }
+        .status-CANCELLED { background: #fee2e2; color: #dc2626; }
+
+        /* Timeline */
+        .timeline { display: flex; gap: 0; margin-bottom: 28px; }
+        .timeline-step {
+            flex: 1; text-align: center; position: relative;
+        }
+        .timeline-step::before {
+            content: ''; position: absolute;
+            top: 16px; left: 50%; right: -50%;
+            height: 2px; background: #e5e7eb; z-index: 0;
+        }
+        .timeline-step:last-child::before { display: none; }
+        .timeline-dot {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: #e5e7eb; color: #9ca3af;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; margin: 0 auto 6px; position: relative; z-index: 1;
+            font-weight: 700;
+        }
+        .timeline-dot.done   { background: #059669; color: #fff; }
+        .timeline-dot.active { background: #e94560; color: #fff; }
+        .timeline-label { font-size: .72rem; color: #6b7280; font-weight: 500; }
+        .timeline-label.done   { color: #059669; font-weight: 700; }
+        .timeline-label.active { color: #e94560; font-weight: 700; }
+
+        /* Info rows */
+        .info-section { margin-bottom: 24px; }
+        .info-section-title {
+            font-size: .72rem; font-weight: 700; letter-spacing: .08em;
+            text-transform: uppercase; color: #9ca3af;
+            margin-bottom: 10px;
+        }
+        .info-row {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            padding: 9px 0; border-bottom: 1px solid #f3f4f6;
+            font-size: .9rem; gap: 12px;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #6b7280; flex-shrink: 0; }
+        .info-value { font-weight: 600; color: #1a1a2e; text-align: right; }
+
+        /* Items */
+        .order-items { display: flex; flex-direction: column; gap: 10px; }
+        .order-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 14px; background: #f9fafb; border-radius: 8px;
+            font-size: .88rem; gap: 8px;
+        }
+        .order-item-name { font-weight: 600; color: #1a1a2e; }
+        .order-item-meta { font-size: .78rem; color: #9ca3af; }
+        .order-item-price { font-weight: 700; color: #1a1a2e; white-space: nowrap; }
+
+        .result-total {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 0 0; border-top: 2px solid #f3f4f6;
+            margin-top: 4px;
+        }
+        .result-total-label { font-size: .95rem; font-weight: 700; color: #374151; }
+        .result-total-value { font-size: 1.3rem; font-weight: 900; color: #e94560; }
+
+        @media(max-width:480px) {
+            .track-box { padding: 24px 18px; }
+            .track-form { flex-direction: column; }
+            .track-btn { width: 100%; }
+            .timeline-label { font-size: .65rem; }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: top}"></div>
+
+<!-- Hero -->
+<section class="track-hero">
+    <div class="container">
+        <h1>Tra Cứu Đơn Hàng</h1>
+        <p>Nhập mã đơn hàng để kiểm tra trạng thái giao hàng</p>
+    </div>
+</section>
+
+<!-- Lookup section -->
+<section class="track-section">
+    <div class="container">
+        <div class="track-box">
+
+            <!-- Search form -->
+            <form method="get" th:action="@{/tra-don-hang}" class="track-form">
+                <input type="text" name="id" class="track-input"
+                       placeholder="Nhập mã đơn hàng (VD: #CF55596F)"
+                       th:value="${query}"
+                       autocomplete="off" spellcheck="false">
+                <button type="submit" class="track-btn">Tra cứu</button>
+            </form>
+            <p class="track-hint">Mã đơn hàng được gửi sau khi đặt hàng thành công</p>
+
+            <!-- Not found -->
+            <div th:if="${notFound}" class="track-not-found">
+                <div class="icon">🔍</div>
+                <h3>Không tìm thấy đơn hàng</h3>
+                <p>Mã đơn "<strong th:text="${query}"></strong>" không tồn tại.<br>
+                   Vui lòng kiểm tra lại hoặc liên hệ <a href="tel:0975481356" style="color:#e94560;">0975.481.356</a></p>
+            </div>
+
+            <!-- Result -->
+            <div th:if="${order != null}" class="track-result">
+
+                <div class="result-header">
+                    <div>
+                        <div class="result-id" th:text="${order.id}"></div>
+                        <div class="result-date"
+                             th:text="'Đặt lúc ' + ${#temporals.format(order.createdAt, 'HH:mm dd/MM/yyyy')}"></div>
+                    </div>
+                    <span class="status-badge"
+                          th:classappend="'status-' + ${order.status}"
+                          th:text="${order.status == 'PENDING'} ? '⏳ Chờ xử lý' :
+                                   (${order.status == 'PAID'} ? '💰 Đã thanh toán' :
+                                   (${order.status == 'SHIPPED'} ? '🚚 Đang giao' :
+                                   (${order.status == 'COMPLETED'} ? '✅ Đã hoàn thành' : '❌ Đã hủy')))">
+                    </span>
+                </div>
+
+                <!-- Timeline — COD: 5 steps (includes Đã thanh toán before Hoàn thành) -->
+                <div class="timeline">
+                    <!-- Step 1: Đã đặt – always done -->
+                    <div class="timeline-step">
+                        <div class="timeline-dot done">✓</div>
+                        <div class="timeline-label done">Đã đặt</div>
+                    </div>
+                    <!-- Step 2: Xác nhận -->
+                    <div class="timeline-step">
+                        <div class="timeline-dot"
+                             th:classappend="${order.status == 'PENDING'} ? 'active' :
+                                            (${order.status == 'SHIPPED' or order.status == 'PAID' or order.status == 'COMPLETED'} ? 'done' : '')"
+                             th:text="${order.status == 'SHIPPED' or order.status == 'PAID' or order.status == 'COMPLETED'} ? '✓' : '2'">2</div>
+                        <div class="timeline-label"
+                             th:classappend="${order.status == 'PENDING'} ? 'active' :
+                                            (${order.status == 'SHIPPED' or order.status == 'PAID' or order.status == 'COMPLETED'} ? 'done' : '')">Xác nhận</div>
+                    </div>
+                    <!-- Step 3: Đang giao -->
+                    <div class="timeline-step">
+                        <div class="timeline-dot"
+                             th:classappend="${order.status == 'SHIPPED'} ? 'active' :
+                                            (${order.status == 'PAID' or order.status == 'COMPLETED'} ? 'done' : '')"
+                             th:text="${order.status == 'PAID' or order.status == 'COMPLETED'} ? '✓' : '3'">3</div>
+                        <div class="timeline-label"
+                             th:classappend="${order.status == 'SHIPPED'} ? 'active' :
+                                            (${order.status == 'PAID' or order.status == 'COMPLETED'} ? 'done' : '')">Đang giao</div>
+                    </div>
+                    <!-- Step 4: Đã thanh toán — only shown for COD -->
+                    <div class="timeline-step" th:if="${order.paymentMethod == 'cod'}">
+                        <div class="timeline-dot"
+                             th:classappend="${order.status == 'PAID'} ? 'active' :
+                                            (${order.status == 'COMPLETED'} ? 'done' : '')"
+                             th:text="${order.status == 'COMPLETED'} ? '✓' : '4'">4</div>
+                        <div class="timeline-label"
+                             th:classappend="${order.status == 'PAID'} ? 'active' :
+                                            (${order.status == 'COMPLETED'} ? 'done' : '')">Đã thanh toán</div>
+                    </div>
+                    <!-- Step 5 (or 4 for non-COD): Hoàn thành -->
+                    <div class="timeline-step">
+                        <div class="timeline-dot"
+                             th:classappend="${order.status == 'COMPLETED'} ? 'done' : ''"
+                             th:text="${order.status == 'COMPLETED'} ? '✓' :
+                                      (${order.paymentMethod == 'cod'} ? '5' : '4')">5</div>
+                        <div class="timeline-label"
+                             th:classappend="${order.status == 'COMPLETED'} ? 'done' : ''">Hoàn thành</div>
+                    </div>
+                </div>
+
+                <!-- Customer info -->
+                <div class="info-section">
+                    <div class="info-section-title">Thông tin giao hàng</div>
+                    <div class="info-row">
+                        <span class="info-label">Người nhận</span>
+                        <span class="info-value" th:text="${order.customerName}"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Số điện thoại</span>
+                        <span class="info-value" th:text="${order.customerPhone}"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Địa chỉ</span>
+                        <span class="info-value" th:text="${order.customerAddress}"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Thanh toán</span>
+                        <span class="info-value"
+                              th:text="${order.paymentMethod == 'cod'} ? 'COD - Thanh toán khi nhận hàng' :
+                                       (${order.paymentMethod == 'momo'} ? 'Ví MoMo' :
+                                       (${order.paymentMethod == 'bank'} ? 'Chuyển khoản' : 'Thẻ VISA/Mastercard'))">
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Items -->
+                <div class="info-section">
+                    <div class="info-section-title">Sản phẩm đã đặt</div>
+                    <div class="order-items">
+                        <div th:each="item : ${order.items}" class="order-item">
+                            <div>
+                                <div class="order-item-name" th:text="${item.productName}"></div>
+                                <div class="order-item-meta"
+                                     th:text="'Size ' + ${item.size} + ' × ' + ${item.quantity}"></div>
+                            </div>
+                            <div class="order-item-price"
+                                 th:text="${#numbers.formatInteger(item.price * item.quantity, 0, 'COMMA').replace(',','.')} + '₫'"></div>
+                        </div>
+                    </div>
+                    <div class="result-total">
+                        <span class="result-total-label">Tổng cộng</span>
+                        <span class="result-total-value" th:text="${order.formattedTotal}"></span>
+                    </div>
+                </div>
+
+                <!-- Help -->
+                <p style="text-align:center; font-size:.82rem; color:#9ca3af; margin-top:8px;">
+                    Cần hỗ trợ? Gọi <a href="tel:0975481356" style="color:#e94560; font-weight:700;">0975.481.356</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>
