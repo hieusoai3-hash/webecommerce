@@ -318,9 +318,8 @@
                         <div style="display:flex; flex-direction:column; gap:5px; font-size:.78rem;">
                             <div style="display:flex; justify-content:space-between;">
                                 <span style="color:var(--text-muted);">Sản phẩm thiếu dữ liệu</span>
-                                <span th:with="incomplete=${#lists.size(products.?[completenessPct < 100])}"
-                                      th:style="${incomplete > 0} ? 'color:var(--accent);font-weight:700' : 'color:var(--success);font-weight:700'"
-                                      th:text="${incomplete}">0</span>
+                                <span th:style="${incompleteCount > 0} ? 'color:var(--accent);font-weight:700' : 'color:var(--success);font-weight:700'"
+                                      th:text="${incompleteCount}">0</span>
                             </div>
                             <div style="display:flex; justify-content:space-between;">
                                 <span style="color:var(--text-muted);">Đơn chờ xử lý</span>

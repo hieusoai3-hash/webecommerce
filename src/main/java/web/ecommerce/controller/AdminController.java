@@ -145,9 +145,11 @@ public class AdminController {
         model.addAttribute("paymentBreakdown", paymentBreakdown);
         model.addAttribute("last7Days",       last7Days);
         model.addAttribute("recentOrders",    orders.stream().limit(8).toList());
-        model.addAttribute("topProducts",     topProducts);
-        model.addAttribute("avgOrderValue",   String.format("%,d", avgOrderValue).replace(",", ".") + "₫");
-        model.addAttribute("revByCategory",   revByCategory);
+        long incompleteCount = products.stream().filter(p -> p.getCompletenessPct() < 100).count();
+        model.addAttribute("topProducts",      topProducts);
+        model.addAttribute("avgOrderValue",    String.format("%,d", avgOrderValue).replace(",", ".") + "₫");
+        model.addAttribute("revByCategory",    revByCategory);
+        model.addAttribute("incompleteCount",  incompleteCount);
         return "admin/dashboard";
     }
 
@@ -171,9 +173,21 @@ public class AdminController {
             }
         }
 
-        model.addAttribute("products",        products);
-        model.addAttribute("salesByProduct",  salesByProduct);
-        model.addAttribute("revByProduct",    revByProduct);
+        // Per-category stats (avg price, total colors) – avoids SpEL lambda in template
+        Map<String, String>  avgPriceByCat   = new HashMap<>();
+        Map<String, Integer> totalColorsByCat = new HashMap<>();
+        for (String cat : List.of("quan-sip", "vi-da", "that-lung")) {
+            List<Product> cp = products.stream().filter(p -> cat.equals(p.getCategory())).collect(Collectors.toList());
+            OptionalDouble avg = cp.stream().mapToLong(Product::getPrice).average();
+            avgPriceByCat.put(cat, avg.isPresent() ? (int)(avg.getAsDouble() / 1000) + "K₫" : "—");
+            totalColorsByCat.put(cat, cp.stream().mapToInt(p -> p.getColors() != null ? p.getColors().size() : 0).sum());
+        }
+
+        model.addAttribute("products",           products);
+        model.addAttribute("salesByProduct",     salesByProduct);
+        model.addAttribute("revByProduct",       revByProduct);
+        model.addAttribute("avgPriceByCat",      avgPriceByCat);
+        model.addAttribute("totalColorsByCat",   totalColorsByCat);
         return "admin/products";
     }
 

@@ -89,6 +89,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // ===== Account Button =====
+    const accountBtn = document.getElementById('account-btn');
+    if (accountBtn) {
+        accountBtn.addEventListener('click', () => {
+            showToast('Tính năng tài khoản đang được phát triển!');
+        });
+    }
+
+    // ===== Footer dead links → friendly toast =====
+    document.querySelectorAll('a[href="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            showToast('Tính năng này đang được cập nhật!');
+        });
+    });
+
     // ===== Search Autocomplete =====
     let _suggestTimer = null;
     let _highlightIdx = -1;

@@ -248,8 +248,7 @@
                     <div class="sec-stats">
                         <span>Hot: <strong th:text="${#lists.size(catProducts.?[hot==true])}">0</strong></span>
                         <span>Sale: <strong th:text="${#lists.size(catProducts.?[discount>0])}">0</strong></span>
-                        <span>Giá TB: <strong
-                                th:text="${catProducts.empty ? '—' : #numbers.formatDecimal(catProducts.stream().mapToLong(p -> p.price).average().orElse(0) / 1000, 0, 'POINT', 0, 'COMMA') + 'K₫'}">—</strong></span>
+                        <span>Giá TB: <strong th:text="${avgPriceByCat[catProducts.empty ? 'quan-sip' : catProducts[0].category]}">—</strong></span>
                     </div>
                     <a th:href="@{/admin/products/new}" class="btn-nb2 btn-outline btn-sm"
                        onclick="event.stopPropagation()"><i class="bi bi-plus-lg"></i> Thêm</a>
@@ -279,7 +278,7 @@
                     </tbody>
                 </table>
                 <div th:unless="${catProducts.empty}" class="sec-footer">
-                    <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.stream().mapToInt(p -> (p.colors != null ? p.colors.size() : 0)).sum()}">0</strong></span>
+                    <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.empty ? 0 : totalColorsByCat[catProducts[0].category]}">0</strong></span>
                     <span>📐 SP có size: <strong th:text="${#lists.size(catProducts.?[sizes != null and !sizes.empty])}">0</strong></span>
                     <span>✅ Hoàn chỉnh 100%: <strong th:text="${#lists.size(catProducts.?[completenessPct == 100])}">0</strong></span>
                 </div>
@@ -300,8 +299,7 @@
                     <div class="sec-stats">
                         <span>Hot: <strong th:text="${#lists.size(catProducts.?[hot==true])}">0</strong></span>
                         <span>Sale: <strong th:text="${#lists.size(catProducts.?[discount>0])}">0</strong></span>
-                        <span>Giá TB: <strong
-                                th:text="${catProducts.empty ? '—' : #numbers.formatDecimal(catProducts.stream().mapToLong(p -> p.price).average().orElse(0) / 1000, 0, 'POINT', 0, 'COMMA') + 'K₫'}">—</strong></span>
+                        <span>Giá TB: <strong th:text="${avgPriceByCat[catProducts.empty ? 'quan-sip' : catProducts[0].category]}">—</strong></span>
                     </div>
                     <a th:href="@{/admin/products/new}" class="btn-nb2 btn-outline btn-sm"
                        onclick="event.stopPropagation()"><i class="bi bi-plus-lg"></i> Thêm</a>
@@ -331,7 +329,7 @@
                     </tbody>
                 </table>
                 <div th:unless="${catProducts.empty}" class="sec-footer">
-                    <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.stream().mapToInt(p -> (p.colors != null ? p.colors.size() : 0)).sum()}">0</strong></span>
+                    <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.empty ? 0 : totalColorsByCat[catProducts[0].category]}">0</strong></span>
                     <span>📐 SP có size: <strong th:text="${#lists.size(catProducts.?[sizes != null and !sizes.empty])}">0</strong></span>
                     <span>✅ Hoàn chỉnh 100%: <strong th:text="${#lists.size(catProducts.?[completenessPct == 100])}">0</strong></span>
                 </div>
@@ -352,8 +350,7 @@
                     <div class="sec-stats">
                         <span>Hot: <strong th:text="${#lists.size(catProducts.?[hot==true])}">0</strong></span>
                         <span>Sale: <strong th:text="${#lists.size(catProducts.?[discount>0])}">0</strong></span>
-                        <span>Giá TB: <strong
-                                th:text="${catProducts.empty ? '—' : #numbers.formatDecimal(catProducts.stream().mapToLong(p -> p.price).average().orElse(0) / 1000, 0, 'POINT', 0, 'COMMA') + 'K₫'}">—</strong></span>
+                        <span>Giá TB: <strong th:text="${avgPriceByCat[catProducts.empty ? 'quan-sip' : catProducts[0].category]}">—</strong></span>
                     </div>
                     <a th:href="@{/admin/products/new}" class="btn-nb2 btn-outline btn-sm"
                        onclick="event.stopPropagation()"><i class="bi bi-plus-lg"></i> Thêm</a>
@@ -383,7 +380,7 @@
                     </tbody>
                 </table>
                 <div th:unless="${catProducts.empty}" class="sec-footer">
-                    <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.stream().mapToInt(p -> (p.colors != null ? p.colors.size() : 0)).sum()}">0</strong></span>
+                    <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.empty ? 0 : totalColorsByCat[catProducts[0].category]}">0</strong></span>
                     <span>📐 SP có size: <strong th:text="${#lists.size(catProducts.?[sizes != null and !sizes.empty])}">0</strong></span>
                     <span>✅ Hoàn chỉnh 100%: <strong th:text="${#lists.size(catProducts.?[completenessPct == 100])}">0</strong></span>
                 </div>
@@ -398,10 +395,14 @@
     th:with="sold=${salesByProduct != null and salesByProduct.containsKey(p.id) ? salesByProduct[p.id] : 0},
              rev=${revByProduct  != null and revByProduct.containsKey(p.id)  ? revByProduct[p.id]  : 0},
              pct=${p.completenessPct}"
-    th:attr="data-search=${#strings.toLowerCase(p.name + ' ' + p.id + ' ' + p.material)},
+    th:attr="data-search=${#strings.toLowerCase(p.name + ' ' + p.id + ' ' + (p.material != null ? p.material : ''))},
              data-hot=${p.hot},
              data-sale=${p.discount > 0},
-             data-pct=${pct}">
+             data-pct=${pct}"
+    th:data-name="${p.name}"
+    th:data-price="${p.price}"
+    th:data-sold="${sold}"
+    th:data-rating="${p.rating}">
 
     <!-- Image -->
     <td style="padding:10px 16px;">
@@ -620,26 +621,30 @@ function applyFilters(q) {
 document.querySelectorAll('th.sortable').forEach(th => {
     th.addEventListener('click', () => {
         const table = th.closest('table');
-        const col = th.dataset.col;
-        const isAsc = th.classList.contains('asc');
+        const col   = th.dataset.col;
+        const wasAsc = th.classList.contains('asc');
 
         table.querySelectorAll('th.sortable').forEach(h => h.classList.remove('asc', 'desc'));
-        th.classList.add(isAsc ? 'desc' : 'asc');
+        th.classList.add(wasAsc ? 'desc' : 'asc');
+        const sortAsc = !wasAsc;
 
         const tbody = table.querySelector('tbody');
+        if (!tbody) return;
         const rows = Array.from(tbody.querySelectorAll('tr'));
+        if (rows.length < 2) return;
+
         rows.sort((a, b) => {
-            let av, bv;
             if (col === 'name') {
-                av = a.querySelector('[class*="p-name"]')?.textContent?.trim() || '';
-                bv = b.querySelector('[class*="p-name"]')?.textContent?.trim() || '';
-                return isAsc ? bv.localeCompare(av, 'vi') : av.localeCompare(bv, 'vi');
+                const av = a.dataset.name || '', bv = b.dataset.name || '';
+                return sortAsc ? av.localeCompare(bv, 'vi') : bv.localeCompare(av, 'vi');
             }
-            if (col === 'price')  { av = parseInt(a.querySelector('td[data-price]')?.dataset.price || 0); bv = parseInt(b.querySelector('td[data-price]')?.dataset.price || 0); }
-            if (col === 'sold')   { av = parseInt(a.querySelector('td[data-sold]')?.dataset.sold || 0);   bv = parseInt(b.querySelector('td[data-sold]')?.dataset.sold || 0); }
-            if (col === 'rating') { av = parseInt(a.querySelector('td[data-rating]')?.dataset.rating || 0); bv = parseInt(b.querySelector('td[data-rating]')?.dataset.rating || 0); }
-            return isAsc ? av - bv : bv - av;
+            let av = 0, bv = 0;
+            if (col === 'price')  { av = +a.dataset.price  || 0; bv = +b.dataset.price  || 0; }
+            if (col === 'sold')   { av = +a.dataset.sold   || 0; bv = +b.dataset.sold   || 0; }
+            if (col === 'rating') { av = +a.dataset.rating || 0; bv = +b.dataset.rating || 0; }
+            return sortAsc ? av - bv : bv - av;
         });
+
         rows.forEach(r => tbody.appendChild(r));
     });
 });
