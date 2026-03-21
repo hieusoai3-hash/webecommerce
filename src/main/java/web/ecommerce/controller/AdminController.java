@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import web.ecommerce.model.Combo;
+import web.ecommerce.model.Coupon;
 import web.ecommerce.model.Product;
 import web.ecommerce.model.ProductColor;
 import web.ecommerce.service.ComboService;
+import web.ecommerce.service.CouponService;
 import web.ecommerce.service.OrderService;
 import web.ecommerce.service.ProductService;
 
@@ -26,14 +28,17 @@ public class AdminController {
     private final ProductService productService;
     private final OrderService orderService;
     private final ComboService comboService;
+    private final CouponService couponService;
 
     @Value("${upload.dir:src/main/resources/static}")
     private String uploadDir;
 
-    public AdminController(ProductService productService, OrderService orderService, ComboService comboService) {
+    public AdminController(ProductService productService, OrderService orderService,
+                           ComboService comboService, CouponService couponService) {
         this.productService = productService;
         this.orderService = orderService;
         this.comboService = comboService;
+        this.couponService = couponService;
     }
 
     // ── Login ────────────────────────────────────────────────────────────
@@ -402,5 +407,88 @@ public class AdminController {
             comboService.save(c);
         });
         return "redirect:/admin/combos";
+    }
+
+    // ── Coupons ──────────────────────────────────────────────────────────
+
+    @GetMapping("/coupons")
+    public String coupons(Model model) {
+        model.addAttribute("coupons", couponService.getAll());
+        model.addAttribute("activePage", "coupons");
+        return "admin/coupons";
+    }
+
+    @GetMapping("/coupons/new")
+    public String couponNew(Model model) {
+        model.addAttribute("coupon", new Coupon());
+        model.addAttribute("isNew", true);
+        model.addAttribute("activePage", "coupons");
+        return "admin/coupon-form";
+    }
+
+    @GetMapping("/coupons/edit")
+    public String couponEdit(@RequestParam Long id, Model model) {
+        couponService.findById(id).ifPresent(c -> model.addAttribute("coupon", c));
+        model.addAttribute("isNew", false);
+        model.addAttribute("activePage", "coupons");
+        return "admin/coupon-form";
+    }
+
+    @PostMapping("/coupons/save")
+    public String couponSave(@RequestParam(required = false) Long id,
+                             @RequestParam String code,
+                             @RequestParam String discountType,
+                             @RequestParam long discountValue,
+                             @RequestParam(defaultValue = "0") long minOrderValue,
+                             @RequestParam(defaultValue = "0") int maxUses,
+                             @RequestParam(defaultValue = "false") boolean active,
+                             @RequestParam(required = false) String expiresAt,
+                             RedirectAttributes ra) {
+        Coupon c = id != null ? couponService.findById(id).orElse(new Coupon()) : new Coupon();
+        c.setCode(code.trim().toUpperCase());
+        c.setDiscountType(discountType);
+        c.setDiscountValue(discountValue);
+        c.setMinOrderValue(minOrderValue);
+        c.setMaxUses(maxUses);
+        c.setActive(active);
+        c.setExpiresAt(expiresAt != null && !expiresAt.isBlank()
+                ? java.time.LocalDate.parse(expiresAt) : null);
+        couponService.save(c);
+        ra.addFlashAttribute("success", "Đã lưu mã: " + c.getCode());
+        return "redirect:/admin/coupons";
+    }
+
+    @PostMapping("/coupons/delete")
+    public String couponDelete(@RequestParam Long id, RedirectAttributes ra) {
+        couponService.delete(id);
+        ra.addFlashAttribute("success", "Đã xóa mã giảm giá.");
+        return "redirect:/admin/coupons";
+    }
+
+    @PostMapping("/coupons/toggle")
+    public String couponToggle(@RequestParam Long id, RedirectAttributes ra) {
+        couponService.findById(id).ifPresent(c -> {
+            c.setActive(!c.isActive());
+            couponService.save(c);
+        });
+        return "redirect:/admin/coupons";
+    }
+
+    // ── Flash Sale ───────────────────────────────────────────────────────
+
+    @GetMapping("/flash-sale")
+    public String flashSale(Model model) {
+        model.addAttribute("products", productService.getAll());
+        model.addAttribute("activePage", "flash-sale");
+        return "admin/flash-sale";
+    }
+
+    @PostMapping("/flash-sale/update")
+    public String flashSaleUpdate(@RequestParam String productId,
+                                  @RequestParam int discountPct,
+                                  RedirectAttributes ra) {
+        productService.updateSale(productId, discountPct);
+        ra.addFlashAttribute("success", "Đã cập nhật khuyến mãi.");
+        return "redirect:/admin/flash-sale";
     }
 }

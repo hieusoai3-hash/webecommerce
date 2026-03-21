@@ -60,7 +60,7 @@ public class SecurityConfig {
                 .permitAll()
             )
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/api/**", "/h2-console/**")
+                .ignoringRequestMatchers("/api/**", "/h2-console/**", "/admin/coupons/**", "/admin/flash-sale/**")
             )
             .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin()) // needed for H2 console

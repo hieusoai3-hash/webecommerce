@@ -27,6 +27,8 @@ public class Order {
     private String paymentMethod;
     private String status;
     private LocalDateTime createdAt;
+    private String couponCode;
+    private long couponDiscount;
 
     public Order() {
         this.createdAt = LocalDateTime.now();
@@ -59,6 +61,12 @@ public class Order {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getCouponCode() { return couponCode; }
+    public void setCouponCode(String couponCode) { this.couponCode = couponCode; }
+
+    public long getCouponDiscount() { return couponDiscount; }
+    public void setCouponDiscount(long couponDiscount) { this.couponDiscount = couponDiscount; }
 
     public String getFormattedTotal() {
         return String.format("%,d", total).replace(",", ".") + "₫";

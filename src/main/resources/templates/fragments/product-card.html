@@ -5,7 +5,10 @@
 <!--
   Usage: th:replace="~{fragments/product-card :: card(product=${p})}"
 -->
-<div th:fragment="card(product)" class="product-card reveal" th:data-category="${product.category}">
+<div th:fragment="card(product)" class="product-card reveal"
+     th:data-category="${product.category}"
+     th:data-price="${product.price}"
+     th:data-name="${product.name}">
     <div class="product-badges">
         <span class="badge badge-hot" th:if="${product.hot}">Hot</span>
         <span class="badge badge-sale" th:if="${product.onSale}"

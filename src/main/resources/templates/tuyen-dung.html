@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuyển Dụng - NB2 Boxer Men</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: top}"></div>
+
+<section class="info-hero">
+    <div class="container">
+        <div class="breadcrumb">
+            <a th:href="@{/}">Trang chủ</a> <span>&#8250;</span>
+            <span style="color:#fff;">Tuyển dụng</span>
+        </div>
+        <h1 class="info-hero-title">Tuyển Dụng</h1>
+        <p class="info-hero-sub">Gia nhập đội ngũ NB2 — cùng nhau xây dựng thương hiệu Việt đẳng cấp</p>
+    </div>
+</section>
+
+<section class="info-content">
+    <div class="container">
+        <div class="info-body">
+
+            <div class="info-highlight">
+                <strong>Tại NB2, bạn không chỉ là nhân viên</strong> — bạn là người xây dựng thương hiệu. Chúng tôi coi trọng sự chủ động, sáng tạo và tinh thần trách nhiệm.
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-section-title">Vị trí đang tuyển</h2>
+                <div class="job-grid">
+                    <div class="job-card">
+                        <h3>Nhân viên Chăm Sóc Khách Hàng</h3>
+                        <div class="job-meta">
+                            <span class="job-tag accent">Full-time</span>
+                            <span class="job-tag">Hà Nội</span>
+                            <span class="job-tag">6–8 triệu/tháng</span>
+                        </div>
+                        <p>Tiếp nhận và xử lý đơn hàng qua Zalo/Facebook/điện thoại. Tư vấn khách hàng chọn sản phẩm, hỗ trợ đổi trả và giải quyết khiếu nại.</p>
+                        <a href="mailto:nb2boxermen@gmail.com?subject=Ứng tuyển CSKH">Ứng tuyển ngay</a>
+                    </div>
+                    <div class="job-card">
+                        <h3>Nhân viên Marketing Digital</h3>
+                        <div class="job-meta">
+                            <span class="job-tag accent">Full-time / Part-time</span>
+                            <span class="job-tag">Remote</span>
+                            <span class="job-tag">Thỏa thuận</span>
+                        </div>
+                        <p>Quản lý fanpage Facebook, TikTok, chạy quảng cáo Meta Ads, tạo nội dung sản phẩm. Ưu tiên người có kinh nghiệm TMĐT.</p>
+                        <a href="mailto:nb2boxermen@gmail.com?subject=Ứng tuyển Marketing">Ứng tuyển ngay</a>
+                    </div>
+                    <div class="job-card">
+                        <h3>Cộng tác viên Bán Hàng</h3>
+                        <div class="job-meta">
+                            <span class="job-tag accent">CTV</span>
+                            <span class="job-tag">Toàn quốc</span>
+                            <span class="job-tag">Hoa hồng 15–20%</span>
+                        </div>
+                        <p>Bán hàng qua mạng xã hội cá nhân. NB2 hỗ trợ hình ảnh, video sản phẩm và mã giảm giá riêng cho cộng tác viên.</p>
+                        <a href="mailto:nb2boxermen@gmail.com?subject=Đăng ký CTV">Đăng ký CTV</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-section-title">Quyền lợi</h2>
+                <ul>
+                    <li>Thu nhập cạnh tranh + thưởng theo hiệu quả</li>
+                    <li>Môi trường trẻ trung, năng động, thoải mái sáng tạo</li>
+                    <li>Được đào tạo về sản phẩm và kỹ năng bán hàng</li>
+                    <li>Chiết khấu 30% khi mua sản phẩm NB2</li>
+                    <li>Cơ hội thăng tiến khi công ty mở rộng</li>
+                </ul>
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-section-title">Cách ứng tuyển</h2>
+                <p>Gửi CV và giới thiệu bản thân về email <a href="mailto:nb2boxermen@gmail.com">nb2boxermen@gmail.com</a> với tiêu đề: <strong>[Vị trí] – Họ tên</strong>. Chúng tôi phản hồi trong 3 ngày làm việc.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

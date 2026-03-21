@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chính Sách Khuyến Mãi - NB2 Boxer Men</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: top}"></div>
+
+<section class="info-hero">
+    <div class="container">
+        <div class="breadcrumb">
+            <a th:href="@{/}">Trang chủ</a> <span>&#8250;</span>
+            <span style="color:#fff;">Chính sách khuyến mãi</span>
+        </div>
+        <h1 class="info-hero-title">Chính Sách Khuyến Mãi</h1>
+        <p class="info-hero-sub">Ưu đãi thường xuyên — tiết kiệm thật sự với NB2 Boxer Men</p>
+    </div>
+</section>
+
+<section class="info-content">
+    <div class="container">
+        <div class="info-body">
+
+            <div class="info-section">
+                <h2 class="info-section-title">Các chương trình khuyến mãi</h2>
+
+                <div class="info-steps">
+                    <div class="info-step">
+                        <div class="info-step-num" style="background:#f59e0b;">🔥</div>
+                        <div class="info-step-body">
+                            <strong>Flash Sale hàng tuần</strong>
+                            Mỗi thứ 6 hàng tuần, NB2 mở Flash Sale với mức giảm 20–40% cho các sản phẩm chọn lọc. Số lượng có hạn, first come first served.
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <div class="info-step-num" style="background:#10b981;">🎁</div>
+                        <div class="info-step-body">
+                            <strong>Combo Mua Nhiều Giảm Nhiều</strong>
+                            Mua 3 tặng 1 — áp dụng quanh năm cho dòng quần sịp. Tiết kiệm đến 25% so với mua lẻ.
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <div class="info-step-num" style="background:#8b5cf6;">🎂</div>
+                        <div class="info-step-body">
+                            <strong>Ưu đãi sinh nhật</strong>
+                            Khách hàng đã đặt hàng tại NB2 nhận mã giảm 10% trong tháng sinh nhật. Liên hệ Zalo/Facebook để kích hoạt.
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <div class="info-step-num" style="background:#3b82f6;">📦</div>
+                        <div class="info-step-body">
+                            <strong>Miễn phí vận chuyển</strong>
+                            Tự động áp dụng cho đơn hàng từ 299.000đ. Không cần mã khuyến mãi.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-section-title">Điều kiện sử dụng mã giảm giá</h2>
+                <ul>
+                    <li>Mỗi mã chỉ áp dụng 1 lần / 1 tài khoản</li>
+                    <li>Không áp dụng cùng các chương trình giảm giá khác (trừ khi có ghi chú)</li>
+                    <li>Mã có thời hạn sử dụng — kiểm tra ngày hết hạn trước khi thanh toán</li>
+                    <li>Không quy đổi thành tiền mặt</li>
+                    <li>NB2 có quyền thu hồi mã nếu phát hiện gian lận</li>
+                </ul>
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-section-title">Theo dõi khuyến mãi mới nhất</h2>
+                <p>Theo dõi <strong>Facebook NB2 Boxer Men</strong> và <strong>nhóm Zalo</strong> để nhận thông báo ưu đãi mới nhất. Hoặc để lại email để nhận newsletter độc quyền.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

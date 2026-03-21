@@ -3,6 +3,7 @@ package web.ecommerce.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import web.ecommerce.model.Order;
+import web.ecommerce.service.CouponService;
 import web.ecommerce.service.OrderService;
 
 import java.util.List;
@@ -12,13 +13,18 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final CouponService couponService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, CouponService couponService) {
         this.orderService = orderService;
+        this.couponService = couponService;
     }
 
     @PostMapping
     public ResponseEntity<Order> create(@RequestBody Order order) {
+        if (order.getCouponCode() != null && !order.getCouponCode().isBlank()) {
+            couponService.markUsed(order.getCouponCode().trim());
+        }
         return ResponseEntity.ok(orderService.create(order));
     }
 

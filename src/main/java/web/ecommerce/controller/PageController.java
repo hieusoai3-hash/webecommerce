@@ -102,6 +102,20 @@ public class PageController {
         return "search";
     }
 
+    // ── Static info pages ──────────────────────────────────────────────────
+    @GetMapping("/chinh-sach-doi-tra")   public String csDoiTra()    { return "chinh-sach-doi-tra"; }
+    @GetMapping("/chinh-sach-bao-mat")   public String csBaoMat()    { return "chinh-sach-bao-mat"; }
+    @GetMapping("/chinh-sach-giao-hang") public String csGiaoHang()  { return "chinh-sach-giao-hang"; }
+    @GetMapping("/chinh-sach-khuyen-mai")public String csKhuyenMai() { return "chinh-sach-khuyen-mai"; }
+    @GetMapping("/huong-dan-chon-size")  public String hdChonSize()  { return "huong-dan-chon-size"; }
+    @GetMapping("/hoi-dap")              public String hoiDap()      { return "hoi-dap"; }
+    @GetMapping("/huong-dan-mua-hang")   public String hdMuaHang()   { return "huong-dan-mua-hang"; }
+    @GetMapping("/trai-nghiem-mua-sam")  public String traiNghiem()  { return "trai-nghiem-mua-sam"; }
+    @GetMapping("/cau-chuyen-thuong-hieu")public String cauChuyen()  { return "cau-chuyen-thuong-hieu"; }
+    @GetMapping("/nha-may-san-xuat")     public String nhaMay()      { return "nha-may-san-xuat"; }
+    @GetMapping("/tuyen-dung")           public String tuyenDung()   { return "tuyen-dung"; }
+    @GetMapping("/lien-he-hop-tac")      public String lienHeHopTac(){ return "lien-he-hop-tac"; }
+
     @GetMapping("/product-detail")
     public String productDetail(@RequestParam String id, Model model) {
         Optional<Product> productOpt = productService.getById(id);

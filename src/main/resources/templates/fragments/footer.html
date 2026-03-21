@@ -38,28 +38,28 @@
                 <div class="footer-col">
                     <h4>Chính Sách</h4>
                     <ul>
-                        <li><a href="#">Chính sách đổi trả 60 ngày (ví & thắt lưng)</a></li>
-                        <li><a href="#">Chính sách bảo mật</a></li>
-                        <li><a href="#">Chính sách giao hàng</a></li>
-                        <li><a href="#">Chính sách khuyến mãi</a></li>
+                        <li><a th:href="@{/chinh-sach-doi-tra}">Chính sách đổi trả 60 ngày (ví & thắt lưng)</a></li>
+                        <li><a th:href="@{/chinh-sach-bao-mat}">Chính sách bảo mật</a></li>
+                        <li><a th:href="@{/chinh-sach-giao-hang}">Chính sách giao hàng</a></li>
+                        <li><a th:href="@{/chinh-sach-khuyen-mai}">Chính sách khuyến mãi</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
                     <h4>Chăm Sóc Khách Hàng</h4>
                     <ul>
-                        <li><a href="#">Hướng dẫn chọn size</a></li>
-                        <li><a href="#">Hỏi đáp - FAQs</a></li>
-                        <li><a href="#">Hướng dẫn mua hàng</a></li>
-                        <li><a href="#">Trải nghiệm mua sắm</a></li>
+                        <li><a th:href="@{/huong-dan-chon-size}">Hướng dẫn chọn size</a></li>
+                        <li><a th:href="@{/hoi-dap}">Hỏi đáp - FAQs</a></li>
+                        <li><a th:href="@{/huong-dan-mua-hang}">Hướng dẫn mua hàng</a></li>
+                        <li><a th:href="@{/trai-nghiem-mua-sam}">Trải nghiệm mua sắm</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
                     <h4>Về NB2 Boxer Men Việt Nam</h4>
                     <ul>
-                        <li><a href="#">Câu chuyện thương hiệu</a></li>
-                        <li><a href="#">Nhà máy sản xuất</a></li>
-                        <li><a href="#">Tuyển dụng</a></li>
-                        <li><a href="#">Liên hệ hợp tác</a></li>
+                        <li><a th:href="@{/cau-chuyen-thuong-hieu}">Câu chuyện thương hiệu</a></li>
+                        <li><a th:href="@{/nha-may-san-xuat}">Nhà máy sản xuất</a></li>
+                        <li><a th:href="@{/tuyen-dung}">Tuyển dụng</a></li>
+                        <li><a th:href="@{/lien-he-hop-tac}">Liên hệ hợp tác</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -76,7 +76,7 @@
                                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                                 <polyline points="22,6 12,13 2,6"/>
                             </svg>
-                            <a href="mailto:support@comfy.vn">support@comfy.vn</a>
+                            <a href="mailto:nb2boxermen@gmail.com">nb2boxermen@gmail.com</a>
                         </li>
                         <li>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -339,6 +339,26 @@
                             <span class="discount-text">Giảm phí vận chuyển:</span>
                             <span class="discount-text">-30.000&#8363;</span>
                         </div>
+
+                        <!-- Coupon -->
+                        <div style="margin:10px 0 4px;">
+                            <div style="display:flex;gap:6px;">
+                                <input type="text" id="coupon-input"
+                                       placeholder="Nhập mã giảm giá"
+                                       style="flex:1;padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:.85rem;outline:none;"
+                                       oninput="this.value=this.value.toUpperCase()">
+                                <button type="button" onclick="applyCoupon()"
+                                        style="padding:8px 14px;background:var(--color-primary);color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;white-space:nowrap;">
+                                    Áp dụng
+                                </button>
+                            </div>
+                            <div id="coupon-msg" style="font-size:.78rem;margin-top:4px;"></div>
+                        </div>
+                        <div class="summary-row" id="coupon-discount-row" style="display:none;color:#10b981;">
+                            <span>Mã giảm giá:</span>
+                            <span id="coupon-discount-display">-0&#8363;</span>
+                        </div>
+
                         <div class="summary-divider"></div>
                         <div class="summary-row summary-total-row">
                             <span>Tổng cộng:</span>

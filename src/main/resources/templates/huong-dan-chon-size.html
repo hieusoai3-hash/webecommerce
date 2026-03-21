@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hướng Dẫn Chọn Size - NB2 Boxer Men</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: top}"></div>
+
+<section class="info-hero">
+    <div class="container">
+        <div class="breadcrumb">
+            <a th:href="@{/}">Trang chủ</a> <span>&#8250;</span>
+            <span style="color:#fff;">Hướng dẫn chọn size</span>
+        </div>
+        <h1 class="info-hero-title">Hướng Dẫn Chọn Size</h1>
+        <p class="info-hero-sub">Chọn đúng size ngay lần đầu — thoải mái tối đa khi mặc</p>
+    </div>
+</section>
+
+<div th:replace="~{fragments/size-guide :: guide('quan-sip')}"></div>
+<div th:replace="~{fragments/size-guide :: guide('that-lung')}"></div>
+<div th:replace="~{fragments/size-guide :: guide('vi-da')}"></div>
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

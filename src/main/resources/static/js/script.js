@@ -504,7 +504,9 @@ document.addEventListener('DOMContentLoaded', () => {
             freeShipNotice.classList.remove('show');
         }
 
-        document.getElementById('summary-total').textContent = total.toLocaleString('vi-VN') + '₫';
+        const couponDisc = (typeof appliedCoupon !== 'undefined') ? appliedCoupon.discount : 0;
+        const finalTotal = Math.max(0, total - couponDisc);
+        document.getElementById('summary-total').textContent = finalTotal.toLocaleString('vi-VN') + '₫';
     }
 
     // Checkout button click
@@ -583,6 +585,42 @@ document.addEventListener('DOMContentLoaded', () => {
         return isValid;
     }
 
+    // ── Coupon logic ────────────────────────────────────────────────────────
+    let appliedCoupon = { code: null, discount: 0 };
+
+    window.applyCoupon = async function() {
+        const code = document.getElementById('coupon-input').value.trim();
+        const msg  = document.getElementById('coupon-msg');
+        if (!code) { msg.textContent = ''; return; }
+
+        const subtotal = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+        msg.style.color = '#6b7280';
+        msg.textContent = 'Đang kiểm tra...';
+
+        const res = await fetch('/api/coupon/validate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code, subtotal })
+        });
+        const data = await res.json();
+
+        if (data.valid) {
+            appliedCoupon = { code, discount: data.discount };
+            msg.style.color = '#10b981';
+            msg.textContent = '✓ ' + data.message;
+            document.getElementById('coupon-discount-row').style.display = '';
+            document.getElementById('coupon-discount-display').textContent =
+                '-' + data.discount.toLocaleString('vi-VN') + '₫';
+            populateCheckoutSummary();
+        } else {
+            appliedCoupon = { code: null, discount: 0 };
+            msg.style.color = '#ef4444';
+            msg.textContent = '✗ ' + data.message;
+            document.getElementById('coupon-discount-row').style.display = 'none';
+            populateCheckoutSummary();
+        }
+    };
+
     // Place order
     if (placeOrderBtn) {
         placeOrderBtn.addEventListener('click', async () => {
@@ -590,7 +628,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             const isFreeShip = subtotal >= FREE_SHIP_THRESHOLD;
-            const total = isFreeShip ? subtotal : subtotal + SHIPPING_FEE;
+            const shipping = isFreeShip ? 0 : SHIPPING_FEE;
+            const total = subtotal + shipping - appliedCoupon.discount;
 
             const paymentMethodNames = {
                 'cod': 'Thanh toán khi nhận hàng (COD)',
@@ -611,7 +650,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 customerPhone:   document.getElementById('checkout-phone').value.trim(),
                 customerAddress: address,
                 paymentMethod:   selectedPayment,
-                total:           total,
+                total:           Math.max(0, total),
+                couponCode:      appliedCoupon.code,
+                couponDiscount:  appliedCoupon.discount,
                 items: cart.map(item => ({
                     productId:   item.productId || '',
                     productName: item.name,
@@ -648,6 +689,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Clear cart & reset form
                 cart = [];
+                appliedCoupon = { code: null, discount: 0 };
+                const cinput = document.getElementById('coupon-input');
+                if (cinput) { cinput.value = ''; document.getElementById('coupon-msg').textContent = ''; }
+                document.getElementById('coupon-discount-row').style.display = 'none';
                 updateCartUI();
                 document.getElementById('checkout-form').reset();
                 paymentOptions.forEach(o => o.classList.remove('active'));
@@ -889,6 +934,24 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    // ===== Sort Select =====
+    const sortSelect = document.getElementById('sort-select');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', () => {
+            const grid = document.getElementById('product-grid');
+            if (!grid) return;
+            const cards = Array.from(grid.querySelectorAll('.product-card'));
+            const val = sortSelect.value;
+            cards.sort((a, b) => {
+                if (val === 'price-asc')  return Number(a.dataset.price) - Number(b.dataset.price);
+                if (val === 'price-desc') return Number(b.dataset.price) - Number(a.dataset.price);
+                if (val === 'name')       return (a.dataset.name || '').localeCompare(b.dataset.name || '', 'vi');
+                return 0; // default — leave original order
+            });
+            cards.forEach(c => grid.appendChild(c));
+        });
+    }
 });
 (function() {
 // Set active state for mobile nav

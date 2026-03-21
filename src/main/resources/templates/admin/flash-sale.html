@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flash Sale - NB2 Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        .fs-table td { vertical-align: middle; }
+        .fs-price-col { min-width: 130px; }
+        .fs-disc-input {
+            width: 72px; padding: 5px 8px;
+            border: 1px solid var(--border); border-radius: 6px;
+            text-align: center; font-size: .88rem;
+            background: var(--surface); color: var(--text);
+        }
+        .fs-disc-input:focus { outline: none; border-color: var(--accent); }
+        .sale-badge {
+            display: inline-block; padding: 2px 8px;
+            background: #fee2e2; color: #b91c1c;
+            font-size: .72rem; font-weight: 700;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{admin/layout :: sidebar}" th:with="activePage='flash-sale'"></div>
+
+<div class="admin-wrapper">
+    <div class="topbar">
+        <h1>Flash Sale &amp; Khuyến Mãi</h1>
+    </div>
+
+    <div class="content-area">
+        <div th:if="${success}" class="alert alert-success">
+            <i class="bi bi-check-circle-fill"></i> <span th:text="${success}"></span>
+        </div>
+
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h6><i class="bi bi-lightning-charge me-2" style="color:var(--accent)"></i>Quản lý giảm giá sản phẩm</h6>
+                <span style="font-size:.8rem;color:var(--text-muted);">Nhập % giảm → Lưu. Nhập 0 để bỏ giảm giá.</span>
+            </div>
+            <div class="admin-card-body no-pad">
+                <table class="admin-table fs-table">
+                    <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th class="fs-price-col">Giá gốc</th>
+                        <th class="fs-price-col">Giá hiện tại</th>
+                        <th>% Giảm</th>
+                        <th width="80">Lưu</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${products}">
+                        <td>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <img th:if="${p.colors != null and !p.colors.isEmpty()}"
+                                     th:src="@{/${p.colors[0].imageUrl}}"
+                                     style="width:36px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0;" alt="">
+                                <div>
+                                    <div style="font-size:.85rem;font-weight:600;" th:text="${p.name}"></div>
+                                    <span th:if="${p.onSale}" class="sale-badge">ĐANG GIẢM -<span th:text="${p.discount}"></span>%</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="font-size:.8rem;color:var(--text-muted);"
+                            th:text="${p.category == 'quan-sip'} ? 'Quần sịp' : (${p.category == 'vi-da'} ? 'Ví da' : 'Thắt lưng')"></td>
+                        <td class="fs-price-col" style="font-size:.85rem;">
+                            <span th:if="${p.originalPrice > 0}" th:text="${p.formattedOriginalPrice}"></span>
+                            <span th:if="${p.originalPrice <= 0}" th:text="${p.formattedPrice}"></span>
+                        </td>
+                        <td class="fs-price-col" style="font-weight:700;" th:text="${p.formattedPrice}"></td>
+                        <td>
+                            <form th:action="@{/admin/flash-sale/update}" method="post"
+                                  style="display:flex;align-items:center;gap:6px;">
+                                <input type="hidden" name="productId" th:value="${p.id}">
+                                <input type="number" name="discountPct" class="fs-disc-input"
+                                       th:value="${p.discount}" min="0" max="99"
+                                       placeholder="0">
+                                <span style="font-size:.8rem;color:var(--text-muted);">%</span>
+                                <button type="submit" class="btn-nb2 btn-accent btn-sm">Lưu</button>
+                            </form>
+                        </td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

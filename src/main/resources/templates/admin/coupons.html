@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mã Giảm Giá - NB2 Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div th:replace="~{admin/layout :: sidebar}" th:with="activePage='coupons'"></div>
+
+<div class="admin-wrapper">
+    <div class="topbar">
+        <h1>Mã Giảm Giá</h1>
+        <a th:href="@{/admin/coupons/new}" class="btn-nb2 btn-accent btn-sm">
+            <i class="bi bi-plus-lg"></i> Thêm mã mới
+        </a>
+    </div>
+
+    <div class="content-area">
+        <div th:if="${success}" class="alert alert-success">
+            <i class="bi bi-check-circle-fill"></i> <span th:text="${success}"></span>
+        </div>
+
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h6><i class="bi bi-ticket-perforated me-2" style="color:var(--accent)"></i>Danh sách mã</h6>
+                <span style="font-size:.8rem;color:var(--text-muted);" th:text="${#lists.size(coupons)} + ' mã'"></span>
+            </div>
+            <div class="admin-card-body no-pad">
+                <div th:if="${#lists.isEmpty(coupons)}" class="empty-state">
+                    <i class="bi bi-ticket-perforated"></i>
+                    <p>Chưa có mã giảm giá nào.</p>
+                    <a th:href="@{/admin/coupons/new}" class="btn-nb2 btn-accent btn-sm">Tạo mã đầu tiên</a>
+                </div>
+                <table th:if="${!#lists.isEmpty(coupons)}" class="admin-table">
+                    <thead>
+                    <tr>
+                        <th>Mã</th>
+                        <th>Loại giảm</th>
+                        <th>Đơn tối thiểu</th>
+                        <th>Đã dùng</th>
+                        <th>Hết hạn</th>
+                        <th>Trạng thái</th>
+                        <th width="160">Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="c : ${coupons}">
+                        <td>
+                            <code style="font-size:.85rem;font-weight:700;color:var(--accent);background:var(--surface);padding:3px 8px;border-radius:6px;"
+                                  th:text="${c.code}"></code>
+                        </td>
+                        <td>
+                            <strong th:text="${c.formattedDiscount}"></strong>
+                            <span style="font-size:.75rem;color:var(--text-muted);"
+                                  th:text="${c.discountType == 'PERCENT'} ? ' giảm %' : ' cố định'"></span>
+                        </td>
+                        <td style="font-size:.82rem;" th:text="${c.formattedMinOrder}"></td>
+                        <td style="font-size:.82rem;">
+                            <span th:text="${c.usedCount}"></span>
+                            <span style="color:var(--text-muted);"
+                                  th:text="${c.maxUses > 0} ? ' / ' + ${c.maxUses} : ' / ∞'"></span>
+                        </td>
+                        <td style="font-size:.8rem;color:var(--text-muted);">
+                            <span th:if="${c.expiresAt != null}"
+                                  th:text="${#temporals.format(c.expiresAt,'dd/MM/yyyy')}"></span>
+                            <span th:if="${c.expiresAt == null}">Không hạn</span>
+                        </td>
+                        <td>
+                            <form th:action="@{/admin/coupons/toggle}" method="post" style="display:inline;">
+                                <input type="hidden" name="id" th:value="${c.id}">
+                                <button type="submit" class="badge"
+                                        th:classappend="${c.active} ? 'badge-paid' : 'badge-pending'"
+                                        style="border:none;cursor:pointer;padding:4px 10px;">
+                                    <span th:text="${c.active} ? 'Đang hoạt động' : 'Tắt'"></span>
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:6px;">
+                                <a th:href="@{/admin/coupons/edit(id=${c.id})}"
+                                   class="btn-nb2 btn-outline btn-sm">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form th:action="@{/admin/coupons/delete}" method="post"
+                                      onsubmit="return confirm('Xóa mã này?')">
+                                    <input type="hidden" name="id" th:value="${c.id}">
+                                    <button type="submit" class="btn-nb2 btn-outline btn-sm"
+                                            style="color:#ef4444;border-color:#ef4444;">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

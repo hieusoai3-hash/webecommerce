@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trải Nghiệm Mua Sắm - NB2 Boxer Men</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .review-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        @media (max-width: 600px) { .review-grid { grid-template-columns: 1fr; } }
+        .review-card {
+            background: #fff;
+            border: 1px solid var(--color-gray-200);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .review-stars { color: #f59e0b; font-size: 1rem; margin-bottom: 8px; }
+        .review-text { font-size: .875rem; color: var(--color-gray-600); line-height: 1.7; margin-bottom: 12px; font-style: italic; }
+        .review-author { font-size: .82rem; font-weight: 700; color: var(--color-gray-800); }
+        .review-date { font-size: .75rem; color: var(--color-gray-400); }
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 36px; text-align: center; }
+        .stat-card { background: var(--color-accent-light); border-radius: 12px; padding: 20px; }
+        .stat-num { font-size: 2rem; font-weight: 800; color: var(--color-accent); }
+        .stat-label { font-size: .82rem; color: var(--color-gray-600); margin-top: 4px; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: top}"></div>
+
+<section class="info-hero">
+    <div class="container">
+        <div class="breadcrumb">
+            <a th:href="@{/}">Trang chủ</a> <span>&#8250;</span>
+            <span style="color:#fff;">Trải nghiệm mua sắm</span>
+        </div>
+        <h1 class="info-hero-title">Trải Nghiệm Mua Sắm</h1>
+        <p class="info-hero-sub">Hàng nghìn khách hàng hài lòng — nghe họ nói gì về NB2</p>
+    </div>
+</section>
+
+<section class="info-content">
+    <div class="container">
+        <div class="info-body" style="max-width:900px;">
+
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-num">4.9★</div>
+                    <div class="stat-label">Điểm đánh giá trung bình</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num">2.800+</div>
+                    <div class="stat-label">Khách hàng đã mua</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num">98%</div>
+                    <div class="stat-label">Đánh giá tích cực</div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-section-title">Khách hàng nói gì về NB2</h2>
+                <div class="review-grid">
+                    <div class="review-card">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Chất liệu bamboo mặc cực thoáng, không bị hầm dù trời nóng. Đã mua lần 2 và sẽ tiếp tục ủng hộ NB2."</p>
+                        <div class="review-author">Nguyễn Minh H. — Hà Nội</div>
+                        <div class="review-date">Tháng 2, 2026</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Ví da đẹp, nhìn sang trọng hơn giá tiền nhiều. Ship nhanh, đóng gói cẩn thận. Tặng bạn trai thì hợp lắm."</p>
+                        <div class="review-author">Trần Thị L. — TP.HCM</div>
+                        <div class="review-date">Tháng 1, 2026</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Thắt lưng da xịn thật, khóa tự động tiện lắm. Đi làm ngày nào cũng đeo, cả năm vẫn không bị phai màu."</p>
+                        <div class="review-author">Lê Văn T. — Đà Nẵng</div>
+                        <div class="review-date">Tháng 3, 2026</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">★★★★☆</div>
+                        <p class="review-text">"Combo 3+1 giá hời, chất lượng tốt. Lần sau chắc mua thêm cho cả gia đình. Chỉ tiếc giao hàng hơi chậm 1 ngày."</p>
+                        <div class="review-author">Phạm Đức A. — Cần Thơ</div>
+                        <div class="review-date">Tháng 2, 2026</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Mua tặng chồng, anh ấy mặc thấy mềm và thoải mái. Nhân viên tư vấn nhiệt tình, hỗ trợ đổi size nhanh chóng."</p>
+                        <div class="review-author">Hoàng Thu P. — Hải Phòng</div>
+                        <div class="review-date">Tháng 1, 2026</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Đã dùng nhiều hãng khác, NB2 là lựa chọn tốt nhất trong tầm giá. Sợi co giãn tốt, không bị chật hay rộng sau khi giặt."</p>
+                        <div class="review-author">Vũ Quang M. — Hà Nội</div>
+                        <div class="review-date">Tháng 3, 2026</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-highlight">
+                <strong>Chia sẻ trải nghiệm của bạn!</strong> Tag <strong>@NB2BoxerMen</strong> trên Facebook hoặc Zalo sau khi nhận hàng để nhận ngay voucher 20.000đ cho đơn tiếp theo.
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

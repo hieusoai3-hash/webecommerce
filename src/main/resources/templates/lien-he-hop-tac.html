@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liên Hệ Hợp Tác - NB2 Boxer Men</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: top}"></div>
+
+<section class="info-hero">
+    <div class="container">
+        <div class="breadcrumb">
+            <a th:href="@{/}">Trang chủ</a> <span>&#8250;</span>
+            <span style="color:#fff;">Liên hệ hợp tác</span>
+        </div>
+        <h1 class="info-hero-title">Liên Hệ Hợp Tác</h1>
+        <p class="info-hero-sub">Cùng NB2 Boxer Men mở rộng mạng lưới phân phối sản phẩm nam Việt</p>
+    </div>
+</section>
+
+<section class="info-content">
+    <div class="container">
+        <div class="info-body">
+
+            <div class="info-section">
+                <h2 class="info-section-title">Hình thức hợp tác</h2>
+                <div class="info-steps">
+                    <div class="info-step">
+                        <div class="info-step-num" style="background:#8b5cf6;">🤝</div>
+                        <div class="info-step-body">
+                            <strong>Đại lý phân phối</strong>
+                            Trở thành đại lý chính thức tại tỉnh/thành phố. Nhận chiết khấu 20–30% và hỗ trợ marketing từ NB2. Yêu cầu đơn tối thiểu 5 triệu/tháng.
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <div class="info-step-num" style="background:#10b981;">📦</div>
+                        <div class="info-step-body">
+                            <strong>Bán buôn / Dropship</strong>
+                            Nhập hàng số lượng lớn với giá sỉ hoặc bán dropship không cần trữ hàng. Phù hợp shop online, TikTok Shop, Shopee.
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <div class="info-step-num" style="background:#f59e0b;">📢</div>
+                        <div class="info-step-body">
+                            <strong>KOL / Influencer</strong>
+                            Hợp tác review sản phẩm, nhận hàng miễn phí và hoa hồng affiliate. Liên hệ để thảo luận chi tiết về chương trình.
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <div class="info-step-num" style="background:#3b82f6;">🏪</div>
+                        <div class="info-step-body">
+                            <strong>Chuỗi bán lẻ / Siêu thị</strong>
+                            NB2 mở cửa hợp tác đưa sản phẩm vào hệ thống bán lẻ, siêu thị tiện lợi và cửa hàng thời trang nam.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-section-title">Gửi đề xuất hợp tác</h2>
+                <form class="partner-form" onsubmit="submitPartner(event)">
+                    <div class="partner-form-row">
+                        <input type="text" placeholder="Họ và tên *" required>
+                        <input type="text" placeholder="Tên công ty / cửa hàng">
+                    </div>
+                    <div class="partner-form-row">
+                        <input type="tel" placeholder="Số điện thoại *" required>
+                        <input type="email" placeholder="Email">
+                    </div>
+                    <select>
+                        <option value="" disabled selected>Hình thức hợp tác</option>
+                        <option>Đại lý phân phối</option>
+                        <option>Bán buôn / Dropship</option>
+                        <option>KOL / Influencer</option>
+                        <option>Chuỗi bán lẻ / Siêu thị</option>
+                        <option>Hình thức khác</option>
+                    </select>
+                    <textarea placeholder="Mô tả ngắn về bạn và mong muốn hợp tác..."></textarea>
+                    <button type="submit" class="partner-submit">Gửi đề xuất</button>
+                </form>
+                <p id="partner-success" style="display:none;color:var(--color-success);font-weight:600;margin-top:12px;">
+                    ✓ Đã gửi thành công! NB2 sẽ liên hệ lại trong 1–2 ngày làm việc.
+                </p>
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-section-title">Liên hệ trực tiếp</h2>
+                <ul>
+                    <li>Email: <a href="mailto:nb2boxermen@gmail.com">nb2boxermen@gmail.com</a></li>
+                    <li>Hotline: <a href="tel:0975481356">0975.481.356</a> (8:00–18:00, Thứ 2–6)</li>
+                    <li>Địa chỉ: 72 Nguyễn Trãi, Thanh Xuân, Hà Nội</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+<script th:src="@{/js/script.js}"></script>
+<script>
+function submitPartner(e) {
+    e.preventDefault();
+    e.target.style.display = 'none';
+    document.getElementById('partner-success').style.display = 'block';
+}
+</script>
+</body>
+</html>
