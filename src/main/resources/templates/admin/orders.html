@@ -46,7 +46,7 @@
                     </thead>
                     <tbody>
                     <tr th:each="order : ${orders}" style="cursor:pointer;"
-                        th:attr="onclick=|window.location.href='@{/admin/orders/{id}(id=${order.id})}'|">
+                        th:attr="onclick=|window.location.href='@{/admin/orders/detail(id=${order.id})}'|">
                         <td><strong th:text="${order.id}"></strong></td>
                         <td>
                             <div th:text="${order.customerName}"></div>
@@ -83,26 +83,30 @@
                                         <i class="bi bi-chevron-down"></i>
                                     </button>
                                     <div class="dropdown-menu">
-                                        <form th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post">
+                                        <form th:action="@{/admin/orders/update-status}" method="post">
+                                            <input type="hidden" name="id" th:value="${order.id}">
                                             <input type="hidden" name="status" value="PENDING">
                                             <button type="submit" class="dropdown-item">
                                                 <i class="bi bi-clock" style="color:var(--warning);"></i> Chờ xử lý
                                             </button>
                                         </form>
                                         <form th:if="${order.paymentMethod == 'cod'}"
-                                              th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post">
+                                              th:action="@{/admin/orders/update-status}" method="post">
+                                            <input type="hidden" name="id" th:value="${order.id}">
                                             <input type="hidden" name="status" value="PAID">
                                             <button type="submit" class="dropdown-item">
                                                 <i class="bi bi-cash-coin" style="color:#7c3aed;"></i> Đã thanh toán (COD)
                                             </button>
                                         </form>
-                                        <form th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post">
+                                        <form th:action="@{/admin/orders/update-status}" method="post">
+                                            <input type="hidden" name="id" th:value="${order.id}">
                                             <input type="hidden" name="status" value="SHIPPED">
                                             <button type="submit" class="dropdown-item">
                                                 <i class="bi bi-truck" style="color:var(--info);"></i> Đang giao
                                             </button>
                                         </form>
-                                        <form th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post">
+                                        <form th:action="@{/admin/orders/update-status}" method="post">
+                                            <input type="hidden" name="id" th:value="${order.id}">
                                             <input type="hidden" name="status" value="COMPLETED">
                                             <button type="submit" class="dropdown-item">
                                                 <i class="bi bi-check-circle" style="color:var(--success);"></i> Hoàn thành

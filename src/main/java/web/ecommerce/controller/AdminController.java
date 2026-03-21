@@ -308,20 +308,23 @@ public class AdminController {
         return "admin/orders";
     }
 
-    @GetMapping("/orders/{id}")
-    public String orderDetail(@PathVariable String id, Model model) {
+    @GetMapping("/orders/detail")
+    public String orderDetail(@RequestParam String id, Model model) {
         orderService.getById(id).ifPresent(order -> model.addAttribute("order", order));
         return "admin/order-detail";
     }
 
-    @PostMapping("/orders/{id}/status")
-    public String updateOrderStatus(@PathVariable String id,
+    @PostMapping("/orders/update-status")
+    public String updateOrderStatus(@RequestParam String id,
                                     @RequestParam String status,
                                     @RequestParam(required = false) String from,
                                     RedirectAttributes redirectAttributes) {
         orderService.updateStatus(id, status);
         redirectAttributes.addFlashAttribute("success", "Đã cập nhật trạng thái đơn hàng.");
-        return "detail".equals(from) ? "redirect:/admin/orders/" + id : "redirect:/admin/orders";
+        if ("detail".equals(from)) {
+            return "redirect:/admin/orders/detail?id=" + java.net.URLEncoder.encode(id, java.nio.charset.StandardCharsets.UTF_8);
+        }
+        return "redirect:/admin/orders";
     }
 
     // ── Combos ───────────────────────────────────────────────────────────
