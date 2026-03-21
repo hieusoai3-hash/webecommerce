@@ -3,14 +3,63 @@ package web.ecommerce.config;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import web.ecommerce.model.Combo;
 import web.ecommerce.model.Product;
 import web.ecommerce.model.ProductColor;
+import web.ecommerce.repository.ComboRepository;
 import web.ecommerce.repository.ProductRepository;
 
 import java.util.List;
 
 @Configuration
 public class DataInitializer {
+
+    @Bean
+    CommandLineRunner seedCombos(ComboRepository comboRepo) {
+        return args -> {
+            if (comboRepo.count() > 0) return;
+
+            // ── Quantity combos (Ưu đãi cực sốc) ────────────────────────────
+            Combo q1 = new Combo();
+            q1.setName("Mua 3 Tặng 1 - Quần Sịp Siêu Tiết Kiệm");
+            q1.setBuyQuantity(3); q1.setFreeQuantity(1);
+            q1.setPrice(199000); q1.setOriginalPrice(259000);
+            q1.setBadgeText("HOT"); q1.setSortOrder(1); q1.setActive(true);
+            comboRepo.save(q1);
+
+            Combo q2 = new Combo();
+            q2.setName("Mua 5 Tặng 2 - Bộ Sưu Tập Đầy Đủ");
+            q2.setBuyQuantity(5); q2.setFreeQuantity(2);
+            q2.setPrice(299000); q2.setOriginalPrice(449000);
+            q2.setBadgeText("SIÊU HOT"); q2.setSortOrder(2); q2.setActive(true);
+            comboRepo.save(q2);
+
+            // ── Mix combos (Combo bán hàng) ───────────────────────────────────
+            Combo m1 = new Combo();
+            m1.setName("Combo Đàn Ông Gọn Gàng");
+            m1.setDescription("Tiết kiệm hơn khi mua kết hợp");
+            m1.setComboItems("3 quần sịp, 1 ví da");
+            m1.setPrice(799000); m1.setOriginalPrice(1000000);
+            m1.setBadgeText("HOT"); m1.setSortOrder(10); m1.setActive(true);
+            comboRepo.save(m1);
+
+            Combo m2 = new Combo();
+            m2.setName("Combo Đi Làm Chuẩn Chỉnh");
+            m2.setDescription("Phong cách công sở hoàn chỉnh");
+            m2.setComboItems("3 quần sịp, 1 thắt lưng");
+            m2.setPrice(849000); m2.setOriginalPrice(1050000);
+            m2.setBadgeText("NEW"); m2.setSortOrder(11); m2.setActive(true);
+            comboRepo.save(m2);
+
+            Combo m3 = new Combo();
+            m3.setName("Combo Nam Tính Toàn Diện");
+            m3.setDescription("Bộ combo hoàn hảo nhất cho nam giới");
+            m3.setComboItems("5 quần sịp, 1 ví da, 1 thắt lưng");
+            m3.setPrice(1299000); m3.setOriginalPrice(1750000);
+            m3.setBadgeText("BEST"); m3.setSortOrder(12); m3.setActive(true);
+            comboRepo.save(m3);
+        };
+    }
 
     @Bean
     CommandLineRunner seedProducts(ProductRepository repo) {

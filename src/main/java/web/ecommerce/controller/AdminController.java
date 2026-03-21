@@ -6,8 +6,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import web.ecommerce.model.Combo;
 import web.ecommerce.model.Product;
 import web.ecommerce.model.ProductColor;
+import web.ecommerce.service.ComboService;
 import web.ecommerce.service.OrderService;
 import web.ecommerce.service.ProductService;
 
@@ -23,13 +25,15 @@ public class AdminController {
 
     private final ProductService productService;
     private final OrderService orderService;
+    private final ComboService comboService;
 
     @Value("${upload.dir:src/main/resources/static}")
     private String uploadDir;
 
-    public AdminController(ProductService productService, OrderService orderService) {
+    public AdminController(ProductService productService, OrderService orderService, ComboService comboService) {
         this.productService = productService;
         this.orderService = orderService;
+        this.comboService = comboService;
     }
 
     // ── Login ────────────────────────────────────────────────────────────
@@ -310,5 +314,80 @@ public class AdminController {
         orderService.updateStatus(id, status);
         redirectAttributes.addFlashAttribute("success", "Đã cập nhật trạng thái đơn hàng.");
         return "redirect:/admin/orders";
+    }
+
+    // ── Combos ───────────────────────────────────────────────────────────
+
+    @GetMapping("/combos")
+    public String comboList(Model model) {
+        model.addAttribute("combos", comboService.getAll());
+        return "admin/combos";
+    }
+
+    @GetMapping("/combos/new")
+    public String newComboForm(Model model) {
+        model.addAttribute("combo", new Combo());
+        model.addAttribute("isNew", true);
+        return "admin/combo-form";
+    }
+
+    @GetMapping("/combos/{id}/edit")
+    public String editComboForm(@PathVariable Long id, Model model) {
+        Combo combo = comboService.getById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Combo not found: " + id));
+        model.addAttribute("combo", combo);
+        model.addAttribute("isNew", false);
+        return "admin/combo-form";
+    }
+
+    @PostMapping("/combos/save")
+    public String saveCombo(
+            @RequestParam(required = false) Long id,
+            @RequestParam String name,
+            @RequestParam int buyQuantity,
+            @RequestParam int freeQuantity,
+            @RequestParam long price,
+            @RequestParam(defaultValue = "0") long originalPrice,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) String details,
+            @RequestParam(required = false) String comboItems,
+            @RequestParam(required = false) String badgeText,
+            @RequestParam(required = false) String imageUrl,
+            @RequestParam(defaultValue = "true") boolean active,
+            @RequestParam(defaultValue = "0") int sortOrder,
+            RedirectAttributes redirectAttributes) {
+
+        Combo combo = (id != null) ? comboService.getById(id).orElse(new Combo()) : new Combo();
+        combo.setName(name);
+        combo.setBuyQuantity(buyQuantity);
+        combo.setFreeQuantity(freeQuantity);
+        combo.setPrice(price);
+        combo.setOriginalPrice(originalPrice);
+        combo.setDescription(description);
+        combo.setDetails(details);
+        combo.setComboItems(comboItems != null && !comboItems.isBlank() ? comboItems : null);
+        combo.setBadgeText(badgeText != null && !badgeText.isBlank() ? badgeText : null);
+        combo.setImageUrl(imageUrl != null && !imageUrl.isBlank() ? imageUrl : null);
+        combo.setActive(active);
+        combo.setSortOrder(sortOrder);
+        comboService.save(combo);
+        redirectAttributes.addFlashAttribute("success", "Đã lưu combo: " + name);
+        return "redirect:/admin/combos";
+    }
+
+    @PostMapping("/combos/{id}/delete")
+    public String deleteCombo(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        comboService.delete(id);
+        redirectAttributes.addFlashAttribute("success", "Đã xóa combo.");
+        return "redirect:/admin/combos";
+    }
+
+    @PostMapping("/combos/{id}/toggle")
+    public String toggleCombo(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        comboService.getById(id).ifPresent(c -> {
+            c.setActive(!c.isActive());
+            comboService.save(c);
+        });
+        return "redirect:/admin/combos";
     }
 }

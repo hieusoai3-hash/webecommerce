@@ -24,6 +24,9 @@
         <a th:href="@{/admin/orders}" th:classappend="${activePage == 'orders'} ? ' active'">
             <i class="bi bi-bag-check"></i> Đơn hàng
         </a>
+        <a th:href="@{/admin/combos}" th:classappend="${activePage == 'combos'} ? ' active'">
+            <i class="bi bi-gift"></i> Combo Hot
+        </a>
 
         <div class="sidebar-divider" style="margin-top: auto;"></div>
         <a th:href="@{/}" target="_blank">

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${isNew} ? 'Thêm Combo - NB2 Admin' : 'Sửa Combo - NB2 Admin'">Combo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div th:replace="~{admin/layout :: sidebar}" th:with="activePage='combos'"></div>
+
+<div class="admin-wrapper">
+    <div class="topbar">
+        <a th:href="@{/admin/combos}" class="btn-nb2 btn-outline btn-sm">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h1 th:text="${isNew} ? 'Thêm combo mới' : 'Chỉnh sửa: ' + ${combo.name}">Combo</h1>
+    </div>
+
+    <div class="content-area">
+        <div th:if="${error}" class="alert alert-danger">
+            <i class="bi bi-exclamation-circle-fill"></i> <span th:text="${error}"></span>
+        </div>
+
+        <form th:action="@{/admin/combos/save}" method="post">
+            <input th:if="${!isNew}" type="hidden" name="id" th:value="${combo.id}">
+
+            <div class="row-2-1" style="align-items:start;">
+
+                <!-- Left -->
+                <div>
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h6><i class="bi bi-gift me-2" style="color:var(--accent)"></i>Thông tin combo</h6>
+                        </div>
+                        <div class="admin-card-body">
+
+                            <div class="form-group">
+                                <label class="form-label">Tên combo</label>
+                                <input type="text" name="name" class="form-control"
+                                       th:value="${combo.name}" required
+                                       placeholder="vd: Combo Mua 3 Tặng 1 - Quần Sịp Bamboo">
+                            </div>
+
+                            <div class="row-2">
+                                <div class="form-group">
+                                    <label class="form-label">Số lượng mua <span class="hint">(bắt buộc)</span></label>
+                                    <input type="number" name="buyQuantity" class="form-control"
+                                           th:value="${combo.buyQuantity > 0 ? combo.buyQuantity : 3}"
+                                           min="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Số lượng tặng</label>
+                                    <input type="number" name="freeQuantity" class="form-control"
+                                           th:value="${combo.freeQuantity > 0 ? combo.freeQuantity : 1}"
+                                           min="0" required>
+                                </div>
+                            </div>
+
+                            <div class="row-2">
+                                <div class="form-group">
+                                    <label class="form-label">Giá combo (₫)</label>
+                                    <input type="number" name="price" class="form-control"
+                                           th:value="${combo.price}" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Giá gốc (₫) <span class="hint">0 = ẩn</span></label>
+                                    <input type="number" name="originalPrice" class="form-control"
+                                           th:value="${combo.originalPrice}" min="0">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Mô tả ngắn</label>
+                                <textarea name="description" class="form-control" rows="2"
+                                          th:text="${combo.description}"
+                                          placeholder="vd: Tiết kiệm 25% so với mua lẻ. Miễn phí vận chuyển."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Sản phẩm trong combo
+                                    <span class="hint">(cách nhau bằng dấu phẩy)</span>
+                                </label>
+                                <input type="text" name="comboItems" class="form-control"
+                                       th:value="${combo.comboItems}"
+                                       placeholder="vd: 3 quần sịp, 1 ví da, 1 thắt lưng">
+                                <div class="form-hint">Để trống nếu là combo mua N tặng N đơn giản.</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Chi tiết thêm <span class="hint">(tuỳ chọn)</span></label>
+                                <textarea name="details" class="form-control" rows="3"
+                                          th:text="${combo.details}"
+                                          placeholder="Các thông tin thêm về combo..."></textarea>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right -->
+                <div>
+                    <div class="admin-card" style="position:sticky; top:calc(var(--topbar-height) + 16px);">
+                        <div class="admin-card-header">
+                            <h6><i class="bi bi-gear me-2" style="color:var(--accent)"></i>Cài đặt</h6>
+                        </div>
+                        <div class="admin-card-body" style="display:flex; flex-direction:column; gap:14px;">
+
+                            <div class="form-group" style="margin:0;">
+                                <label class="form-label">Badge hiển thị</label>
+                                <input type="text" name="badgeText" class="form-control"
+                                       th:value="${combo.badgeText}"
+                                       placeholder="vd: HOT, BEST, NEW, -25%">
+                                <div class="form-hint">Để trống = tự động "COMBO"</div>
+                            </div>
+
+                            <div class="form-group" style="margin:0;">
+                                <label class="form-label">URL ảnh <span class="hint">(tuỳ chọn)</span></label>
+                                <input type="text" name="imageUrl" class="form-control"
+                                       th:value="${combo.imageUrl}"
+                                       placeholder="images/products/...">
+                            </div>
+
+                            <div class="form-group" style="margin:0;">
+                                <label class="form-label">Thứ tự hiển thị</label>
+                                <input type="number" name="sortOrder" class="form-control"
+                                       th:value="${combo.sortOrder}" min="0">
+                                <div class="form-hint">Số nhỏ hơn = hiển thị trước</div>
+                            </div>
+
+                            <div class="form-check">
+                                <input type="checkbox" name="active" id="active"
+                                       class="form-check-input" value="true"
+                                       th:checked="${combo.active or isNew}">
+                                <label for="active" class="form-label" style="margin-bottom:0; cursor:pointer;">
+                                    <i class="bi bi-eye" style="color:var(--success);"></i>
+                                    Hiển thị trên trang web
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn-nb2 btn-accent btn-lg btn-full">
+                                <i class="bi bi-check-lg"></i>
+                                <span th:text="${isNew} ? 'Tạo combo' : 'Lưu thay đổi'">Lưu</span>
+                            </button>
+                            <a th:href="@{/admin/combos}" class="btn-nb2 btn-outline btn-full">Hủy</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

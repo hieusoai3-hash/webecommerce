@@ -266,13 +266,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const image = productCard.querySelector('.img-primary').src;
         const activeColor = productCard.querySelector('.color-swatch.active');
         const color = activeColor ? activeColor.getAttribute('data-color') : 'Mặc định';
+        const productId = productCard.dataset.productId || '';
 
         const existingItem = cart.find(item => item.name === name && item.size === size && item.color === color);
 
         if (existingItem) {
             existingItem.qty += 1;
         } else {
-            cart.push({ name, price, image, size, color, qty: 1 });
+            cart.push({ productId, name, price, image, size, color, qty: 1 });
         }
 
         updateCartUI();
@@ -584,17 +585,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Place order
     if (placeOrderBtn) {
-        placeOrderBtn.addEventListener('click', () => {
+        placeOrderBtn.addEventListener('click', async () => {
             if (!validateCheckoutForm()) return;
 
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             const isFreeShip = subtotal >= FREE_SHIP_THRESHOLD;
             const total = isFreeShip ? subtotal : subtotal + SHIPPING_FEE;
 
-            // Generate order ID
-            const orderId = '#CF' + Math.random().toString(36).substring(2, 8).toUpperCase();
-
-            // Get payment method name
             const paymentMethodNames = {
                 'cod': 'Thanh toán khi nhận hàng (COD)',
                 'momo': 'Ví MoMo',
@@ -603,26 +600,63 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             const selectedPayment = document.querySelector('input[name="payment"]:checked').value;
 
-            // Show success
-            document.getElementById('success-order-id').textContent = orderId;
-            document.getElementById('success-payment-method').textContent = paymentMethodNames[selectedPayment] || 'COD';
-            document.getElementById('success-total').textContent = total.toLocaleString('vi-VN') + '₫';
+            const address = [
+                document.getElementById('checkout-address').value.trim(),
+                document.getElementById('checkout-district').value.trim(),
+                document.getElementById('checkout-city').value.trim()
+            ].filter(Boolean).join(', ');
 
-            checkoutContent.style.display = 'none';
-            checkoutSuccess.style.display = 'block';
+            const orderPayload = {
+                customerName:    document.getElementById('checkout-name').value.trim(),
+                customerPhone:   document.getElementById('checkout-phone').value.trim(),
+                customerAddress: address,
+                paymentMethod:   selectedPayment,
+                total:           total,
+                items: cart.map(item => ({
+                    productId:   item.productId || '',
+                    productName: item.name,
+                    size:        item.size,
+                    quantity:    item.qty,
+                    price:       item.price
+                }))
+            };
 
-            // Scroll modal to top
-            checkoutModal.scrollTop = 0;
+            // Disable button while submitting
+            placeOrderBtn.disabled = true;
+            placeOrderBtn.textContent = 'Đang xử lý...';
 
-            // Clear cart
-            cart = [];
-            updateCartUI();
+            try {
+                const res = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderPayload)
+                });
 
-            // Reset form
-            document.getElementById('checkout-form').reset();
-            // Reset payment to COD
-            paymentOptions.forEach(o => o.classList.remove('active'));
-            document.querySelector('.payment-option[data-method="cod"]').classList.add('active');
+                if (!res.ok) throw new Error('Server error ' + res.status);
+                const savedOrder = await res.json();
+
+                // Show success with real order ID from server
+                document.getElementById('success-order-id').textContent = savedOrder.id;
+                document.getElementById('success-payment-method').textContent = paymentMethodNames[selectedPayment] || 'COD';
+                document.getElementById('success-total').textContent = total.toLocaleString('vi-VN') + '₫';
+
+                checkoutContent.style.display = 'none';
+                checkoutSuccess.style.display = 'block';
+                checkoutModal.scrollTop = 0;
+
+                // Clear cart & reset form
+                cart = [];
+                updateCartUI();
+                document.getElementById('checkout-form').reset();
+                paymentOptions.forEach(o => o.classList.remove('active'));
+                document.querySelector('.payment-option[data-method="cod"]').classList.add('active');
+
+            } catch (err) {
+                showToast('Đặt hàng thất bại, vui lòng thử lại!');
+            } finally {
+                placeOrderBtn.disabled = false;
+                placeOrderBtn.textContent = 'Đặt hàng ngay';
+            }
         });
     }
 
@@ -777,11 +811,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const color = activeColorBtn ? activeColorBtn.title : 'Mặc định';
             const image = pdMainImg ? pdMainImg.src : '';
 
+            const productId = pdAddCartBtn.dataset.productId || '';
             const existingItem = cart.find(item => item.name === name && item.size === selectedSize.dataset.size && item.color === color);
             if (existingItem) {
                 existingItem.qty += 1;
             } else {
-                cart.push({ name, price: priceRaw, image, size: selectedSize.dataset.size, color, qty: 1 });
+                cart.push({ productId, name, price: priceRaw, image, size: selectedSize.dataset.size, color, qty: 1 });
             }
             updateCartUI();
             openCart();

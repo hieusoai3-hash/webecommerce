@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import web.ecommerce.model.Product;
+import web.ecommerce.service.ComboService;
 import web.ecommerce.service.ProductService;
 
 import java.util.List;
@@ -14,9 +15,11 @@ import java.util.Optional;
 public class PageController {
 
     private final ProductService productService;
+    private final ComboService comboService;
 
-    public PageController(ProductService productService) {
+    public PageController(ProductService productService, ComboService comboService) {
         this.productService = productService;
+        this.comboService = comboService;
     }
 
     @GetMapping("/")
@@ -59,6 +62,13 @@ public class PageController {
         model.addAttribute("products", productService.getOnSale());
         model.addAttribute("activePage", "sale");
         return "sale";
+    }
+
+    @GetMapping("/combo-hot")
+    public String comboHot(Model model) {
+        model.addAttribute("combos", comboService.getActive());
+        model.addAttribute("activePage", "combo-hot");
+        return "combo-hot";
     }
 
     @GetMapping("/ve-chung-toi")

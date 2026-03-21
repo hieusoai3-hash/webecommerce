@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combo Hot - NB2 Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        .combo-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; }
+        .combo-card {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:var(--radius-lg); overflow:hidden;
+            transition:box-shadow .2s, transform .2s;
+        }
+        .combo-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+        .combo-card-header {
+            padding:20px 20px 14px;
+            background:linear-gradient(135deg,var(--primary) 0%,#0f3460 100%);
+            position:relative;
+        }
+        .combo-card-header.inactive { background:var(--bg); }
+        .combo-badge {
+            display:inline-block; padding:3px 10px; border-radius:99px;
+            font-size:.68rem; font-weight:700; letter-spacing:.06em;
+            background:var(--accent); color:#fff; margin-bottom:8px;
+        }
+        .combo-label {
+            font-size:1.5rem; font-weight:900; color:#fff; line-height:1.1;
+        }
+        .combo-card-header.inactive .combo-label { color:var(--text-muted); }
+        .combo-name {
+            font-size:.82rem; color:rgba(255,255,255,.65); margin-top:4px;
+        }
+        .combo-card-header.inactive .combo-name { color:var(--text-soft); }
+        .combo-body { padding:18px 20px; }
+        .combo-price-row { display:flex; align-items:baseline; gap:10px; margin-bottom:10px; }
+        .combo-price { font-size:1.25rem; font-weight:900; color:var(--text); }
+        .combo-orig  { font-size:.82rem; color:var(--text-soft); text-decoration:line-through; }
+        .combo-saving{ font-size:.72rem; font-weight:700; color:var(--success); }
+        .combo-desc  { font-size:.82rem; color:var(--text-muted); line-height:1.5; margin-bottom:14px; }
+        .combo-actions { display:flex; gap:8px; flex-wrap:wrap; }
+        .inactive-tag {
+            display:inline-flex; align-items:center; gap:5px;
+            font-size:.72rem; font-weight:700; color:var(--text-soft);
+            background:var(--bg); border:1px solid var(--border);
+            border-radius:99px; padding:3px 10px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{admin/layout :: sidebar}" th:with="activePage='combos'"></div>
+
+<div class="admin-wrapper">
+    <div class="topbar">
+        <h1>Combo Hot</h1>
+        <span class="topbar-sep"></span>
+        <a th:href="@{/combo-hot}" target="_blank" class="btn-nb2 btn-outline btn-sm">
+            <i class="bi bi-box-arrow-up-right"></i> Xem trang
+        </a>
+        <a th:href="@{/admin/combos/new}" class="btn-nb2 btn-accent btn-sm">
+            <i class="bi bi-plus-lg"></i> Thêm combo
+        </a>
+    </div>
+
+    <div class="content-area">
+        <div th:if="${success}" class="alert alert-success">
+            <i class="bi bi-check-circle-fill"></i> <span th:text="${success}"></span>
+        </div>
+
+        <!-- Empty -->
+        <div th:if="${#lists.isEmpty(combos)}" class="admin-card">
+            <div class="empty-state" style="padding:60px 0;">
+                <i class="bi bi-gift" style="font-size:3rem; color:var(--text-soft);"></i>
+                <p>Chưa có combo nào. Nhấn "Thêm combo" để tạo.</p>
+            </div>
+        </div>
+
+        <!-- Grid -->
+        <div th:unless="${#lists.isEmpty(combos)}" class="combo-grid">
+            <div th:each="combo : ${combos}" class="combo-card">
+                <div class="combo-card-header" th:classappend="${!combo.active} ? ' inactive'">
+                    <div th:if="${combo.badgeText != null and !combo.badgeText.isEmpty()}"
+                         class="combo-badge" th:text="${combo.badgeText}">HOT</div>
+                    <div th:if="${combo.badgeText == null or combo.badgeText.isEmpty()}"
+                         class="combo-badge">COMBO</div>
+                    <div class="combo-label" th:text="${combo.label}">Mua 3 Tặng 1</div>
+                    <div class="combo-name" th:text="${combo.name}"></div>
+                </div>
+                <div class="combo-body">
+                    <div class="combo-price-row">
+                        <span class="combo-price" th:text="${combo.formattedPrice}"></span>
+                        <span th:if="${combo.originalPrice > 0}" class="combo-orig" th:text="${combo.formattedOriginalPrice}"></span>
+                        <span th:if="${combo.savingPct > 0}" class="combo-saving"
+                              th:text="'−' + ${combo.savingPct} + '%'"></span>
+                    </div>
+                    <div th:if="${combo.description != null}" class="combo-desc" th:text="${combo.description}"></div>
+                    <div th:unless="${combo.active}" style="margin-bottom:12px;">
+                        <span class="inactive-tag"><i class="bi bi-eye-slash"></i> Đang ẩn</span>
+                    </div>
+                    <div class="combo-actions">
+                        <a th:href="@{'/admin/combos/' + ${combo.id} + '/edit'}"
+                           class="btn-nb2 btn-primary btn-sm">
+                            <i class="bi bi-pencil-square"></i> Sửa
+                        </a>
+                        <form th:action="@{'/admin/combos/' + ${combo.id} + '/toggle'}" method="post" style="margin:0;">
+                            <button type="submit" class="btn-nb2 btn-outline btn-sm"
+                                    th:text="${combo.active} ? 'Ẩn' : 'Hiện'">Ẩn</button>
+                        </form>
+                        <form th:action="@{'/admin/combos/' + ${combo.id} + '/delete'}" method="post"
+                              style="margin:0;" onsubmit="return confirm('Xóa combo này?')">
+                            <button type="submit" class="btn-nb2 btn-danger-outline btn-sm">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
