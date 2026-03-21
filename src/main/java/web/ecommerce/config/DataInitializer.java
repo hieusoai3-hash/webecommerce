@@ -147,7 +147,7 @@ public class DataInitializer {
 
             // ── Ví da ─────────────────────────────────────────────────────
             save(repo, "vi-card-mini", "Ví Card Mini Monogram Neo", "vi-da", "Da cao cấp & Microfiber",
-                    450000, 0, 0, 5, 320, false,
+                    350000, 450000, 22, 5, 320, false,
                     "Ví card mini với thiết kế nhỏ gọn, đựng vừa thẻ và tiền mặt. Chất liệu da Microfiber bền đẹp.",
                     List.of("Da Microfiber cao cấp", "Thiết kế nhỏ gọn", "Nhiều ngăn thẻ", "Không bong tróc"),
                     List.of("Free Size"),
@@ -156,7 +156,7 @@ public class DataInitializer {
                             new ProductColor("Đen", "#1a1a1a", "images/products/wallets/wallet_premium_black.png")));
 
             save(repo, "vi-monogram-rfid", "Ví Mini Monogram Neo RFID", "vi-da", "Da cao cấp & Microfiber",
-                    550000, 0, 0, 5, 215, false,
+                    430000, 550000, 22, 5, 215, false,
                     "Ví Mini Monogram Neo tích hợp công nghệ chặn RFID bảo vệ thông tin thẻ ngân hàng.",
                     List.of("Công nghệ chặn RFID", "Da Microfiber bền đẹp", "Ngăn thẻ thông minh", "Bảo vệ thông tin cá nhân"),
                     List.of("Free Size"),
@@ -165,7 +165,7 @@ public class DataInitializer {
                             new ProductColor("Đen",       "#1a1a1a", "images/products/wallets/wallet_premium_black.png")));
 
             save(repo, "vi-mercury", "Ví Khắc Tên Mercury", "vi-da", "Da cao cấp & Microfiber",
-                    600000, 0, 0, 5, 410, true,
+                    480000, 600000, 20, 5, 410, true,
                     "Ví Mercury cao cấp với dịch vụ khắc tên miễn phí, món quà ý nghĩa cho người thân.",
                     List.of("Khắc tên miễn phí", "Da Microfiber cao cấp", "Thiết kế sang trọng", "Quà tặng ý nghĩa"),
                     List.of("Free Size"),
@@ -174,7 +174,7 @@ public class DataInitializer {
                             new ProductColor("Nâu",       "#8B4513", "images/products/wallets/wallet_premium_brown.png")));
 
             save(repo, "vi-hayden-rfid", "Ví Da Hayden RFID", "vi-da", "Da cao cấp & Microfiber",
-                    620000, 0, 0, 5, 180, false,
+                    490000, 620000, 21, 5, 180, false,
                     "Ví Hayden RFID với thiết kế ngang cổ điển, tích hợp công nghệ chặn RFID hiện đại.",
                     List.of("Chặn RFID bảo mật", "Thiết kế ngang cổ điển", "Nhiều ngăn tiện dụng", "Da bền không bong tróc"),
                     List.of("Free Size"),
