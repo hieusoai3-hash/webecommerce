@@ -78,7 +78,9 @@
             <p class="products-count">Hiển thị <strong th:text="${#lists.size(products)}"></strong> sản phẩm đang giảm giá</p>
         </div>
         <div class="product-grid" id="product-grid">
-            <div th:each="product : ${products}" th:replace="~{fragments/product-card :: card(product=${product})}"></div>
+            <th:block th:each="product : ${products}">
+                <div th:replace="~{fragments/product-card :: card(product=${product})}"></div>
+            </th:block>
         </div>
         <div class="products-cta" th:if="${#lists.isEmpty(products)}">
             <p>Không có sản phẩm nào đang giảm giá.</p>

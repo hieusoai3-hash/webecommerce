@@ -1,38 +1,44 @@
 package web.ecommerce.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import web.ecommerce.model.Order;
+import web.ecommerce.repository.OrderRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class OrderService {
 
-    // In-memory store — swap with a JPA repository when a database is added
-    private final List<Order> orders = new ArrayList<>();
+    private final OrderRepository repo;
+
+    public OrderService(OrderRepository repo) {
+        this.repo = repo;
+    }
 
     public Order create(Order order) {
         order.setId("#CF" + UUID.randomUUID().toString().substring(0, 6).toUpperCase());
         order.setStatus("PENDING");
-        orders.add(order);
-        return order;
+        return repo.save(order);
     }
 
+    @Transactional(readOnly = true)
     public List<Order> getAll() {
-        return List.copyOf(orders);
+        return repo.findAllByOrderByCreatedAtDesc();
     }
 
+    @Transactional(readOnly = true)
     public Optional<Order> getById(String id) {
-        return orders.stream().filter(o -> o.getId().equals(id)).findFirst();
+        return repo.findById(id);
     }
 
     public Optional<Order> updateStatus(String id, String status) {
-        return getById(id).map(o -> {
+        return repo.findById(id).map(o -> {
             o.setStatus(status);
-            return o;
+            return repo.save(o);
         });
     }
 }

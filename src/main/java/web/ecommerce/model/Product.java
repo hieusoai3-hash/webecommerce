@@ -1,8 +1,19 @@
 package web.ecommerce.model;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Table;
 import java.util.List;
 
+@Entity
+@Table(name = "products")
 public class Product {
+
+    @Id
     private String id;
     private String name;
     private String category;
@@ -12,10 +23,24 @@ public class Product {
     private int discount;
     private int rating;
     private int reviews;
+
+    @Column(length = 2000)
     private String description;
+
+    @ElementCollection
+    @CollectionTable(name = "product_features", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "feature")
     private List<String> features;
+
+    @ElementCollection
+    @CollectionTable(name = "product_colors", joinColumns = @JoinColumn(name = "product_id"))
     private List<ProductColor> colors;
+
+    @ElementCollection
+    @CollectionTable(name = "product_sizes", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "size")
     private List<String> sizes;
+
     private boolean hot;
 
     public Product() {}
@@ -86,4 +111,15 @@ public class Product {
 
     public boolean isHot() { return hot; }
     public void setHot(boolean hot) { this.hot = hot; }
+
+    /** Returns 0–100 representing how complete this product's data is. */
+    public int getCompletenessPct() {
+        int score = 0;
+        if (colors    != null && !colors.isEmpty())                    score += 20;
+        if (description != null && !description.isBlank())             score += 20;
+        if (features  != null && !features.isEmpty())                  score += 20;
+        if (sizes     != null && !sizes.isEmpty())                     score += 20;
+        if (reviews   > 0)                                             score += 20;
+        return score;
+    }
 }

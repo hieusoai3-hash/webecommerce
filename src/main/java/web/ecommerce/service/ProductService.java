@@ -1,198 +1,70 @@
 package web.ecommerce.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import web.ecommerce.model.Product;
-import web.ecommerce.model.ProductColor;
+import web.ecommerce.repository.ProductRepository;
 
-import java.util.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
+@Transactional
 public class ProductService {
 
-    private static final Map<String, Product> PRODUCTS = new LinkedHashMap<>();
+    private final ProductRepository repo;
 
-    static {
-        // ── Quần sịp ──────────────────────────────────────────────────────
-        add("trunk-bamboo", "Quần Lót Nam Trunk Bamboo", "quan-sip", "Bamboo",
-                189000, 259000, 27, 5, 2300, true,
-                "Quần lót nam Trunk Bamboo cao cấp với chất liệu sợi tre tự nhiên, mềm mại và thoáng khí. Thiết kế ôm vừa vặn, đường may phẳng không gây khó chịu.",
-                List.of("Chất liệu sợi Bamboo tự nhiên", "Kháng khuẩn & khử mùi", "Co giãn 4 chiều", "Đường may phẳng"),
-                List.of("XL", "2XL", "3XL", "4XL", "5XL", "6XL"),
-                List.of(
-                        new ProductColor("Đen",       "#1a1a1a", "images/products/underwear/product_trunk_navy.png"),
-                        new ProductColor("Xám",       "#555555", "images/products/underwear/product_boxer_gray.png"),
-                        new ProductColor("Xanh đậm",  "#1e3a5f", "images/products/underwear/product_trunk_navy.png"),
-                        new ProductColor("Xanh nhạt", "#87ceeb", "images/products/underwear/product_trunk_green.png")));
-
-        add("brief-modal", "Quần Lót Nam Brief Lenzing Modal", "quan-sip", "Lenzing Modal",
-                159000, 0, 0, 5, 1800, false,
-                "Brief Lenzing Modal với chất liệu Modal nhập khẩu từ Áo, siêu mềm mịn và co giãn tốt. Phù hợp mặc hàng ngày.",
-                List.of("Lenzing Modal nhập khẩu Áo", "Siêu mềm mịn", "Thấm hút mồ hôi tốt", "Giữ form sau nhiều lần giặt"),
-                List.of("XL", "2XL", "3XL", "4XL", "5XL", "6XL"),
-                List.of(
-                        new ProductColor("Đen",      "#1a1a1a", "images/products/underwear/product_brief_black.png"),
-                        new ProductColor("Xám",      "#555555", "images/products/underwear/product_brief_black.png"),
-                        new ProductColor("Xanh đậm", "#1e3a5f", "images/products/underwear/product_brief_black.png")));
-
-        add("combo-trunk-cotton", "Combo 3 Quần Lót Nam Trunk Cotton", "quan-sip", "Cotton Compact",
-                359000, 599000, 40, 5, 4100, true,
-                "Combo 3 quần lót Trunk Cotton Compact siêu tiết kiệm. Chất liệu cotton compact cao cấp, bền đẹp và thoáng mát.",
-                List.of("95% Cotton Compact, 5% Spandex", "Combo tiết kiệm 40%", "Bền màu sau nhiều lần giặt", "Thấm hút mồ hôi vượt trội"),
-                List.of("XL", "2XL", "3XL", "4XL", "5XL", "6XL"),
-                List.of(
-                        new ProductColor("Đen",      "#1a1a1a", "images/products/underwear/product_boxer_gray.png"),
-                        new ProductColor("Xám",      "#555555", "images/products/underwear/product_boxer_gray.png"),
-                        new ProductColor("Xanh đậm", "#1e3a5f", "images/products/underwear/product_trunk_navy.png")));
-
-        add("trunk-excool", "Quần Lót Nam Trunk Excool", "quan-sip", "Excool",
-                169000, 0, 0, 4, 956, false,
-                "Trunk Excool với công nghệ thoát ẩm nhanh gấp 3 lần, lý tưởng cho người vận động nhiều và khí hậu nóng ẩm.",
-                List.of("Công nghệ Excool độc quyền", "Thoát ẩm nhanh gấp 3 lần", "Siêu nhẹ, thoáng mát", "Phù hợp thể thao"),
-                List.of("XL", "2XL", "3XL", "4XL", "5XL", "6XL"),
-                List.of(
-                        new ProductColor("Đen",       "#1a1a1a", "images/products/underwear/product_trunk_green.png"),
-                        new ProductColor("Xám",       "#555555", "images/products/underwear/product_boxer_gray.png"),
-                        new ProductColor("Xanh nhạt", "#87ceeb", "images/products/underwear/product_trunk_green.png")));
-
-        add("brief-bamboo", "Quần Lót Nam Brief Bamboo", "quan-sip", "Bamboo",
-                139000, 199000, 30, 5, 1200, false,
-                "Brief Bamboo với thiết kế tam giác truyền thống, chất liệu sợi tre kháng khuẩn tự nhiên.",
-                List.of("Sợi Bamboo kháng khuẩn", "Thiết kế Brief truyền thống", "Mềm mại, thoáng khí", "Co giãn thoải mái"),
-                List.of("XL", "2XL", "3XL", "4XL", "5XL", "6XL"),
-                List.of(
-                        new ProductColor("Đen", "#1a1a1a", "images/products/underwear/product_brief_wine.png"),
-                        new ProductColor("Xám", "#555555", "images/products/underwear/product_brief_black.png")));
-
-        add("boxer-brief-modal", "Quần Lót Nam Boxer Brief Modal II", "quan-sip", "Lenzing Modal",
-                199000, 0, 0, 5, 678, false,
-                "Boxer Brief Modal II phiên bản nâng cấp, ống dài hơn giúp chống cọ xát đùi hiệu quả.",
-                List.of("Lenzing Modal cao cấp", "Ống dài chống cọ xát", "Lưng thun dệt êm ái", "Đường may phẳng tuyệt đối"),
-                List.of("XL", "2XL", "3XL", "4XL", "5XL", "6XL"),
-                List.of(
-                        new ProductColor("Đen",      "#1a1a1a", "images/products/underwear/product_trunk_navy.png"),
-                        new ProductColor("Xanh đậm", "#1e3a5f", "images/products/underwear/product_trunk_navy.png")));
-
-        add("combo-brief-cotton", "Combo 3 Quần Lót Nam Brief Cotton Stretch", "quan-sip", "Cotton Stretch",
-                299000, 459000, 35, 5, 3500, false,
-                "Combo 3 Brief Cotton Stretch với độ co giãn cao, ôm sát thoải mái suốt cả ngày.",
-                List.of("Cotton Stretch co giãn cao", "Combo tiết kiệm 35%", "Ôm sát nhưng không bó", "Bền đẹp lâu dài"),
-                List.of("XL", "2XL", "3XL", "4XL", "5XL", "6XL"),
-                List.of(
-                        new ProductColor("Đen", "#1a1a1a", "images/products/underwear/product_brief_black.png"),
-                        new ProductColor("Xám", "#555555", "images/products/underwear/product_brief_wine.png")));
-
-        add("trunk-ergofit", "Quần Lót Nam Trunk Ergofit", "quan-sip", "Cotton Compact",
-                179000, 0, 0, 4, 845, false,
-                "Trunk Ergofit với thiết kế công thái học, ôm theo cơ thể mang lại sự thoải mái tối đa.",
-                List.of("Thiết kế Ergofit công thái học", "Cotton Compact cao cấp", "Lưng thun không cuốn", "Thoáng khí cả ngày"),
-                List.of("XL", "2XL", "3XL", "4XL", "5XL", "6XL"),
-                List.of(
-                        new ProductColor("Đen",       "#1a1a1a", "images/products/underwear/product_boxer_gray.png"),
-                        new ProductColor("Xanh nhạt", "#87ceeb", "images/products/underwear/product_trunk_green.png")));
-
-        // ── Ví da ─────────────────────────────────────────────────────────
-        add("vi-card-mini", "Ví Card Mini Monogram Neo", "vi-da", "Da cao cấp & Microfiber",
-                450000, 0, 0, 5, 320, false,
-                "Ví card mini với thiết kế nhỏ gọn, đựng vừa thẻ và tiền mặt. Chất liệu da Microfiber bền đẹp.",
-                List.of("Da Microfiber cao cấp", "Thiết kế nhỏ gọn", "Nhiều ngăn thẻ", "Không bong tróc"),
-                List.of("Free Size"),
-                List.of(
-                        new ProductColor("Nâu", "#8B4513", "images/products/wallets/wallet_premium_brown.png"),
-                        new ProductColor("Đen", "#1a1a1a", "images/products/wallets/wallet_premium_black.png")));
-
-        add("vi-monogram-rfid", "Ví Mini Monogram Neo RFID", "vi-da", "Da cao cấp & Microfiber",
-                550000, 0, 0, 5, 215, false,
-                "Ví Mini Monogram Neo tích hợp công nghệ chặn RFID bảo vệ thông tin thẻ ngân hàng.",
-                List.of("Công nghệ chặn RFID", "Da Microfiber bền đẹp", "Ngăn thẻ thông minh", "Bảo vệ thông tin cá nhân"),
-                List.of("Free Size"),
-                List.of(
-                        new ProductColor("Xanh navy", "#1e3a5f", "images/products/wallets/wallet_premium_navy.png"),
-                        new ProductColor("Đen",       "#1a1a1a", "images/products/wallets/wallet_premium_black.png")));
-
-        add("vi-mercury", "Ví Khắc Tên Mercury", "vi-da", "Da cao cấp & Microfiber",
-                600000, 0, 0, 5, 410, true,
-                "Ví Mercury cao cấp với dịch vụ khắc tên miễn phí, món quà ý nghĩa cho người thân.",
-                List.of("Khắc tên miễn phí", "Da Microfiber cao cấp", "Thiết kế sang trọng", "Quà tặng ý nghĩa"),
-                List.of("Free Size"),
-                List.of(
-                        new ProductColor("Xanh rêu", "#556B2F", "images/products/wallets/wallet_premium_green.png"),
-                        new ProductColor("Nâu",       "#8B4513", "images/products/wallets/wallet_premium_brown.png")));
-
-        add("vi-hayden-rfid", "Ví Da Hayden RFID", "vi-da", "Da cao cấp & Microfiber",
-                620000, 0, 0, 5, 180, false,
-                "Ví Hayden RFID với thiết kế ngang cổ điển, tích hợp công nghệ chặn RFID hiện đại.",
-                List.of("Chặn RFID bảo mật", "Thiết kế ngang cổ điển", "Nhiều ngăn tiện dụng", "Da bền không bong tróc"),
-                List.of("Free Size"),
-                List.of(
-                        new ProductColor("Đen",       "#1a1a1a", "images/products/wallets/wallet_premium_black.png"),
-                        new ProductColor("Xanh navy", "#1e3a5f", "images/products/wallets/wallet_premium_navy.png")));
-
-        // ── Thắt lưng ─────────────────────────────────────────────────────
-        add("that-lung-tu-dong", "Thắt Lưng Nam Tự Động Neo", "that-lung", "Da bò thật 100%",
-                550000, 650000, 15, 5, 420, true,
-                "Thắt lưng nam tự động với khóa hợp kim cao cấp không gỉ. Thiết kế tối giản, nam tính, phù hợp cho dân công sở.",
-                List.of("Da bò nguyên tấm", "Khóa tự động hợp kim", "Bảo hành da 12 tháng", "Thiết kế tinh tế"),
-                List.of("Free Size"),
-                List.of(
-                        new ProductColor("Đen", "#1a1a1a", "images/products/belts/belt_black_auto.png"),
-                        new ProductColor("Nâu", "#8B4513", "images/products/belts/belt_brown_classic.png")));
-
-        add("that-lung-xoay-chieu", "Thắt Lưng Xoay Chiều Reversible", "that-lung", "Da bò Saffiano",
-                650000, 0, 0, 5, 315, false,
-                "Thắt lưng xoay chiều 2 mặt Đen - Nâu linh hoạt, mua 1 được 2. Phù hợp thay đổi trang phục dễ dàng.",
-                List.of("Khóa đúc nguyên khối", "Sử dụng 2 mặt Đen/Nâu", "Chất da Saffiano chống xước", "Tiện lợi, tiết kiệm"),
-                List.of("Free Size"),
-                List.of(
-                        new ProductColor("Đen/Nâu", "#333333", "images/products/belts/belt_black_auto.png")));
-
-        add("that-lung-duc-lo", "Thắt Lưng Đục Lỗ Cổ Điển", "that-lung", "Da bò Mill",
-                450000, 0, 0, 4, 150, false,
-                "Thiết kế đục lỗ cổ điển dập vân tự nhiên, mang đậm phong cách vintage và phóng khoáng.",
-                List.of("Da bò dập vân", "Phong cách Vintage", "Khóa kim đồng thau", "Bền bỉ vượt thời gian"),
-                List.of("Free Size"),
-                List.of(
-                        new ProductColor("Nâu sáp", "#A0522D", "images/products/belts/belt_brown_classic.png")));
-
-        add("that-lung-khoa-kim", "Thắt Lưng Khóa Kim Loại", "that-lung", "Da bò Nappa",
-                700000, 0, 0, 5, 512, false,
-                "Dòng thắt lưng cực kì sang trọng với khóa kim đúc nguyên khối xước mờ. Hoàn hảo khi kết hợp suit dự tiệc.",
-                List.of("Khóa kim loại xước mờ", "Chất da Nappa mềm", "Thiết kế đẳng cấp", "Tạo điểm nhấn mạnh mẽ"),
-                List.of("Free Size"),
-                List.of(
-                        new ProductColor("Đen bóng", "#000000", "images/products/belts/belt_black_auto.png")));
+    public ProductService(ProductRepository repo) {
+        this.repo = repo;
     }
 
-    private static void add(String id, String name, String category, String material,
-                             long price, long originalPrice, int discount,
-                             int rating, int reviews, boolean hot,
-                             String description, List<String> features,
-                             List<String> sizes, List<ProductColor> colors) {
-        Product p = new Product();
-        p.setId(id); p.setName(name); p.setCategory(category); p.setMaterial(material);
-        p.setPrice(price); p.setOriginalPrice(originalPrice); p.setDiscount(discount);
-        p.setRating(rating); p.setReviews(reviews); p.setHot(hot);
-        p.setDescription(description); p.setFeatures(features);
-        p.setSizes(sizes); p.setColors(colors);
-        PRODUCTS.put(id, p);
-    }
-
+    @Transactional(readOnly = true)
     public List<Product> getAll() {
-        return List.copyOf(PRODUCTS.values());
+        return repo.findAll();
     }
 
+    @Transactional(readOnly = true)
     public List<Product> getByCategory(String category) {
-        return PRODUCTS.values().stream()
-                .filter(p -> p.getCategory().equals(category))
-                .toList();
+        return repo.findByCategory(category);
     }
 
+    @Transactional(readOnly = true)
     public List<Product> getOnSale() {
-        return PRODUCTS.values().stream()
-                .filter(Product::isOnSale)
-                .toList();
+        return repo.findByDiscountGreaterThan(0);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Product> getById(String id) {
-        return Optional.ofNullable(PRODUCTS.get(id));
+        return repo.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Product> search(String q) {
+        if (q == null || q.isBlank()) return repo.findAll();
+        return repo.searchByKeyword(q.trim());
+    }
+
+    public Product save(Product product) {
+        return repo.save(product);
+    }
+
+    public void delete(String id) {
+        repo.deleteById(id);
+    }
+
+    public String saveImage(MultipartFile file, String uploadDir) throws IOException {
+        if (file == null || file.isEmpty()) return null;
+        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Path dir = Paths.get(uploadDir, "images", "products", "uploads");
+        Files.createDirectories(dir);
+        Files.copy(file.getInputStream(), dir.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
+        return "images/products/uploads/" + filename;
     }
 }

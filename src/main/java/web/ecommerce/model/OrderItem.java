@@ -1,5 +1,8 @@
 package web.ecommerce.model;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class OrderItem {
 
     private String productId;

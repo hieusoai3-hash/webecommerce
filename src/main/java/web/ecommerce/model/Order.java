@@ -1,15 +1,28 @@
 package web.ecommerce.model;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Entity
+@Table(name = "orders")
 public class Order {
 
+    @Id
     private String id;
     private String customerName;
     private String customerPhone;
     private String customerAddress;
+
+    @ElementCollection
+    @CollectionTable(name = "order_items", joinColumns = @JoinColumn(name = "order_id"))
     private List<OrderItem> items;
+
     private long total;
     private String paymentMethod;
     private String status;
@@ -46,4 +59,8 @@ public class Order {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getFormattedTotal() {
+        return String.format("%,d", total).replace(",", ".") + "₫";
+    }
 }

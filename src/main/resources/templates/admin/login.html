@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - NB2 Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div class="login-page">
+    <div class="login-card">
+        <div class="login-card-header">
+            <div class="logo-icon">&#9670;</div>
+            <h4>NB2 Admin</h4>
+            <p>Đăng nhập để quản trị hệ thống</p>
+        </div>
+        <div class="login-card-body">
+            <div th:if="${param.error}" class="alert alert-danger">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                Sai tên đăng nhập hoặc mật khẩu.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                <i class="bi bi-check-circle-fill"></i>
+                Đã đăng xuất thành công.
+            </div>
+
+            <form th:action="@{/admin/login}" method="post">
+                <div class="form-group">
+                    <label class="form-label">Tên đăng nhập</label>
+                    <input type="text" name="username" class="form-control" autofocus required
+                           placeholder="admin">
+                </div>
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label">Mật khẩu</label>
+                    <input type="password" name="password" class="form-control" required
+                           placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-nb2 btn-accent btn-lg btn-full">
+                    <i class="bi bi-shield-lock"></i> Đăng nhập
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

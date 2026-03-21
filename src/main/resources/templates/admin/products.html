@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sản phẩm - NB2 Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        /* ── Summary strip ── */
+        .summary-strip { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+        .s-pill {
+            display:flex; align-items:center; gap:8px; padding:10px 16px;
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:var(--radius-md); font-size:.82rem;
+        }
+        .s-pill strong { font-size:1.1rem; font-weight:800; color:var(--text); }
+        .s-pill .s-icon {
+            width:34px; height:34px; border-radius:var(--radius-sm);
+            display:flex; align-items:center; justify-content:center; font-size:.95rem;
+        }
+
+        /* ── Toolbar ── */
+        .pl-toolbar {
+            display:flex; align-items:center; gap:10px; margin-bottom:18px; flex-wrap:wrap;
+        }
+        .search-box {
+            display:flex; align-items:center; gap:8px; flex:1; max-width:320px;
+            background:var(--surface); border:1.5px solid var(--border);
+            border-radius:var(--radius-md); padding:8px 14px; transition:border-color .2s;
+        }
+        .search-box:focus-within { border-color:var(--primary); }
+        .search-box i { color:var(--text-soft); }
+        .search-box input { border:none; outline:none; background:none; font-family:inherit; font-size:.875rem; color:var(--text); width:100%; }
+        .search-box input::placeholder { color:var(--text-soft); }
+
+        .filter-pills { display:flex; gap:4px; }
+        .fp {
+            padding:6px 13px; border-radius:var(--radius-full); font-size:.78rem; font-weight:600;
+            border:1.5px solid var(--border); background:var(--surface); color:var(--text-muted);
+            cursor:pointer; transition:all .18s;
+        }
+        .fp:hover { background:var(--bg); }
+        .fp.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+        .fp.active.red  { background:var(--accent); border-color:var(--accent); }
+        .fp.active.green{ background:var(--success); border-color:var(--success); }
+
+        /* ── Cat tabs ── */
+        .cat-tabs {
+            display:flex; gap:5px; margin-bottom:20px;
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:var(--radius-lg); padding:5px; width:fit-content;
+        }
+        .cat-tab {
+            display:flex; align-items:center; gap:7px; padding:7px 18px;
+            border-radius:var(--radius-md); font-size:.84rem; font-weight:600;
+            cursor:pointer; border:none; background:transparent; color:var(--text-muted); transition:all .18s;
+        }
+        .cat-tab:hover { background:var(--bg); color:var(--text); }
+        .cat-tab.active { background:var(--primary); color:#fff; }
+        .cat-tab .tc { border-radius:99px; padding:1px 8px; font-size:.7rem; background:var(--bg); color:var(--text-muted); }
+        .cat-tab.active .tc { background:rgba(255,255,255,.22); color:#fff; }
+        .cat-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+        /* ── Section ── */
+        .section-header {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:14px 20px; border-bottom:1px solid var(--border);
+            cursor:pointer; user-select:none; transition:background .18s;
+        }
+        .section-header:hover { background:#fafbfc; }
+        .sec-title { display:flex; align-items:center; gap:10px; font-size:.94rem; font-weight:700; }
+        .sec-stats { display:flex; gap:16px; font-size:.78rem; color:var(--text-muted); }
+        .sec-stat strong { color:var(--text); font-weight:700; }
+        .chevron { font-size:.85rem; color:var(--text-muted); transition:transform .22s; }
+        .sec-actions { display:flex; align-items:center; gap:8px; }
+        .section-body { overflow:hidden; }
+        .section-body.collapsed { max-height:0 !important; overflow:hidden; }
+        .admin-card + .admin-card { margin-top:14px; }
+
+        /* ── Section footer ── */
+        .sec-footer {
+            display:flex; gap:20px; padding:12px 20px;
+            border-top:1px solid var(--border); background:var(--bg);
+            font-size:.8rem; color:var(--text-muted);
+        }
+        .sec-footer span strong { color:var(--text); font-weight:700; }
+
+        /* ── Rich row ── */
+        .p-img-wrap { position:relative; width:68px; height:68px; flex-shrink:0; }
+        .p-img-wrap img {
+            width:68px; height:68px; border-radius:var(--radius-md);
+            object-fit:cover; border:1px solid var(--border);
+        }
+        .p-no-img {
+            width:68px; height:68px; border-radius:var(--radius-md);
+            background:var(--bg); border:1px solid var(--border);
+            display:flex; align-items:center; justify-content:center;
+            color:var(--text-soft); font-size:1.3rem;
+        }
+        .p-hot-badge {
+            position:absolute; top:-5px; right:-5px;
+            background:var(--accent); color:#fff; border-radius:50%;
+            width:20px; height:20px; display:flex; align-items:center; justify-content:center;
+            font-size:.6rem; box-shadow:0 2px 6px rgba(233,69,96,.45);
+        }
+        .p-name  { font-weight:700; font-size:.9rem; color:var(--text); }
+        .p-id    { font-size:.7rem; color:var(--text-soft); font-family:monospace; margin-top:1px; }
+        .p-mat   { font-size:.75rem; color:var(--text-muted); margin-top:3px; }
+        .p-desc  { font-size:.73rem; color:var(--text-muted); margin-top:4px; max-width:220px;
+                   white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .p-feat  { font-size:.7rem; color:var(--text-soft); margin-top:2px; }
+
+        .color-dots { display:flex; gap:4px; flex-wrap:wrap; align-items:center; }
+        .c-dot { width:14px; height:14px; border-radius:50%; border:1.5px solid rgba(0,0,0,.1); box-shadow:0 1px 2px rgba(0,0,0,.1); }
+        .c-more { background:var(--bg); border:1px solid var(--border); border-radius:99px; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:.62rem; font-weight:700; color:var(--text-muted); }
+        .size-tags { display:flex; gap:3px; flex-wrap:wrap; margin-top:6px; }
+        .s-tag { padding:2px 7px; border-radius:4px; font-size:.67rem; font-weight:600; background:var(--bg); border:1px solid var(--border); color:var(--text-muted); }
+
+        .price-curr { font-size:.95rem; font-weight:800; color:var(--text); }
+        .price-orig { font-size:.75rem; color:var(--text-soft); text-decoration:line-through; }
+        .price-disc { display:inline-flex; align-items:center; padding:1px 7px; border-radius:99px; font-size:.7rem; font-weight:700; background:var(--accent-light); color:var(--accent); margin-top:3px; }
+
+        .stars { color:#f59e0b; font-size:.8rem; letter-spacing:-.5px; }
+        .rev-cnt { font-size:.72rem; color:var(--text-muted); }
+
+        /* Sold stats */
+        .sold-qty { font-size:1rem; font-weight:800; color:var(--text); }
+        .sold-rev { font-size:.74rem; color:var(--success); font-weight:600; margin-top:2px; }
+        .sold-zero { font-size:.82rem; color:var(--text-soft); }
+
+        /* Completeness bar */
+        .comp-wrap { display:flex; flex-direction:column; gap:5px; min-width:90px; }
+        .comp-bar-track { height:6px; background:var(--bg); border-radius:99px; overflow:hidden; border:1px solid var(--border); }
+        .comp-bar-fill { height:100%; border-radius:99px; transition:width .4s ease; }
+        .comp-pct { font-size:.72rem; font-weight:700; }
+        .comp-checks { display:flex; gap:3px; flex-wrap:wrap; }
+        .comp-check { font-size:.65rem; padding:1px 5px; border-radius:4px; }
+
+        /* Status col */
+        .status-badges { display:flex; flex-direction:column; gap:4px; }
+
+        /* Row hidden by filter */
+        tr.row-hidden { display:none; }
+
+        /* Sortable headers */
+        th.sortable { cursor:pointer; white-space:nowrap; }
+        th.sortable:hover { color:var(--accent); }
+        th.sortable .sort-icon { font-size:.7rem; color:var(--text-soft); margin-left:3px; }
+        th.sortable.asc .sort-icon::before  { content:' ▲'; }
+        th.sortable.desc .sort-icon::before { content:' ▼'; }
+
+        /* Select all checkbox */
+        .bulk-bar {
+            display:none; align-items:center; gap:10px; padding:10px 16px;
+            background:var(--accent-light); border-bottom:1px solid #f9b4bf; font-size:.85rem;
+        }
+        .bulk-bar.visible { display:flex; }
+    </style>
+</head>
+<body>
+<div th:replace="~{admin/layout :: sidebar}" th:with="activePage='products'"></div>
+
+<div class="admin-wrapper">
+    <div class="topbar">
+        <h1>Sản phẩm</h1>
+        <span class="topbar-sep"></span>
+        <a th:href="@{/admin/products/new}" class="btn-nb2 btn-accent btn-sm">
+            <i class="bi bi-plus-lg"></i> Thêm sản phẩm
+        </a>
+    </div>
+
+    <div class="content-area">
+
+        <div th:if="${success}" class="alert alert-success">
+            <i class="bi bi-check-circle-fill"></i> <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger">
+            <i class="bi bi-exclamation-circle-fill"></i> <span th:text="${error}"></span>
+        </div>
+
+        <!-- Summary strip -->
+        <div class="summary-strip">
+            <div class="s-pill">
+                <div class="s-icon" style="background:var(--info-light); color:var(--info);"><i class="bi bi-box-seam"></i></div>
+                <div><strong th:text="${#lists.size(products)}">0</strong><br><span style="color:var(--text-muted);">Tổng SP</span></div>
+            </div>
+            <div class="s-pill">
+                <div class="s-icon" style="background:var(--accent-light); color:var(--accent);"><i class="bi bi-fire"></i></div>
+                <div><strong th:text="${#lists.size(products.?[hot == true])}">0</strong><br><span style="color:var(--text-muted);">Nổi bật</span></div>
+            </div>
+            <div class="s-pill">
+                <div class="s-icon" style="background:var(--success-light); color:var(--success);"><i class="bi bi-tag-fill"></i></div>
+                <div><strong th:text="${#lists.size(products.?[discount > 0])}">0</strong><br><span style="color:var(--text-muted);">Đang sale</span></div>
+            </div>
+            <div class="s-pill">
+                <div class="s-icon" style="background:#fff8ec; color:var(--amber);"><i class="bi bi-palette-fill"></i></div>
+                <div><strong th:text="${#lists.size(products.?[colors != null and !colors.empty])}">0</strong><br><span style="color:var(--text-muted);">Có ảnh màu</span></div>
+            </div>
+            <div class="s-pill">
+                <div class="s-icon" style="background:var(--bg); color:var(--text-muted);"><i class="bi bi-check2-circle"></i></div>
+                <div><strong th:text="${#lists.size(products.?[completenessPct == 100])}">0</strong><br><span style="color:var(--text-muted);">Hoàn chỉnh</span></div>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="pl-toolbar">
+            <div class="search-box">
+                <i class="bi bi-search"></i>
+                <input type="text" id="p-search" placeholder="Tìm tên, ID, chất liệu...">
+            </div>
+            <div class="filter-pills">
+                <button class="fp active" data-filter="all">Tất cả</button>
+                <button class="fp red"   data-filter="hot">🔥 Nổi bật</button>
+                <button class="fp green" data-filter="sale">🏷 Sale</button>
+                <button class="fp"       data-filter="normal">Thường</button>
+                <button class="fp"       data-filter="incomplete">⚠ Thiếu dữ liệu</button>
+            </div>
+        </div>
+
+        <!-- Category tabs -->
+        <div class="cat-tabs">
+            <button class="cat-tab active" data-target="sec-qs">
+                <span class="cat-dot" style="background:#3b82f6;"></span> Quần sịp
+                <span class="tc" th:text="${#lists.size(products.?[category == 'quan-sip'])}">0</span>
+            </button>
+            <button class="cat-tab" data-target="sec-vd">
+                <span class="cat-dot" style="background:#f59e0b;"></span> Ví da
+                <span class="tc" th:text="${#lists.size(products.?[category == 'vi-da'])}">0</span>
+            </button>
+            <button class="cat-tab" data-target="sec-tl">
+                <span class="cat-dot" style="background:#10b981;"></span> Thắt lưng
+                <span class="tc" th:text="${#lists.size(products.?[category == 'that-lung'])}">0</span>
+            </button>
+        </div>
+
+        <!-- ══ QUẦN SỊP ══════════════════════════════════════════════ -->
+        <div class="admin-card" id="sec-qs"
+             th:with="catProducts=${products.?[category == 'quan-sip']}">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="sec-title">
+                    <span class="cat-dot" style="background:#3b82f6; width:12px; height:12px;"></span>
+                    Quần Sịp Nam
+                    <span class="badge badge-blue"
+                          th:text="${#lists.size(catProducts)} + ' sản phẩm'"></span>
+                </div>
+                <div class="sec-actions">
+                    <div class="sec-stats">
+                        <span>Hot: <strong th:text="${#lists.size(catProducts.?[hot==true])}">0</strong></span>
+                        <span>Sale: <strong th:text="${#lists.size(catProducts.?[discount>0])}">0</strong></span>
+                        <span>Giá TB: <strong
+                                th:text="${catProducts.empty ? '—' : #numbers.formatDecimal(catProducts.stream().mapToLong(p -> p.price).average().orElse(0) / 1000, 0, 'POINT', 0, 'COMMA') + 'K₫'}">—</strong></span>
+                    </div>
+                    <a th:href="@{/admin/products/new}" class="btn-nb2 btn-outline btn-sm"
+                       onclick="event.stopPropagation()"><i class="bi bi-plus-lg"></i> Thêm</a>
+                    <i class="bi bi-chevron-down chevron"></i>
+                </div>
+            </div>
+            <div class="section-body">
+                <div th:if="${catProducts.empty}" class="empty-state">
+                    <i class="bi bi-inbox"></i><p>Chưa có sản phẩm trong danh mục này.</p>
+                </div>
+                <table th:unless="${catProducts.empty}" class="admin-table" id="tbl-qs">
+                    <thead><tr>
+                        <th width="76">Ảnh</th>
+                        <th class="sortable" data-col="name">Sản phẩm <span class="sort-icon"></span></th>
+                        <th>Màu / Size</th>
+                        <th class="sortable" data-col="price">Giá <span class="sort-icon"></span></th>
+                        <th class="sortable" data-col="sold">Đã bán <span class="sort-icon"></span></th>
+                        <th class="sortable" data-col="rating">Đánh giá <span class="sort-icon"></span></th>
+                        <th>Hoàn chỉnh</th>
+                        <th>Trạng thái</th>
+                        <th width="120">Thao tác</th>
+                    </tr></thead>
+                    <tbody>
+                    <th:block th:each="p : ${products}" th:if="${p.category == 'quan-sip'}">
+                        <tr th:replace="~{admin/products :: productRow(p=${p}, salesByProduct=${salesByProduct}, revByProduct=${revByProduct})}"></tr>
+                    </th:block>
+                    </tbody>
+                </table>
+                <div th:unless="${catProducts.empty}" class="sec-footer">
+                    <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.stream().mapToInt(p -> (p.colors != null ? p.colors.size() : 0)).sum()}">0</strong></span>
+                    <span>📐 SP có size: <strong th:text="${#lists.size(catProducts.?[sizes != null and !sizes.empty])}">0</strong></span>
+                    <span>✅ Hoàn chỉnh 100%: <strong th:text="${#lists.size(catProducts.?[completenessPct == 100])}">0</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ VÍ DA ═════════════════════════════════════════════════ -->
+        <div class="admin-card" id="sec-vd"
+             th:with="catProducts=${products.?[category == 'vi-da']}">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="sec-title">
+                    <span class="cat-dot" style="background:#f59e0b; width:12px; height:12px;"></span>
+                    Ví Da Cao Cấp
+                    <span class="badge badge-amber"
+                          th:text="${#lists.size(catProducts)} + ' sản phẩm'"></span>
+                </div>
+                <div class="sec-actions">
+                    <div class="sec-stats">
+                        <span>Hot: <strong th:text="${#lists.size(catProducts.?[hot==true])}">0</strong></span>
+                        <span>Sale: <strong th:text="${#lists.size(catProducts.?[discount>0])}">0</strong></span>
+                        <span>Giá TB: <strong
+                                th:text="${catProducts.empty ? '—' : #numbers.formatDecimal(catProducts.stream().mapToLong(p -> p.price).average().orElse(0) / 1000, 0, 'POINT', 0, 'COMMA') + 'K₫'}">—</strong></span>
+                    </div>
+                    <a th:href="@{/admin/products/new}" class="btn-nb2 btn-outline btn-sm"
+                       onclick="event.stopPropagation()"><i class="bi bi-plus-lg"></i> Thêm</a>
+                    <i class="bi bi-chevron-down chevron"></i>
+                </div>
+            </div>
+            <div class="section-body">
+                <div th:if="${catProducts.empty}" class="empty-state">
+                    <i class="bi bi-inbox"></i><p>Chưa có sản phẩm trong danh mục này.</p>
+                </div>
+                <table th:unless="${catProducts.empty}" class="admin-table" id="tbl-vd">
+                    <thead><tr>
+                        <th width="76">Ảnh</th>
+                        <th class="sortable" data-col="name">Sản phẩm <span class="sort-icon"></span></th>
+                        <th>Màu / Size</th>
+                        <th class="sortable" data-col="price">Giá <span class="sort-icon"></span></th>
+                        <th class="sortable" data-col="sold">Đã bán <span class="sort-icon"></span></th>
+                        <th class="sortable" data-col="rating">Đánh giá <span class="sort-icon"></span></th>
+                        <th>Hoàn chỉnh</th>
+                        <th>Trạng thái</th>
+                        <th width="120">Thao tác</th>
+                    </tr></thead>
+                    <tbody>
+                    <th:block th:each="p : ${products}" th:if="${p.category == 'vi-da'}">
+                        <tr th:replace="~{admin/products :: productRow(p=${p}, salesByProduct=${salesByProduct}, revByProduct=${revByProduct})}"></tr>
+                    </th:block>
+                    </tbody>
+                </table>
+                <div th:unless="${catProducts.empty}" class="sec-footer">
+                    <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.stream().mapToInt(p -> (p.colors != null ? p.colors.size() : 0)).sum()}">0</strong></span>
+                    <span>📐 SP có size: <strong th:text="${#lists.size(catProducts.?[sizes != null and !sizes.empty])}">0</strong></span>
+                    <span>✅ Hoàn chỉnh 100%: <strong th:text="${#lists.size(catProducts.?[completenessPct == 100])}">0</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ THẮT LƯNG ══════════════════════════════════════════════ -->
+        <div class="admin-card" id="sec-tl"
+             th:with="catProducts=${products.?[category == 'that-lung']}">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="sec-title">
+                    <span class="cat-dot" style="background:#10b981; width:12px; height:12px;"></span>
+                    Thắt Lưng Da
+                    <span class="badge badge-green"
+                          th:text="${#lists.size(catProducts)} + ' sản phẩm'"></span>
+                </div>
+                <div class="sec-actions">
+                    <div class="sec-stats">
+                        <span>Hot: <strong th:text="${#lists.size(catProducts.?[hot==true])}">0</strong></span>
+                        <span>Sale: <strong th:text="${#lists.size(catProducts.?[discount>0])}">0</strong></span>
+                        <span>Giá TB: <strong
+                                th:text="${catProducts.empty ? '—' : #numbers.formatDecimal(catProducts.stream().mapToLong(p -> p.price).average().orElse(0) / 1000, 0, 'POINT', 0, 'COMMA') + 'K₫'}">—</strong></span>
+                    </div>
+                    <a th:href="@{/admin/products/new}" class="btn-nb2 btn-outline btn-sm"
+                       onclick="event.stopPropagation()"><i class="bi bi-plus-lg"></i> Thêm</a>
+                    <i class="bi bi-chevron-down chevron"></i>
+                </div>
+            </div>
+            <div class="section-body">
+                <div th:if="${catProducts.empty}" class="empty-state">
+                    <i class="bi bi-inbox"></i><p>Chưa có sản phẩm trong danh mục này.</p>
+                </div>
+                <table th:unless="${catProducts.empty}" class="admin-table" id="tbl-tl">
+                    <thead><tr>
+                        <th width="76">Ảnh</th>
+                        <th class="sortable" data-col="name">Sản phẩm <span class="sort-icon"></span></th>
+                        <th>Màu / Size</th>
+                        <th class="sortable" data-col="price">Giá <span class="sort-icon"></span></th>
+                        <th class="sortable" data-col="sold">Đã bán <span class="sort-icon"></span></th>
+                        <th class="sortable" data-col="rating">Đánh giá <span class="sort-icon"></span></th>
+                        <th>Hoàn chỉnh</th>
+                        <th>Trạng thái</th>
+                        <th width="120">Thao tác</th>
+                    </tr></thead>
+                    <tbody>
+                    <th:block th:each="p : ${products}" th:if="${p.category == 'that-lung'}">
+                        <tr th:replace="~{admin/products :: productRow(p=${p}, salesByProduct=${salesByProduct}, revByProduct=${revByProduct})}"></tr>
+                    </th:block>
+                    </tbody>
+                </table>
+                <div th:unless="${catProducts.empty}" class="sec-footer">
+                    <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.stream().mapToInt(p -> (p.colors != null ? p.colors.size() : 0)).sum()}">0</strong></span>
+                    <span>📐 SP có size: <strong th:text="${#lists.size(catProducts.?[sizes != null and !sizes.empty])}">0</strong></span>
+                    <span>✅ Hoàn chỉnh 100%: <strong th:text="${#lists.size(catProducts.?[completenessPct == 100])}">0</strong></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ══ Shared row fragment ══════════════════════════════════════════════ -->
+<tr th:fragment="productRow(p, salesByProduct, revByProduct)"
+    th:with="sold=${salesByProduct != null and salesByProduct.containsKey(p.id) ? salesByProduct[p.id] : 0},
+             rev=${revByProduct  != null and revByProduct.containsKey(p.id)  ? revByProduct[p.id]  : 0},
+             pct=${p.completenessPct}"
+    th:attr="data-search=${#strings.toLowerCase(p.name + ' ' + p.id + ' ' + p.material)},
+             data-hot=${p.hot},
+             data-sale=${p.discount > 0},
+             data-pct=${pct}">
+
+    <!-- Image -->
+    <td style="padding:10px 16px;">
+        <div class="p-img-wrap">
+            <img th:if="${p.colors != null and !p.colors.empty}"
+                 th:src="@{'/' + ${p.colors[0].imageUrl}}"
+                 alt="img" onerror="this.style.display='none'">
+            <div th:unless="${p.colors != null and !p.colors.empty}" class="p-no-img">
+                <i class="bi bi-image"></i>
+            </div>
+            <div th:if="${p.hot}" class="p-hot-badge">🔥</div>
+        </div>
+    </td>
+
+    <!-- Name + meta + description preview -->
+    <td>
+        <div class="p-name" th:text="${p.name}"></div>
+        <div class="p-id" th:text="${p.id}"></div>
+        <div class="p-mat"><i class="bi bi-layers" style="font-size:.68rem;"></i> <span th:text="${p.material}"></span></div>
+        <div class="p-desc" th:if="${p.description != null and !p.description.isEmpty()}"
+             th:text="${p.description}"></div>
+        <div class="p-feat" th:if="${p.features != null and !p.features.empty}">
+            <i class="bi bi-check2-all" style="color:var(--success);"></i>
+            <span th:text="${#lists.size(p.features)} + ' tính năng'"></span>
+        </div>
+    </td>
+
+    <!-- Colors + Sizes -->
+    <td>
+        <div th:if="${p.colors != null and !p.colors.empty}">
+            <div class="color-dots">
+                <div th:each="c,st : ${p.colors}" th:if="${st.index < 6}"
+                     class="c-dot" th:style="'background:' + ${c.hex}"
+                     th:title="${c.name}"></div>
+                <div th:if="${#lists.size(p.colors) > 6}" class="c-more"
+                     th:text="'+' + (${#lists.size(p.colors)} - 6)"></div>
+            </div>
+            <div style="font-size:.7rem; color:var(--text-muted); margin-top:3px;"
+                 th:text="${#lists.size(p.colors)} + ' màu'"></div>
+        </div>
+        <div class="size-tags" th:if="${p.sizes != null and !p.sizes.empty}">
+            <span th:each="s,st : ${p.sizes}" th:if="${st.index < 5}"
+                  class="s-tag" th:text="${s}"></span>
+            <span th:if="${#lists.size(p.sizes) > 5}" class="s-tag"
+                  th:text="'+' + (${#lists.size(p.sizes)} - 5)"></span>
+        </div>
+        <div th:if="${(p.colors == null or p.colors.empty) and (p.sizes == null or p.sizes.empty)}"
+             style="font-size:.78rem; color:var(--text-soft);">—</div>
+    </td>
+
+    <!-- Price -->
+    <td th:attr="data-price=${p.price}">
+        <div class="price-curr" th:text="${p.formattedPrice}"></div>
+        <div th:if="${p.originalPrice > 0}" class="price-orig"
+             th:text="${p.formattedOriginalPrice}"></div>
+        <div th:if="${p.discount > 0}" class="price-disc"
+             th:text="'−' + ${p.discount} + '%'"></div>
+    </td>
+
+    <!-- Sold + Revenue -->
+    <td th:attr="data-sold=${sold}">
+        <div th:if="${sold > 0}">
+            <div class="sold-qty" th:text="${sold} + ' cái'"></div>
+            <div class="sold-rev"
+                 th:text="'~' + ${#numbers.formatDecimal(rev / 1000, 0, 'POINT', 0, 'COMMA') + 'K₫'}"></div>
+        </div>
+        <div th:unless="${sold > 0}" class="sold-zero">Chưa có</div>
+    </td>
+
+    <!-- Rating -->
+    <td th:attr="data-rating=${p.rating}">
+        <div class="stars" th:text="${p.stars}"></div>
+        <div class="rev-cnt" th:text="${p.formattedReviews} + ' đánh giá'"></div>
+    </td>
+
+    <!-- Completeness -->
+    <td>
+        <div class="comp-wrap">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <span class="comp-pct"
+                      th:style="${pct == 100} ? 'color:var(--success)' : (${pct >= 60} ? 'color:var(--warning)' : 'color:var(--danger)')"
+                      th:text="${pct} + '%'">0%</span>
+            </div>
+            <div class="comp-bar-track">
+                <div class="comp-bar-fill"
+                     th:style="'width:' + ${pct} + '%; background:' + (${pct == 100} ? 'var(--success)' : (${pct >= 60} ? 'var(--warning)' : 'var(--danger)'))"></div>
+            </div>
+            <div class="comp-checks">
+                <span class="comp-check"
+                      th:style="${p.colors != null and !p.colors.empty} ? 'background:var(--success-light);color:#065f46' : 'background:var(--danger-light);color:#991b1b'"
+                      th:title="'Ảnh màu'">🖼</span>
+                <span class="comp-check"
+                      th:style="${p.description != null and !p.description.isEmpty()} ? 'background:var(--success-light);color:#065f46' : 'background:var(--danger-light);color:#991b1b'"
+                      th:title="'Mô tả'">📝</span>
+                <span class="comp-check"
+                      th:style="${p.features != null and !p.features.empty} ? 'background:var(--success-light);color:#065f46' : 'background:var(--danger-light);color:#991b1b'"
+                      th:title="'Tính năng'">✅</span>
+                <span class="comp-check"
+                      th:style="${p.sizes != null and !p.sizes.empty} ? 'background:var(--success-light);color:#065f46' : 'background:var(--danger-light);color:#991b1b'"
+                      th:title="'Kích thước'">📐</span>
+                <span class="comp-check"
+                      th:style="${p.reviews > 0} ? 'background:var(--success-light);color:#065f46' : 'background:var(--danger-light);color:#991b1b'"
+                      th:title="'Đánh giá'">⭐</span>
+            </div>
+        </div>
+    </td>
+
+    <!-- Status -->
+    <td>
+        <div class="status-badges">
+            <span th:if="${p.hot}" class="badge badge-red">🔥 Nổi bật</span>
+            <span th:if="${p.discount > 0}" class="badge badge-green"
+                  th:text="'Sale −' + ${p.discount} + '%'"></span>
+            <span th:if="${!p.hot and p.discount == 0}" class="badge badge-gray">Thường</span>
+            <span th:if="${sold > 0}" class="badge badge-blue"
+                  th:text="'Bán chạy ×' + ${sold}"></span>
+        </div>
+    </td>
+
+    <!-- Actions -->
+    <td>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+            <a th:href="@{'/admin/products/' + ${p.id} + '/edit'}"
+               class="btn-nb2 btn-primary btn-sm" style="justify-content:center;">
+                <i class="bi bi-pencil-square"></i> Chỉnh sửa
+            </a>
+            <a th:href="@{'/product-detail?id=' + ${p.id}}" target="_blank"
+               class="btn-nb2 btn-outline btn-sm" style="justify-content:center;">
+                <i class="bi bi-eye"></i> Xem
+            </a>
+            <form th:action="@{'/admin/products/' + ${p.id} + '/delete'}" method="post"
+                  onsubmit="return confirm('Xóa sản phẩm \'' + this.dataset.name + '\'?')"
+                  th:attr="data-name=${p.name}">
+                <button type="submit" class="btn-nb2 btn-danger-outline btn-sm btn-full">
+                    <i class="bi bi-trash3"></i> Xóa
+                </button>
+            </form>
+        </div>
+    </td>
+</tr>
+
+<script>
+// ── Collapse/expand ─────────────────────────────────────────────────────
+function toggleSection(header) {
+    const body = header.nextElementSibling;
+    const chevron = header.querySelector('.chevron');
+    const isOpen = !body.classList.contains('collapsed');
+    if (isOpen) {
+        body.style.maxHeight = body.scrollHeight + 'px';
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            body.style.maxHeight = '0'; body.style.overflow = 'hidden';
+            chevron.style.transform = 'rotate(-90deg)';
+            setTimeout(() => body.classList.add('collapsed'), 240);
+        }));
+    } else {
+        body.classList.remove('collapsed');
+        body.style.maxHeight = body.scrollHeight + 'px'; body.style.overflow = 'hidden';
+        chevron.style.transform = 'rotate(0deg)';
+        setTimeout(() => { body.style.maxHeight = 'none'; body.style.overflow = ''; }, 260);
+    }
+}
+
+// ── Category tabs ────────────────────────────────────────────────────────
+document.querySelectorAll('.cat-tab[data-target]').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const target = document.getElementById(tab.dataset.target);
+        if (!target) return;
+        const body = target.querySelector('.section-body');
+        if (body && body.classList.contains('collapsed')) toggleSection(target.querySelector('.section-header'));
+        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    });
+});
+
+// ── Live search ──────────────────────────────────────────────────────────
+document.getElementById('p-search').addEventListener('input', function () {
+    const q = this.value.toLowerCase().trim();
+    applyFilters(q);
+});
+
+// ── Status filter ────────────────────────────────────────────────────────
+let activeFilter = 'all';
+document.querySelectorAll('.fp[data-filter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.fp').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.dataset.filter;
+        applyFilters(document.getElementById('p-search').value.toLowerCase().trim());
+    });
+});
+
+function applyFilters(q) {
+    let anyVisible = false;
+    document.querySelectorAll('tr[data-search]').forEach(row => {
+        const matchSearch = !q || row.dataset.search.includes(q);
+        let matchFilter = true;
+        if (activeFilter === 'hot')        matchFilter = row.dataset.hot === 'true';
+        else if (activeFilter === 'sale')  matchFilter = row.dataset.sale === 'true';
+        else if (activeFilter === 'normal') matchFilter = row.dataset.hot === 'false' && row.dataset.sale === 'false';
+        else if (activeFilter === 'incomplete') matchFilter = parseInt(row.dataset.pct) < 100;
+        const show = matchSearch && matchFilter;
+        row.classList.toggle('row-hidden', !show);
+        if (show) anyVisible = true;
+    });
+    // Auto-expand sections with results when filtering
+    if (q || activeFilter !== 'all') {
+        document.querySelectorAll('.admin-card[id^="sec-"]').forEach(card => {
+            const body = card.querySelector('.section-body');
+            if (body && body.classList.contains('collapsed')) toggleSection(card.querySelector('.section-header'));
+        });
+    }
+}
+
+// ── Column sort ──────────────────────────────────────────────────────────
+document.querySelectorAll('th.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+        const table = th.closest('table');
+        const col = th.dataset.col;
+        const isAsc = th.classList.contains('asc');
+
+        table.querySelectorAll('th.sortable').forEach(h => h.classList.remove('asc', 'desc'));
+        th.classList.add(isAsc ? 'desc' : 'asc');
+
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((a, b) => {
+            let av, bv;
+            if (col === 'name') {
+                av = a.querySelector('[class*="p-name"]')?.textContent?.trim() || '';
+                bv = b.querySelector('[class*="p-name"]')?.textContent?.trim() || '';
+                return isAsc ? bv.localeCompare(av, 'vi') : av.localeCompare(bv, 'vi');
+            }
+            if (col === 'price')  { av = parseInt(a.querySelector('td[data-price]')?.dataset.price || 0); bv = parseInt(b.querySelector('td[data-price]')?.dataset.price || 0); }
+            if (col === 'sold')   { av = parseInt(a.querySelector('td[data-sold]')?.dataset.sold || 0);   bv = parseInt(b.querySelector('td[data-sold]')?.dataset.sold || 0); }
+            if (col === 'rating') { av = parseInt(a.querySelector('td[data-rating]')?.dataset.rating || 0); bv = parseInt(b.querySelector('td[data-rating]')?.dataset.rating || 0); }
+            return isAsc ? av - bv : bv - av;
+        });
+        rows.forEach(r => tbody.appendChild(r));
+    });
+});
+
+// ── Init ─────────────────────────────────────────────────────────────────
+document.querySelectorAll('.section-body:not(.collapsed)').forEach(b => { b.style.maxHeight = 'none'; });
+</script>
+</body>
+</html>

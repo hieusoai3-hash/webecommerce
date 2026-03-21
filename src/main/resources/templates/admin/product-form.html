@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${isNew} ? 'Thêm sản phẩm - NB2 Admin' : 'Sửa sản phẩm - NB2 Admin'">Sản phẩm - NB2 Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div th:replace="~{admin/layout :: sidebar}" th:with="activePage='products'"></div>
+
+<div class="admin-wrapper">
+    <div class="topbar">
+        <a th:href="@{/admin/products}" class="btn-nb2 btn-outline btn-sm">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h1 th:text="${isNew} ? 'Thêm sản phẩm mới' : 'Chỉnh sửa: ' + ${product.name}">Sản phẩm</h1>
+    </div>
+
+    <div class="content-area">
+        <div th:if="${error}" class="alert alert-danger">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <form th:action="@{/admin/products/save}" method="post" enctype="multipart/form-data">
+            <div class="row-2-1" style="align-items: start;">
+
+                <!-- Left: main fields -->
+                <div>
+                    <!-- Basic info -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h6><i class="bi bi-info-circle me-2" style="color:var(--accent)"></i>Thông tin cơ bản</h6>
+                        </div>
+                        <div class="admin-card-body">
+                            <div class="row-2">
+                                <div class="form-group" style="grid-column: 1 / -1;">
+                                    <label class="form-label">
+                                        ID sản phẩm
+                                        <span class="hint">(slug — vd: trunk-bamboo)</span>
+                                    </label>
+                                    <input type="text" name="id" class="form-control"
+                                           th:value="${product.id}"
+                                           th:readonly="${!isNew}"
+                                           required pattern="[a-z0-9\-]+"
+                                           placeholder="vd: trunk-bamboo">
+                                    <div th:if="${!isNew}" class="form-hint">ID không thể thay đổi sau khi tạo.</div>
+                                </div>
+
+                                <div class="form-group" style="grid-column: 1 / -1;">
+                                    <label class="form-label">Tên sản phẩm</label>
+                                    <input type="text" name="name" class="form-control"
+                                           th:value="${product.name}" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Danh mục</label>
+                                    <select name="category" class="form-select" required>
+                                        <option value="quan-sip" th:selected="${product.category == 'quan-sip'}">Quần sịp</option>
+                                        <option value="vi-da"    th:selected="${product.category == 'vi-da'}">Ví da</option>
+                                        <option value="that-lung" th:selected="${product.category == 'that-lung'}">Thắt lưng</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Chất liệu</label>
+                                    <input type="text" name="material" class="form-control"
+                                           th:value="${product.material}" required>
+                                </div>
+                            </div>
+
+                            <div class="row-3">
+                                <div class="form-group">
+                                    <label class="form-label">Giá (₫)</label>
+                                    <input type="number" name="price" class="form-control"
+                                           th:value="${product.price}" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Giá gốc (₫) <span class="hint">0 = ẩn</span></label>
+                                    <input type="number" name="originalPrice" class="form-control"
+                                           th:value="${product.originalPrice}" min="0">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Giảm giá (%)</label>
+                                    <input type="number" name="discount" class="form-control"
+                                           th:value="${product.discount}" min="0" max="100">
+                                </div>
+                            </div>
+
+                            <div class="row-2">
+                                <div class="form-group">
+                                    <label class="form-label">Đánh giá (1–5)</label>
+                                    <input type="number" name="rating" class="form-control"
+                                           th:value="${product.rating}" min="1" max="5">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Số lượt đánh giá</label>
+                                    <input type="number" name="reviews" class="form-control"
+                                           th:value="${product.reviews}" min="0">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Mô tả</label>
+                                <textarea name="description" class="form-control" rows="3"
+                                          th:text="${product.description}"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Tính năng <span class="hint">(mỗi dòng một tính năng)</span>
+                                </label>
+                                <textarea name="featuresStr" class="form-control" rows="4"
+                                          th:text="${featuresStr}"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Kích thước <span class="hint">(cách nhau bằng dấu phẩy)</span>
+                                </label>
+                                <input type="text" name="sizesStr" class="form-control"
+                                       th:value="${sizesStr}" placeholder="XL, 2XL, 3XL, 4XL">
+                            </div>
+
+                            <div class="form-check">
+                                <input type="checkbox" name="hot" id="hot" class="form-check-input"
+                                       value="true" th:checked="${product.hot}">
+                                <label for="hot" class="form-label" style="margin-bottom:0; cursor:pointer;">
+                                    <i class="bi bi-fire" style="color:var(--accent);"></i>
+                                    Sản phẩm nổi bật (Hot)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Colors & Images -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h6><i class="bi bi-palette me-2" style="color:var(--accent)"></i>Màu sắc &amp; Ảnh</h6>
+                            <button type="button" class="btn-nb2 btn-accent btn-sm" onclick="addColorRow()">
+                                <i class="bi bi-plus-lg"></i> Thêm màu
+                            </button>
+                        </div>
+                        <div class="admin-card-body" id="colors-container">
+
+                            <!-- Existing colors -->
+                            <div th:each="color : ${product.colors}" class="color-row">
+                                <input type="color" name="colorHex"
+                                       th:value="${color.hex}"
+                                       class="color-picker" title="Chọn màu">
+                                <input type="text" name="colorName"
+                                       th:value="${color.name}"
+                                       class="form-control" style="max-width:150px;"
+                                       placeholder="Tên màu" required>
+                                <div style="flex:1;">
+                                    <input type="file" name="colorImage" class="form-control"
+                                           accept="image/*" onchange="previewColorImg(this)"
+                                           style="font-size:.8rem;">
+                                    <div class="form-hint">Để trống = giữ ảnh cũ</div>
+                                </div>
+                                <img th:if="${color.imageUrl != null and !#strings.isEmpty(color.imageUrl)}"
+                                     th:src="@{'/' + ${color.imageUrl}}"
+                                     class="color-preview-img"
+                                     onerror="this.style.display='none'" alt="preview">
+                                <input type="hidden" name="colorExistingUrl" th:value="${color.imageUrl}">
+                                <button type="button" class="btn-nb2 btn-danger-outline btn-sm"
+                                        onclick="this.closest('.color-row').remove()">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+
+                            <p th:if="${product.colors == null or product.colors.empty}"
+                               class="form-hint" id="empty-hint" style="text-align:center; padding:20px 0;">
+                                Chưa có màu nào. Nhấn "Thêm màu" để thêm.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: save -->
+                <div>
+                    <div class="admin-card" style="position:sticky; top: calc(var(--topbar-height) + 16px);">
+                        <div class="admin-card-header">
+                            <h6><i class="bi bi-cloud-upload me-2" style="color:var(--accent)"></i>Lưu sản phẩm</h6>
+                        </div>
+                        <div class="admin-card-body" style="display:flex; flex-direction:column; gap:10px;">
+                            <p style="font-size:.8rem; color:var(--text-muted); margin:0;">
+                                Ảnh đầu tiên sẽ hiển thị mặc định. Mỗi màu có thể có ảnh riêng.
+                            </p>
+                            <button type="submit" class="btn-nb2 btn-accent btn-lg btn-full">
+                                <i class="bi bi-check-lg"></i>
+                                <span th:text="${isNew} ? 'Tạo sản phẩm' : 'Lưu thay đổi'">Lưu</span>
+                            </button>
+                            <a th:href="@{/admin/products}" class="btn-nb2 btn-outline btn-full">
+                                Hủy
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function addColorRow(name, hex, existingUrl) {
+    name = name || '';
+    hex = hex || '#1a1a2e';
+    existingUrl = existingUrl || '';
+    const hint = document.getElementById('empty-hint');
+    if (hint) hint.style.display = 'none';
+
+    const row = document.createElement('div');
+    row.className = 'color-row';
+    row.innerHTML = `
+        <input type="color" name="colorHex" value="${hex}" class="color-picker" title="Chọn màu">
+        <input type="text" name="colorName" value="${name}" class="form-control"
+               style="max-width:150px;" placeholder="Tên màu" required>
+        <div style="flex:1;">
+            <input type="file" name="colorImage" class="form-control" accept="image/*"
+                   onchange="previewColorImg(this)" style="font-size:.8rem;">
+            <div class="form-hint">Để trống = giữ ảnh cũ</div>
+        </div>
+        ${existingUrl
+            ? `<img src="/${existingUrl}" class="color-preview-img" onerror="this.style.display='none'" alt="preview">`
+            : `<div class="color-preview-img" style="background:var(--bg); display:flex; align-items:center; justify-content:center; font-size:.7rem; color:var(--text-soft);">Chưa có</div>`}
+        <input type="hidden" name="colorExistingUrl" value="${existingUrl}">
+        <button type="button" class="btn-nb2 btn-danger-outline btn-sm"
+                onclick="this.closest('.color-row').remove()">
+            <i class="bi bi-trash"></i>
+        </button>`;
+    document.getElementById('colors-container').appendChild(row);
+}
+
+function previewColorImg(input) {
+    if (!input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        const row = input.closest('.color-row');
+        let img = row.querySelector('.color-preview-img');
+        if (!img || img.tagName !== 'IMG') {
+            img = document.createElement('img');
+            img.className = 'color-preview-img';
+            img.alt = 'preview';
+            const hidden = row.querySelector('input[name="colorExistingUrl"]');
+            hidden.parentNode.insertBefore(img, hidden);
+            if (row.querySelector('.color-preview-img:not(img)')) {
+                row.querySelector('.color-preview-img:not(img)').remove();
+            }
+        }
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(input.files[0]);
+}
+</script>
+</body>
+</html>

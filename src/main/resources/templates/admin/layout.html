@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<aside th:fragment="sidebar" class="sidebar">
+    <a th:href="@{/admin/dashboard}" class="sidebar-brand">
+        <div class="brand-icon">&#9670;</div>
+        <div class="brand-text">
+            NB2 Admin
+            <span>Boxer Men</span>
+        </div>
+    </a>
+
+    <nav class="sidebar-nav" style="margin-top: 8px;">
+        <div class="sidebar-section">Tổng quan</div>
+        <a th:href="@{/admin/dashboard}" th:classappend="${activePage == 'dashboard'} ? ' active'">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+
+        <div class="sidebar-section">Quản lý</div>
+        <a th:href="@{/admin/products}" th:classappend="${activePage == 'products'} ? ' active'">
+            <i class="bi bi-box-seam"></i> Sản phẩm
+        </a>
+        <a th:href="@{/admin/orders}" th:classappend="${activePage == 'orders'} ? ' active'">
+            <i class="bi bi-bag-check"></i> Đơn hàng
+        </a>
+
+        <div class="sidebar-divider" style="margin-top: auto;"></div>
+        <a th:href="@{/}" target="_blank">
+            <i class="bi bi-shop"></i> Xem cửa hàng
+        </a>
+        <a th:href="@{/admin/logout}">
+            <i class="bi bi-box-arrow-right"></i> Đăng xuất
+        </a>
+    </nav>
+</aside>
+
+</body>
+</html>

@@ -48,7 +48,9 @@
             </select>
         </div>
         <div class="product-grid" id="product-grid">
-            <div th:each="product : ${products}" th:replace="~{fragments/product-card :: card(product=${product})}"></div>
+            <th:block th:each="product : ${products}">
+                <div th:replace="~{fragments/product-card :: card(product=${product})}"></div>
+            </th:block>
         </div>
     </div>
 </section>

@@ -40,14 +40,14 @@
                                 </div>
                                 <div class="mega-col">
                                     <h4>Theo Chất Liệu</h4>
-                                    <a href="#">Cotton Compact</a>
-                                    <a href="#">Da bò thật</a>
-                                    <a href="#">Da PU cao cấp</a>
+                                    <a th:href="@{/quan-sip}">Cotton Compact</a>
+                                    <a th:href="@{/that-lung}">Da bò thật</a>
+                                    <a th:href="@{/vi-da}">Da PU cao cấp</a>
                                 </div>
                                 <div class="mega-col">
                                     <h4>Bộ Sưu Tập</h4>
-                                    <a href="#">Sản phẩm mới</a>
-                                    <a href="#">Bán chạy nhất</a>
+                                    <a th:href="@{/san-pham}">Sản phẩm mới</a>
+                                    <a th:href="@{/san-pham}">Bán chạy nhất</a>
                                     <a th:href="@{/sale}">Sale</a>
                                 </div>
                             </div>
@@ -68,7 +68,9 @@
                         <path d="m21 21-4.35-4.35"></path>
                     </svg>
                 </button>
-                <input type="text" class="search-input" id="search-input" placeholder="Tìm kiếm sản phẩm...">
+                <input type="text" class="search-input" id="search-input"
+                       placeholder="Tìm kiếm sản phẩm..." autocomplete="off">
+                <div class="search-dropdown" id="search-dropdown"></div>
             </div>
 
             <div class="header-actions">

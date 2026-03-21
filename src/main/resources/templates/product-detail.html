@@ -117,7 +117,9 @@
     <div class="container">
         <h2 class="pd-related-title">Sản Phẩm Liên Quan</h2>
         <div class="product-grid" id="pd-related-grid">
-            <div th:each="product : ${related}" th:replace="~{fragments/product-card :: card(product=${product})}"></div>
+            <th:block th:each="product : ${related}">
+                <div th:replace="~{fragments/product-card :: card(product=${product})}"></div>
+            </th:block>
         </div>
     </div>
 </section>

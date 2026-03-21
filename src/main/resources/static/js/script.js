@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchToggle = document.getElementById('search-toggle');
     const searchBar = document.getElementById('search-bar');
     const searchInput = document.getElementById('search-input');
+    const searchDropdown = document.getElementById('search-dropdown');
     const cartBtn = document.getElementById('cart-btn');
     const cartOverlay = document.getElementById('cart-overlay');
     const cartSidebar = document.getElementById('cart-sidebar');
@@ -88,20 +89,132 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ===== Search Bar =====
+    // ===== Search Autocomplete =====
+    let _suggestTimer = null;
+    let _highlightIdx = -1;
+
+    function closeDropdown() {
+        if (searchDropdown) {
+            searchDropdown.innerHTML = '';
+            searchDropdown.classList.remove('open');
+        }
+        _highlightIdx = -1;
+    }
+
+    function highlightItem(idx) {
+        if (!searchDropdown) return;
+        const items = searchDropdown.querySelectorAll('.sd-item');
+        items.forEach((el, i) => el.classList.toggle('sd-highlighted', i === idx));
+        _highlightIdx = idx;
+    }
+
+    function renderDropdown(q, data) {
+        if (!searchDropdown) return;
+        const { products = [], categories = [], total = 0 } = data;
+        if (!products.length && !categories.length) { closeDropdown(); return; }
+
+        const escapeRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        let html = '';
+
+        if (categories.length) {
+            html += '<div class="sd-section-label">Danh mục</div>';
+            categories.forEach(cat => {
+                html += `<a href="/${cat.slug}" class="sd-item">
+                    <span class="sd-cat-icon">📂</span>
+                    <span class="sd-cat-label">${cat.label}</span>
+                    <span class="sd-cat-count">${cat.count} sản phẩm</span>
+                </a>`;
+            });
+        }
+
+        if (products.length) {
+            html += '<div class="sd-section-label">Sản phẩm</div>';
+            products.forEach(p => {
+                const imgHtml = p.imageUrl
+                    ? `<img src="/${p.imageUrl}" alt="" onerror="this.style.display='none'">`
+                    : `<span class="sd-img-placeholder">?</span>`;
+                const highlighted = p.name.replace(
+                    new RegExp('(' + escapeRe(q) + ')', 'gi'),
+                    '<mark>$1</mark>'
+                );
+                const disc = p.discount > 0
+                    ? `<span class="sd-disc">-${p.discount}%</span>` : '';
+                html += `<a href="/product-detail?id=${p.id}" class="sd-item">
+                    <div class="sd-img">${imgHtml}</div>
+                    <div class="sd-info">
+                        <div class="sd-name">${highlighted}</div>
+                        <div class="sd-price">${p.price}${disc}</div>
+                    </div>
+                </a>`;
+            });
+        }
+
+        if (total > products.length) {
+            html += `<a href="/search?q=${encodeURIComponent(q)}" class="sd-view-all">
+                Xem tất cả ${total} kết quả →
+            </a>`;
+        }
+
+        searchDropdown.innerHTML = html;
+        searchDropdown.classList.add('open');
+        _highlightIdx = -1;
+    }
+
+    async function fetchSuggestions(q) {
+        try {
+            const res = await fetch('/api/suggest?q=' + encodeURIComponent(q));
+            const data = await res.json();
+            renderDropdown(q, data);
+        } catch (_) { closeDropdown(); }
+    }
+
     if (searchToggle) {
         searchToggle.addEventListener('click', () => {
             searchBar.classList.toggle('expanded');
             if (searchBar.classList.contains('expanded')) {
                 searchInput.focus();
+            } else {
+                closeDropdown();
             }
         });
     }
 
-    // Close search on click outside
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            clearTimeout(_suggestTimer);
+            const q = searchInput.value.trim();
+            if (q.length < 2) { closeDropdown(); return; }
+            _suggestTimer = setTimeout(() => fetchSuggestions(q), 280);
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (!searchDropdown) return;
+            const items = searchDropdown.querySelectorAll('.sd-item');
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                highlightItem(Math.min(_highlightIdx + 1, items.length - 1));
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                highlightItem(Math.max(_highlightIdx - 1, 0));
+            } else if (e.key === 'Enter') {
+                if (_highlightIdx >= 0 && items[_highlightIdx]) {
+                    items[_highlightIdx].click();
+                } else {
+                    const q = searchInput.value.trim();
+                    if (q) window.location.href = '/search?q=' + encodeURIComponent(q);
+                }
+            } else if (e.key === 'Escape') {
+                closeDropdown();
+                searchBar.classList.remove('expanded');
+            }
+        });
+    }
+
+    // Close on outside click
     document.addEventListener('click', (e) => {
         if (searchBar && !searchBar.contains(e.target)) {
             searchBar.classList.remove('expanded');
+            closeDropdown();
         }
     });
 

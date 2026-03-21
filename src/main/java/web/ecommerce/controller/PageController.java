@@ -61,6 +61,14 @@ public class PageController {
         return "sale";
     }
 
+    @GetMapping("/search")
+    public String search(@RequestParam(required = false) String q, Model model) {
+        model.addAttribute("products", productService.search(q));
+        model.addAttribute("query", q != null ? q : "");
+        model.addAttribute("activePage", "san-pham");
+        return "search";
+    }
+
     @GetMapping("/product-detail")
     public String productDetail(@RequestParam String id, Model model) {
         Optional<Product> productOpt = productService.getById(id);
