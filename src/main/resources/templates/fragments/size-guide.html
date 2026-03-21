@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--/* ─────────────────────────────────────────────────────────────
+     Size guide section fragment
+     Usage: th:replace="~{fragments/size-guide :: guide(category='quan-sip')}"
+     ───────────────────────────────────────────────────────────── */-->
+
+<section th:fragment="guide(category)" class="size-guide-section">
+    <div class="container">
+        <div class="sg-inner">
+
+            <div class="sg-header">
+                <h2 class="sg-title">Hướng Dẫn Chọn Size</h2>
+                <p class="sg-subtitle"
+                   th:if="${category == 'quan-sip'}">Đo vòng eo tại vị trí nhỏ nhất để chọn size chính xác nhất</p>
+                <p class="sg-subtitle"
+                   th:if="${category == 'that-lung'}">Đo vòng bụng qua rốn để chọn size thắt lưng phù hợp</p>
+                <p class="sg-subtitle"
+                   th:if="${category == 'vi-da'}">Kích thước thực tế sản phẩm — chọn theo nhu cầu sử dụng</p>
+            </div>
+
+            <!-- QUẦN SỊP -->
+            <div th:if="${category == 'quan-sip'}">
+                <div class="sg-tip">
+                    <span class="sg-tip-icon">💡</span>
+                    <span><strong>Mẹo:</strong> Nếu bạn nằm ở ranh giới 2 size, hãy chọn size lớn hơn để thoải mái hơn.</span>
+                </div>
+                <div class="sg-table-wrap">
+                    <table class="sg-table">
+                        <thead>
+                            <tr>
+                                <th>Size</th>
+                                <th>Vòng eo (cm)</th>
+                                <th>Vòng hông (cm)</th>
+                                <th>Cân nặng (kg)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="sg-size-cell">S</td><td>68 – 72</td><td>86 – 90</td><td>50 – 60</td></tr>
+                            <tr><td class="sg-size-cell">M</td><td>73 – 77</td><td>91 – 95</td><td>60 – 70</td></tr>
+                            <tr><td class="sg-size-cell">L</td><td>78 – 82</td><td>96 – 100</td><td>70 – 80</td></tr>
+                            <tr><td class="sg-size-cell">XL</td><td>83 – 88</td><td>101 – 106</td><td>80 – 92</td></tr>
+                            <tr><td class="sg-size-cell">XXL</td><td>89 – 95</td><td>107 – 114</td><td>92 – 105</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="sg-how">
+                    <h4 class="sg-how-title">Cách đo</h4>
+                    <div class="sg-how-grid">
+                        <div class="sg-how-item">
+                            <div class="sg-how-num">1</div>
+                            <div>
+                                <strong>Vòng eo:</strong> Dùng thước dây quanh eo tại điểm nhỏ nhất (thường trên rốn). Đứng thẳng, hít thở bình thường.
+                            </div>
+                        </div>
+                        <div class="sg-how-item">
+                            <div class="sg-how-num">2</div>
+                            <div>
+                                <strong>Vòng hông:</strong> Đo quanh điểm rộng nhất của hông/mông.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- THẮT LƯNG -->
+            <div th:if="${category == 'that-lung'}">
+                <div class="sg-tip">
+                    <span class="sg-tip-icon">💡</span>
+                    <span><strong>Công thức:</strong> Size thắt lưng = Vòng bụng (cm) + 20 – 25 cm. Ví dụ: vòng bụng 80 cm → chọn size 100–105.</span>
+                </div>
+                <div class="sg-table-wrap">
+                    <table class="sg-table">
+                        <thead>
+                            <tr>
+                                <th>Size (cm)</th>
+                                <th>Vòng bụng phù hợp</th>
+                                <th>Chiều dài dây</th>
+                                <th>Lỗ thắt số 3 (giữa)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="sg-size-cell">100</td><td>75 – 80 cm</td><td>100 cm</td><td>~ 80 cm</td></tr>
+                            <tr><td class="sg-size-cell">105</td><td>80 – 85 cm</td><td>105 cm</td><td>~ 85 cm</td></tr>
+                            <tr><td class="sg-size-cell">110</td><td>85 – 90 cm</td><td>110 cm</td><td>~ 90 cm</td></tr>
+                            <tr><td class="sg-size-cell">115</td><td>90 – 95 cm</td><td>115 cm</td><td>~ 95 cm</td></tr>
+                            <tr><td class="sg-size-cell">120</td><td>95 – 100 cm</td><td>120 cm</td><td>~ 100 cm</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="sg-how">
+                    <h4 class="sg-how-title">Cách đo vòng bụng</h4>
+                    <div class="sg-how-grid">
+                        <div class="sg-how-item">
+                            <div class="sg-how-num">1</div>
+                            <div>Dùng thước dây quấn quanh bụng ngang qua rốn.</div>
+                        </div>
+                        <div class="sg-how-item">
+                            <div class="sg-how-num">2</div>
+                            <div>Đứng thẳng tự nhiên, thước vừa khít — không kéo căng, không lỏng.</div>
+                        </div>
+                        <div class="sg-how-item">
+                            <div class="sg-how-num">3</div>
+                            <div>Lấy số đo + 20 cm = size thắt lưng cần chọn.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VÍ DA -->
+            <div th:if="${category == 'vi-da'}">
+                <div class="sg-tip">
+                    <span class="sg-tip-icon">💡</span>
+                    <span><strong>Lưu ý:</strong> Ví mới có thể cứng một chút, sẽ mềm và đẹp hơn sau 1–2 tuần sử dụng.</span>
+                </div>
+                <div class="sg-wallet-grid">
+                    <div class="sg-wallet-card">
+                        <div class="sg-wallet-icon">👛</div>
+                        <h4>Ví Ngắn</h4>
+                        <p class="sg-wallet-dim">11.5 × 9 × 1.5 cm</p>
+                        <ul class="sg-wallet-list">
+                            <li>6 – 8 ngăn thẻ</li>
+                            <li>2 ngăn tiền mặt</li>
+                            <li>Bỏ vừa túi quần trước</li>
+                            <li>Phù hợp mang hàng ngày</li>
+                        </ul>
+                    </div>
+                    <div class="sg-wallet-card">
+                        <div class="sg-wallet-icon">💼</div>
+                        <h4>Ví Dài</h4>
+                        <p class="sg-wallet-dim">19 × 9.5 × 2 cm</p>
+                        <ul class="sg-wallet-list">
+                            <li>10 – 12 ngăn thẻ</li>
+                            <li>3 ngăn tiền + ngăn kéo</li>
+                            <li>Bỏ túi áo hoặc túi xách</li>
+                            <li>Lý tưởng đi công tác, du lịch</li>
+                        </ul>
+                    </div>
+                    <div class="sg-wallet-card">
+                        <div class="sg-wallet-icon">💳</div>
+                        <h4>Card Holder</h4>
+                        <p class="sg-wallet-dim">10 × 7 × 0.8 cm</p>
+                        <ul class="sg-wallet-list">
+                            <li>4 – 6 thẻ</li>
+                            <li>Siêu mỏng, siêu nhẹ</li>
+                            <li>Tích hợp chống RFID</li>
+                            <li>Phù hợp người ít dùng tiền mặt</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Inline modal for product-detail page -->
+<div th:fragment="modal(category)" id="sg-modal" class="sg-modal-overlay" onclick="if(event.target===this)closeSgModal()">
+    <div class="sg-modal-box">
+        <div class="sg-modal-header">
+            <h3>Hướng Dẫn Chọn Size</h3>
+            <button class="sg-modal-close" onclick="closeSgModal()">&#x2715;</button>
+        </div>
+        <div class="sg-modal-body">
+
+            <!-- QUẦN SỊP -->
+            <div th:if="${category == 'quan-sip'}">
+                <p class="sg-modal-sub">Đo vòng eo tại điểm nhỏ nhất (trên rốn) để chọn đúng size.</p>
+                <table class="sg-table sg-table-compact">
+                    <thead><tr><th>Size</th><th>Vòng eo</th><th>Vòng hông</th><th>Cân nặng</th></tr></thead>
+                    <tbody>
+                        <tr><td class="sg-size-cell">S</td><td>68–72 cm</td><td>86–90 cm</td><td>50–60 kg</td></tr>
+                        <tr><td class="sg-size-cell">M</td><td>73–77 cm</td><td>91–95 cm</td><td>60–70 kg</td></tr>
+                        <tr><td class="sg-size-cell">L</td><td>78–82 cm</td><td>96–100 cm</td><td>70–80 kg</td></tr>
+                        <tr><td class="sg-size-cell">XL</td><td>83–88 cm</td><td>101–106 cm</td><td>80–92 kg</td></tr>
+                        <tr><td class="sg-size-cell">XXL</td><td>89–95 cm</td><td>107–114 cm</td><td>92–105 kg</td></tr>
+                    </tbody>
+                </table>
+                <p class="sg-modal-tip">💡 Nếu ở ranh giới 2 size, chọn size lớn hơn để thoải mái hơn.</p>
+            </div>
+
+            <!-- THẮT LƯNG -->
+            <div th:if="${category == 'that-lung'}">
+                <p class="sg-modal-sub">Size thắt lưng = Vòng bụng (cm) + 20–25 cm</p>
+                <table class="sg-table sg-table-compact">
+                    <thead><tr><th>Size</th><th>Vòng bụng</th><th>Chiều dài dây</th></tr></thead>
+                    <tbody>
+                        <tr><td class="sg-size-cell">100</td><td>75–80 cm</td><td>100 cm</td></tr>
+                        <tr><td class="sg-size-cell">105</td><td>80–85 cm</td><td>105 cm</td></tr>
+                        <tr><td class="sg-size-cell">110</td><td>85–90 cm</td><td>110 cm</td></tr>
+                        <tr><td class="sg-size-cell">115</td><td>90–95 cm</td><td>115 cm</td></tr>
+                        <tr><td class="sg-size-cell">120</td><td>95–100 cm</td><td>120 cm</td></tr>
+                    </tbody>
+                </table>
+                <p class="sg-modal-tip">💡 Ví dụ: vòng bụng 80 cm → chọn size 100 hoặc 105.</p>
+            </div>
+
+            <!-- VÍ DA -->
+            <div th:if="${category == 'vi-da'}">
+                <p class="sg-modal-sub">Chọn loại ví phù hợp với nhu cầu sử dụng của bạn.</p>
+                <table class="sg-table sg-table-compact">
+                    <thead><tr><th>Loại ví</th><th>Kích thước</th><th>Số ngăn thẻ</th><th>Phù hợp</th></tr></thead>
+                    <tbody>
+                        <tr><td class="sg-size-cell">Ví ngắn</td><td>11.5×9×1.5 cm</td><td>6–8 thẻ</td><td>Dùng hàng ngày</td></tr>
+                        <tr><td class="sg-size-cell">Ví dài</td><td>19×9.5×2 cm</td><td>10–12 thẻ</td><td>Công tác, du lịch</td></tr>
+                        <tr><td class="sg-size-cell">Card holder</td><td>10×7×0.8 cm</td><td>4–6 thẻ</td><td>Tối giản, không tiền mặt</td></tr>
+                    </tbody>
+                </table>
+                <p class="sg-modal-tip">💡 Ví mới sẽ mềm và đẹp hơn sau 1–2 tuần sử dụng.</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
