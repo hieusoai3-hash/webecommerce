@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Usage: th:replace="~{fragments/product-card :: card(product=${p})}"
+-->
+<div th:fragment="card(product)" class="product-card reveal" th:data-category="${product.category}">
+    <div class="product-badges">
+        <span class="badge badge-hot" th:if="${product.hot}">Hot</span>
+        <span class="badge badge-sale" th:if="${product.onSale}"
+              th:text="'-' + ${product.discount} + '%'"></span>
+    </div>
+    <div class="product-image">
+        <img th:src="@{/{url}(url=${product.colors[0].imageUrl})}"
+             th:alt="${product.name}" class="img-primary" loading="lazy">
+        <img th:if="${#lists.size(product.colors) > 1}"
+             th:src="@{/{url}(url=${product.colors[1].imageUrl})}"
+             th:alt="${product.name} + ' - Hover'" class="img-hover" loading="lazy">
+        <div class="quick-add">
+            <span class="quick-add-title">Chọn size</span>
+            <div class="size-options">
+                <button class="size-btn" th:each="size : ${product.sizes}"
+                        th:data-size="${size}" th:text="${size}"></button>
+            </div>
+        </div>
+    </div>
+    <div class="product-info">
+        <div class="product-colors">
+            <button class="color-swatch" th:each="color, stat : ${product.colors}"
+                    th:classappend="${stat.first} ? ' active'"
+                    th:style="'background:' + ${color.hex}"
+                    th:title="${color.name}"
+                    th:data-color="${color.name}"
+                    th:data-img="@{/{url}(url=${color.imageUrl})}"></button>
+        </div>
+        <a th:href="@{/product-detail(id=${product.id})}" class="product-name-link">
+            <h3 class="product-name" th:text="${product.name}"></h3>
+        </a>
+        <p class="product-material" th:text="'Chất liệu: ' + ${product.material}"></p>
+        <div class="product-price">
+            <span class="price-current" th:text="${product.formattedPrice}"></span>
+            <span class="price-original" th:if="${product.onSale}"
+                  th:text="${product.formattedOriginalPrice}"></span>
+            <span class="price-discount" th:if="${product.onSale}"
+                  th:text="'-' + ${product.discount} + '%'"></span>
+        </div>
+        <div class="product-rating">
+            <div class="stars" th:text="${product.stars}"></div>
+            <span class="rating-count" th:text="'(' + ${product.formattedReviews} + ')'"></span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

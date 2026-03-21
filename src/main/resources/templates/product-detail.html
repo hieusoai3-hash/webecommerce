@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.name} + ' - NB2 Boxer Men'">Chi Tiết Sản Phẩm - NB2 Boxer Men</title>
+    <meta name="description" th:content="${product.description}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: top}"></div>
+
+<!-- Product Detail -->
+<section class="pd-wrapper">
+    <div class="container">
+        <div class="pd-breadcrumb">
+            <a th:href="@{/}">Trang chủ</a> <span>&#8250;</span>
+            <a th:href="@{/san-pham}">Sản phẩm</a> <span>&#8250;</span>
+            <span th:text="${product.name}" style="color:#333;"></span>
+        </div>
+        <div class="pd-layout">
+            <!-- Gallery -->
+            <div class="pd-gallery">
+                <div class="pd-main-image">
+                    <img id="pd-main-img"
+                         th:src="@{/{url}(url=${product.colors[0].imageUrl})}"
+                         th:alt="${product.name}">
+                </div>
+                <div class="pd-thumbs" id="pd-thumbs">
+                    <img th:each="color : ${product.colors}"
+                         th:src="@{/{url}(url=${color.imageUrl})}"
+                         th:alt="${color.name}"
+                         th:title="${color.name}"
+                         th:data-img="@{/{url}(url=${color.imageUrl})}"
+                         class="pd-thumb" loading="lazy">
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div class="pd-info">
+                <span class="pd-category" th:text="${product.category == 'quan-sip'} ? 'Quần Sịp Nam' : (${product.category == 'vi-da'} ? 'Ví Da Nam' : 'Thắt Lưng Nam')"></span>
+                <h1 class="pd-title" th:text="${product.name}"></h1>
+                <p class="pd-material" th:text="'Chất liệu: ' + ${product.material}"></p>
+
+                <div class="pd-rating-row">
+                    <span class="pd-stars" th:text="${product.stars}"></span>
+                    <span class="pd-review-count" th:text="'(' + ${product.formattedReviews} + ' đánh giá)'"></span>
+                </div>
+
+                <div class="pd-price-row">
+                    <span class="pd-price" th:text="${product.formattedPrice}"></span>
+                    <span class="pd-original" th:if="${product.onSale}" th:text="${product.formattedOriginalPrice}"></span>
+                    <span class="pd-discount-tag" th:if="${product.onSale}" th:text="'-' + ${product.discount} + '%'"></span>
+                </div>
+
+                <!-- Colors -->
+                <p class="pd-section-label">Màu sắc</p>
+                <div class="pd-colors" id="pd-colors">
+                    <button th:each="color, stat : ${product.colors}"
+                            class="pd-color-btn color-swatch"
+                            th:classappend="${stat.first} ? ' active'"
+                            th:style="'background:' + ${color.hex}"
+                            th:title="${color.name}"
+                            th:data-color="${color.name}"
+                            th:data-img="@{/{url}(url=${color.imageUrl})}"></button>
+                </div>
+
+                <!-- Sizes -->
+                <p class="pd-section-label">Size</p>
+                <div class="pd-sizes" id="pd-sizes">
+                    <button th:each="size : ${product.sizes}"
+                            class="pd-size-btn"
+                            th:data-size="${size}"
+                            th:text="${size}"></button>
+                </div>
+
+                <!-- Actions -->
+                <div class="pd-actions">
+                    <button class="pd-add-cart" id="pd-add-cart"
+                            th:data-product-id="${product.id}"
+                            th:data-product-name="${product.name}"
+                            th:data-product-price="${product.price}">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <path d="M16 10a4 4 0 0 1-8 0"></path>
+                        </svg>
+                        THÊM VÀO GIỎ
+                    </button>
+                    <button class="pd-buy-now" id="pd-buy-now"
+                            th:data-product-id="${product.id}"
+                            th:data-product-price="${product.price}">MUA NGAY</button>
+                </div>
+
+                <!-- Features -->
+                <div class="pd-features" id="pd-features">
+                    <ul>
+                        <li th:each="feature : ${product.features}" th:text="${feature}"></li>
+                    </ul>
+                </div>
+
+                <!-- Description -->
+                <div class="pd-desc" id="pd-desc">
+                    <p th:text="${product.description}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Products -->
+<section class="pd-related" th:if="${!#lists.isEmpty(related)}">
+    <div class="container">
+        <h2 class="pd-related-title">Sản Phẩm Liên Quan</h2>
+        <div class="product-grid" id="pd-related-grid">
+            <div th:each="product : ${related}" th:replace="~{fragments/product-card :: card(product=${product})}"></div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

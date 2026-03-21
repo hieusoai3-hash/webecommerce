@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NB2 Boxer Men - Đồ Lót Nam Cao Cấp</title>
+    <meta name="description" content="NB2 Boxer Men - Thương hiệu đồ lót nam cao cấp.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: top}"></div>
+
+<!-- Hero Section -->
+<section class="hero" id="hero">
+    <div class="hero-bg">
+        <img th:src="@{/images/banners/hero_banner.png}" alt="NB2 Boxer Men" loading="eager">
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <span class="hero-tag animate-fade-up">THƯƠNG HIỆU PHÁI MẠNH</span>
+        <h1 class="hero-title animate-fade-up delay-1">NB2<br><span class="text-accent">Boxer Men</span></h1>
+        <p class="hero-description animate-fade-up delay-2">Khẳng định phong cách đàn ông<br>Quần sịp, Ví da &amp; Thắt lưng cao cấp</p>
+        <div class="hero-actions animate-fade-up delay-3">
+            <a href="#products" class="btn btn-primary btn-lg">
+                MUA NGAY
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14m-7-7 7 7-7 7"/>
+                </svg>
+            </a>
+            <a href="#features" class="btn btn-outline btn-lg">TÌM HIỂU THÊM</a>
+        </div>
+        <div class="hero-stats animate-fade-up delay-4">
+            <div class="stat"><span class="stat-number">50K+</span><span class="stat-label">Khách hàng</span></div>
+            <div class="stat-divider"></div>
+            <div class="stat"><span class="stat-number">4.9&#9733;</span><span class="stat-label">Đánh giá</span></div>
+            <div class="stat-divider"></div>
+            <div class="stat"><span class="stat-number">60 ngày</span><span class="stat-label">Đổi trả</span></div>
+        </div>
+    </div>
+    <div class="hero-scroll-indicator">
+        <span>Cuộn xuống</span>
+        <div class="scroll-arrow">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14m-7-7 7 7 7-7"/>
+            </svg>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories" id="categories">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">DANH MỤC SẢN PHẨM</span>
+            <h2 class="section-title">Khám Phá Thế Giới Đồ Nam</h2>
+            <p class="section-desc">Lựa chọn các sản phẩm phù hợp nhất với phong cách của bạn</p>
+        </div>
+        <div class="category-grid">
+            <a th:href="@{/quan-sip}" class="category-card reveal" id="cat-quan-sip">
+                <div class="category-img">
+                    <img th:src="@{/images/products/underwear/product_trunk_navy.png}" alt="Quần Sịp Nam" loading="lazy">
+                </div>
+                <div class="category-info">
+                    <h3>Quần Sịp Nam</h3>
+                    <span class="category-subtitle">Thoải Mái Tối Đa</span>
+                    <span class="category-cta">Khám phá &#8594;</span>
+                </div>
+            </a>
+            <a th:href="@{/vi-da}" class="category-card reveal" id="cat-vi-da">
+                <div class="category-img">
+                    <img th:src="@{/images/products/wallets/wallet_premium_brown.png}" alt="Ví Da Cao Cấp" loading="lazy">
+                </div>
+                <div class="category-info">
+                    <h3>Ví Da Cao Cấp</h3>
+                    <span class="category-subtitle">Sang Trọng, Lịch Lãm</span>
+                    <span class="category-cta">Khám phá &#8594;</span>
+                </div>
+            </a>
+            <a th:href="@{/that-lung}" class="category-card reveal" id="cat-that-lung">
+                <div class="category-img">
+                    <img th:src="@{/images/categories/category_brief.png}" alt="Thắt Lưng Da" loading="lazy">
+                </div>
+                <div class="category-info">
+                    <h3>Thắt Lưng Da</h3>
+                    <span class="category-subtitle">Bền Bỉ, Nam Tính</span>
+                    <span class="category-cta">Khám phá &#8594;</span>
+                </div>
+            </a>
+            <a href="#" class="category-card reveal" id="cat-phu-kien">
+                <div class="category-img">
+                    <img th:src="@{/images/products/underwear/product_boxer_gray.png}" alt="Phụ Kiện Khác" loading="lazy">
+                </div>
+                <div class="category-info">
+                    <h3>Phụ Kiện Khác</h3>
+                    <span class="category-subtitle">Hoàn Thiện Phong Cách</span>
+                    <span class="category-cta">Khám phá &#8594;</span>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="products" id="products">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">SẢN PHẨM NỔI BẬT</span>
+            <h2 class="section-title">Bán Chạy Nhất</h2>
+            <p class="section-desc">Được hàng nghìn khách hàng tin dùng mỗi ngày</p>
+        </div>
+        <div class="product-filters" id="product-filters">
+            <button class="filter-btn active" data-filter="all">Tất cả</button>
+            <button class="filter-btn" data-filter="quan-sip">Quần sịp</button>
+            <button class="filter-btn" data-filter="vi-da">Ví da</button>
+            <button class="filter-btn" data-filter="that-lung">Thắt lưng</button>
+        </div>
+        <div class="product-grid" id="product-grid">
+            <div th:each="product : ${products}" th:replace="~{fragments/product-card :: card(product=${product})}"></div>
+        </div>
+        <div class="products-cta">
+            <a th:href="@{/san-pham}" class="btn btn-primary btn-lg">Xem tất cả sản phẩm &#8594;</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features" id="features">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">TẠI SAO CHỌN COMFY?</span>
+            <h2 class="section-title">Cam Kết Chất Lượng</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card reveal" id="feature-1">
+                <div class="feature-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <h3>Chất Liệu Cao Cấp</h3>
+                <p>Sử dụng sợi Bamboo, Lenzing Modal và Cotton Compact nhập khẩu, mang lại cảm giác mềm mại tối đa</p>
+            </div>
+            <div class="feature-card reveal" id="feature-2">
+                <div class="feature-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+                    </svg>
+                </div>
+                <h3>Thoáng Mát 24/7</h3>
+                <p>Công nghệ Excool độc quyền, thoát ẩm nhanh gấp 3 lần, giữ cho bạn luôn khô thoáng cả ngày</p>
+            </div>
+            <div class="feature-card reveal" id="feature-3">
+                <div class="feature-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                </div>
+                <h3>Về NB2 Boxer Men</h3>
+                <p>NB2 Boxer Men Việt Nam tự hào là thương hiệu mang đến những sản phẩm đồ da nam giới chất lượng cao cấp, thiết kế tỉ mỉ vì sự tự tin và lịch lãm của bạn mỗi ngày.</p>
+            </div>
+            <div class="feature-card reveal" id="feature-4">
+                <div class="feature-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                </div>
+                <h3>Đổi Trả 60 Ngày</h3>
+                <p>Cam kết đổi trả miễn phí trong 60 ngày nếu bạn không hài lòng. Không cần lý do, không câu hỏi</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Promo Banner -->
+<section class="promo-banner" id="promo-banner">
+    <div class="container">
+        <div class="promo-content reveal">
+            <div class="promo-text">
+                <span class="promo-tag">ƯU ĐÃI ĐẶC BIỆT</span>
+                <h2>Mua 3 Tặng 1</h2>
+                <p>Áp dụng cho tất cả sản phẩm quần lót nam. Thêm 4 sản phẩm vào giỏ hàng, chiếc rẻ nhất sẽ được miễn phí!</p>
+                <a href="#products" class="btn btn-primary btn-lg">Mua ngay</a>
+            </div>
+            <div class="promo-visual">
+                <div class="promo-circle">
+                    <span class="promo-big-text">3+1</span>
+                    <span class="promo-small-text">FREE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials" id="testimonials">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">ĐÁNH GIÁ</span>
+            <h2 class="section-title">Khách Hàng Nói Gì?</h2>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card reveal">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">"Chất liệu Bamboo mềm mại cực kỳ, mặc cả ngày mà vẫn thoáng mát. Mình đã chuyển sang dùng hoàn toàn NB2 Boxer Men Việt Nam rồi!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">TM</div>
+                    <div class="author-info">
+                        <span class="author-name">Trần Minh</span>
+                        <span class="author-detail">Đã mua Trunk Bamboo</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card reveal">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">"Deal combo 3 chiếc rất hời, giao hàng nhanh, đóng gói cẩn thận. Sẽ mua thêm cho cả gia đình."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">NH</div>
+                    <div class="author-info">
+                        <span class="author-name">Nguyễn Hoàng</span>
+                        <span class="author-detail">Đã mua Combo 3 Cotton</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card reveal">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">"Dùng thử rồi thì không muốn quay lại hàng cũ nữa. Chất Modal mềm mịn, co giãn tốt, đường may tinh tế."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">PD</div>
+                    <div class="author-info">
+                        <span class="author-name">Phạm Đức</span>
+                        <span class="author-detail">Đã mua Brief Modal</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter" id="newsletter">
+    <div class="container">
+        <div class="newsletter-inner reveal">
+            <div class="newsletter-text">
+                <h2>Nhận Ưu Đãi Độc Quyền</h2>
+                <p>Đăng ký email để nhận thông tin khuyến mãi, sản phẩm mới và giảm ngay 10% cho đơn hàng đầu tiên</p>
+            </div>
+            <form class="newsletter-form" id="newsletter-form">
+                <div class="form-group">
+                    <input type="email" placeholder="Nhập email của bạn..." class="newsletter-input" id="newsletter-input" required>
+                    <button type="submit" class="btn btn-primary newsletter-btn">ĐĂNG KÝ</button>
+                </div>
+                <p class="newsletter-note">Bằng cách đăng ký, bạn đồng ý nhận email marketing từ NB2 Boxer Men Việt Nam</p>
+            </form>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

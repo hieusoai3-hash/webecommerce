@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tất Cả Sản Phẩm - NB2 Boxer Men</title>
+    <meta name="description" content="Khám phá toàn bộ sản phẩm NB2 Boxer Men - Quần lót nam, ví da &amp; phụ kiện cao cấp.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: top}"></div>
+
+<!-- Page Hero -->
+<section class="page-hero">
+    <div class="page-hero-content">
+        <div class="container">
+            <div class="breadcrumb">
+                <a th:href="@{/}">Trang chủ</a> <span>&#8250;</span> <span style="color:#fff;">Tất cả sản phẩm</span>
+            </div>
+            <h1>Tất Cả Sản Phẩm</h1>
+            <p>Khám phá bộ sưu tập quần lót nam, ví da &amp; phụ kiện cao cấp từ NB2 Boxer Men</p>
+            <div class="category-nav">
+                <button class="category-pill active" data-filter="all">Tất cả</button>
+                <button class="category-pill" data-filter="quan-sip">Quần sịp</button>
+                <button class="category-pill" data-filter="vi-da">Ví da</button>
+                <button class="category-pill" data-filter="that-lung">Thắt lưng</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="products" id="products" style="padding-top: 50px;">
+    <div class="container">
+        <div class="products-toolbar">
+            <p class="products-count">Hiển thị <strong th:text="${#lists.size(products)}"></strong> sản phẩm</p>
+            <select class="sort-select" id="sort-select">
+                <option value="default">Sắp xếp: Mặc định</option>
+                <option value="price-asc">Giá: Thấp &#8594; Cao</option>
+                <option value="price-desc">Giá: Cao &#8594; Thấp</option>
+                <option value="name">Tên A-Z</option>
+            </select>
+        </div>
+
+        <!-- Quần Sịp -->
+        <div class="section-divider" id="section-quan-sip"><h2>Quần Sịp Nam</h2></div>
+        <div class="product-grid">
+            <th:block th:each="product : ${products}" th:if="${product.category == 'quan-sip'}">
+                <div th:replace="~{fragments/product-card :: card(product=${product})}"></div>
+            </th:block>
+        </div>
+
+        <!-- Ví Da -->
+        <div class="section-divider" id="section-vi-da"><h2>Ví Da Cao Cấp</h2></div>
+        <div class="product-grid">
+            <th:block th:each="product : ${products}" th:if="${product.category == 'vi-da'}">
+                <div th:replace="~{fragments/product-card :: card(product=${product})}"></div>
+            </th:block>
+        </div>
+
+        <!-- Thắt Lưng -->
+        <div class="section-divider" id="section-that-lung"><h2>Thắt Lưng Da</h2></div>
+        <div class="product-grid">
+            <th:block th:each="product : ${products}" th:if="${product.category == 'that-lung'}">
+                <div th:replace="~{fragments/product-card :: card(product=${product})}"></div>
+            </th:block>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

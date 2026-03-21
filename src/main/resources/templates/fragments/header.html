@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="top">
+    <!-- Announcement Bar -->
+    <div class="announcement-bar" id="announcement-bar">
+        <div class="container">
+            <p>&#128293; <strong>FLASH SALE</strong> - Giảm đến 40% tất cả quần lót | Mua 3 tặng 1 | Miễn phí vận chuyển đơn từ 299K &#128293;</p>
+        </div>
+        <button class="announcement-close" id="announcement-close" aria-label="Đóng thông báo">&times;</button>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container header-inner">
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+
+            <a th:href="@{/}" class="logo" id="logo">
+                <span class="logo-icon">&#9670;</span> NB2 Boxer Men
+            </a>
+
+            <nav class="main-nav" id="main-nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a th:href="@{/}" class="nav-link" th:classappend="${activePage == 'home'} ? ' active'">TRANG CHỦ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/san-pham}" class="nav-link"
+                           th:classappend="${activePage == 'san-pham' or activePage == 'quan-sip' or activePage == 'vi-da' or activePage == 'that-lung'} ? ' active'">SẢN PHẨM</a>
+                        <div class="mega-menu">
+                            <div class="mega-menu-inner">
+                                <div class="mega-col">
+                                    <h4>Danh Mục</h4>
+                                    <a th:href="@{/quan-sip}">Quần sịp</a>
+                                    <a th:href="@{/vi-da}">Ví da</a>
+                                    <a th:href="@{/that-lung}">Thắt lưng</a>
+                                </div>
+                                <div class="mega-col">
+                                    <h4>Theo Chất Liệu</h4>
+                                    <a href="#">Cotton Compact</a>
+                                    <a href="#">Da bò thật</a>
+                                    <a href="#">Da PU cao cấp</a>
+                                </div>
+                                <div class="mega-col">
+                                    <h4>Bộ Sưu Tập</h4>
+                                    <a href="#">Sản phẩm mới</a>
+                                    <a href="#">Bán chạy nhất</a>
+                                    <a th:href="@{/sale}">Sale</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item"><a th:href="@{/#bestsellers}" class="nav-link">BÁN CHẠY</a></li>
+                    <li class="nav-item">
+                        <a th:href="@{/sale}" class="nav-link nav-sale" th:classappend="${activePage == 'sale'} ? ' active'">SALE</a>
+                    </li>
+                    <li class="nav-item"><a th:href="@{/#about}" class="nav-link">VỀ CHÚNG TÔI</a></li>
+                </ul>
+            </nav>
+
+            <div class="search-bar" id="search-bar">
+                <button class="search-toggle" id="search-toggle" aria-label="Tìm kiếm">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+                <input type="text" class="search-input" id="search-input" placeholder="Tìm kiếm sản phẩm...">
+            </div>
+
+            <div class="header-actions">
+                <button class="action-btn" id="account-btn" aria-label="Tài khoản">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </button>
+                <button class="action-btn cart-btn" id="cart-btn" aria-label="Giỏ hàng">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    <span class="cart-count" id="cart-count">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+</div>
+
+</body>
+</html>

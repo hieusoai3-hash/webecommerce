@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thắt Lưng Nam - NB2 Boxer Men</title>
+    <meta name="description" content="Thắt lưng nam da bò thật cao cấp NB2 Boxer Men - Khóa tự động, reversible, cổ điển.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: top}"></div>
+
+<!-- Page Hero -->
+<section class="page-hero">
+    <div class="page-hero-content">
+        <div class="container">
+            <div class="breadcrumb">
+                <a th:href="@{/}">Trang chủ</a> <span>&#8250;</span>
+                <a th:href="@{/san-pham}">Sản phẩm</a> <span>&#8250;</span>
+                <span style="color:#fff;">Thắt Lưng Nam</span>
+            </div>
+            <h1>Thắt Lưng Nam Da Thật</h1>
+            <p>Bền bỉ, nam tính với chất liệu da bò thật 100% thượng hạng</p>
+            <div class="category-nav">
+                <a th:href="@{/san-pham}" class="category-pill">Tất cả</a>
+                <a th:href="@{/quan-sip}" class="category-pill">Quần sịp</a>
+                <a th:href="@{/vi-da}" class="category-pill">Ví da</a>
+                <a th:href="@{/that-lung}" class="category-pill active">Thắt lưng</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="products" id="products" style="padding-top: 50px;">
+    <div class="container">
+        <div class="products-toolbar">
+            <p class="products-count">Hiển thị <strong th:text="${#lists.size(products)}"></strong> sản phẩm</p>
+            <select class="sort-select" id="sort-select">
+                <option value="default">Sắp xếp: Mặc định</option>
+                <option value="price-asc">Giá: Thấp &#8594; Cao</option>
+                <option value="price-desc">Giá: Cao &#8594; Thấp</option>
+                <option value="name">Tên A-Z</option>
+            </select>
+        </div>
+        <div class="product-grid" id="product-grid">
+            <div th:each="product : ${products}" th:replace="~{fragments/product-card :: card(product=${product})}"></div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>
