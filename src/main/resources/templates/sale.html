@@ -18,7 +18,7 @@
 <section class="sale-hero">
     <div class="sale-hero-content">
         <div class="container">
-            <span class="sale-badge">&#9889; FLASH SALE &#9889;</span>
+            <span class="sale-badge">FLASH SALE</span>
             <h1>Giảm Đến <span>50%</span></h1>
             <p>Ưu đãi cực sốc cho tất cả sản phẩm quần lót nam &amp; ví da cao cấp. Số lượng có hạn - Nhanh tay kẻo hết!</p>
             <div class="countdown-container" id="countdown">
@@ -47,22 +47,18 @@
             </a>
             <div class="sale-perks">
                 <div class="sale-perk">
-                    <div class="sale-perk-icon">&#128666;</div>
                     <h4>Free Ship</h4>
                     <p>Đơn từ 299K</p>
                 </div>
                 <div class="sale-perk">
-                    <div class="sale-perk-icon">&#127873;</div>
                     <h4>Mua 3 Tặng 1</h4>
                     <p>Áp dụng tất cả</p>
                 </div>
                 <div class="sale-perk">
-                    <div class="sale-perk-icon">&#128260;</div>
                     <h4>Đổi Trả 60 Ngày</h4>
-                    <p>Ví & thắt lưng</p>
+                    <p>Ví &amp; thắt lưng</p>
                 </div>
                 <div class="sale-perk">
-                    <div class="sale-perk-icon">&#128142;</div>
                     <h4>Chất Lượng</h4>
                     <p>Cam kết chính hãng</p>
                 </div>
@@ -76,6 +72,23 @@
     <div class="container">
         <div class="products-toolbar">
             <p class="products-count">Hiển thị <strong th:text="${#lists.size(products)}"></strong> sản phẩm đang giảm giá</p>
+            <div class="sort-dropdown" id="sort-dropdown">
+                <button class="sort-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M3 6h18M7 12h10M11 18h2"/>
+                    </svg>
+                    <span id="sort-label">Sắp xếp</span>
+                    <svg class="sort-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </button>
+                <ul class="sort-menu">
+                    <li class="sort-option active" data-value="default">Mặc định</li>
+                    <li class="sort-option" data-value="price-asc">Giá: Thấp → Cao</li>
+                    <li class="sort-option" data-value="price-desc">Giá: Cao → Thấp</li>
+                    <li class="sort-option" data-value="discount-desc">Giảm giá nhiều nhất</li>
+                </ul>
+            </div>
         </div>
         <div class="product-grid" id="product-grid">
             <th:block th:each="product : ${products}">
@@ -92,5 +105,42 @@
 <div th:replace="~{fragments/footer :: bottom}"></div>
 
 <script th:src="@{/js/script.js}"></script>
+<script>
+    (function () {
+        // Đặt thời điểm kết thúc flash sale: 3 ngày kể từ lần đầu vào trang
+        var storageKey = 'nb2_flash_sale_end';
+        var end = localStorage.getItem(storageKey);
+        if (!end) {
+            end = Date.now() + 3 * 24 * 60 * 60 * 1000;
+            localStorage.setItem(storageKey, end);
+        } else {
+            end = parseInt(end);
+        }
+
+        function pad(n) { return String(n).padStart(2, '0'); }
+
+        function tick() {
+            var diff = end - Date.now();
+            if (diff <= 0) {
+                document.getElementById('cd-days').textContent    = '00';
+                document.getElementById('cd-hours').textContent   = '00';
+                document.getElementById('cd-minutes').textContent = '00';
+                document.getElementById('cd-seconds').textContent = '00';
+                return;
+            }
+            var days    = Math.floor(diff / 86400000);
+            var hours   = Math.floor((diff % 86400000) / 3600000);
+            var minutes = Math.floor((diff % 3600000)  / 60000);
+            var seconds = Math.floor((diff % 60000)    / 1000);
+            document.getElementById('cd-days').textContent    = pad(days);
+            document.getElementById('cd-hours').textContent   = pad(hours);
+            document.getElementById('cd-minutes').textContent = pad(minutes);
+            document.getElementById('cd-seconds').textContent = pad(seconds);
+        }
+
+        tick();
+        setInterval(tick, 1000);
+    })();
+</script>
 </body>
 </html>

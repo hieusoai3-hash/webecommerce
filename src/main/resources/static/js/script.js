@@ -1310,19 +1310,43 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ===== Sort Select =====
-    const sortSelect = document.getElementById('sort-select');
-    if (sortSelect) {
-        sortSelect.addEventListener('change', () => {
-            const grid = document.getElementById('product-grid');
-            if (!grid) return;
+    // ===== Sort Dropdown =====
+    const sortDropdown = document.getElementById('sort-dropdown');
+    if (sortDropdown) {
+        const sortBtn = sortDropdown.querySelector('.sort-btn');
+        const sortLabel = sortDropdown.querySelector('#sort-label');
+
+        sortBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sortDropdown.classList.toggle('open');
+        });
+
+        document.addEventListener('click', () => sortDropdown.classList.remove('open'));
+
+        sortDropdown.querySelectorAll('.sort-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                sortDropdown.querySelectorAll('.sort-option').forEach(o => o.classList.remove('active'));
+                opt.classList.add('active');
+                sortLabel.textContent = opt.textContent.trim();
+                sortDropdown.classList.remove('open');
+                applySort(opt.dataset.value);
+            });
+        });
+    }
+
+    function applySort(val) {
+        // Support single #product-grid or multiple .product-grid (san-pham page)
+        const grids = document.getElementById('product-grid')
+            ? [document.getElementById('product-grid')]
+            : Array.from(document.querySelectorAll('.product-grid'));
+        grids.forEach(grid => {
             const cards = Array.from(grid.querySelectorAll('.product-card'));
-            const val = sortSelect.value;
             cards.sort((a, b) => {
-                if (val === 'price-asc')  return Number(a.dataset.price) - Number(b.dataset.price);
-                if (val === 'price-desc') return Number(b.dataset.price) - Number(a.dataset.price);
-                if (val === 'name')       return (a.dataset.name || '').localeCompare(b.dataset.name || '', 'vi');
-                return 0; // default — leave original order
+                if (val === 'price-asc')     return Number(a.dataset.price) - Number(b.dataset.price);
+                if (val === 'price-desc')    return Number(b.dataset.price) - Number(a.dataset.price);
+                if (val === 'discount-desc') return Number(b.dataset.discount) - Number(a.dataset.discount);
+                if (val === 'name')          return (a.dataset.name || '').localeCompare(b.dataset.name || '', 'vi');
+                return 0;
             });
             cards.forEach(c => grid.appendChild(c));
         });

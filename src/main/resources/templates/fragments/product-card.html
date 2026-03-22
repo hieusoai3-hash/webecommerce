@@ -8,6 +8,7 @@
 <div th:fragment="card(product)" class="product-card reveal"
      th:data-category="${product.category}"
      th:data-price="${product.price}"
+     th:data-discount="${product.onSale ? product.discount : 0}"
      th:data-name="${product.name}">
     <div class="product-badges">
         <span class="badge badge-hot" th:if="${product.hot}">Hot</span>

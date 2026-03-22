@@ -40,12 +40,24 @@
     <div class="container">
         <div class="products-toolbar">
             <p class="products-count">Hiển thị <strong th:text="${#lists.size(products)}"></strong> sản phẩm</p>
-            <select class="sort-select" id="sort-select">
-                <option value="default">Sắp xếp: Mặc định</option>
-                <option value="price-asc">Giá: Thấp &#8594; Cao</option>
-                <option value="price-desc">Giá: Cao &#8594; Thấp</option>
-                <option value="name">Tên A-Z</option>
-            </select>
+            <div class="sort-dropdown" id="sort-dropdown">
+                <button class="sort-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M3 6h18M7 12h10M11 18h2"/>
+                    </svg>
+                    <span id="sort-label">Sắp xếp</span>
+                    <svg class="sort-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </button>
+                <ul class="sort-menu">
+                    <li class="sort-option active" data-value="default">Mặc định</li>
+                    <li class="sort-option" data-value="price-asc">Giá: Thấp → Cao</li>
+                    <li class="sort-option" data-value="price-desc">Giá: Cao → Thấp</li>
+                    <li class="sort-option" data-value="name">Tên A-Z</li>
+                    <li class="sort-option" data-value="discount-desc">Giảm giá nhiều nhất</li>
+                </ul>
+            </div>
         </div>
         <div class="product-grid" id="product-grid">
             <th:block th:each="product : ${products}">
