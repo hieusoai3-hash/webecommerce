@@ -90,18 +90,16 @@
                     <span class="category-cta">Khám phá &#8594;</span>
                 </div>
             </a>
-            <a th:href="@{/combo-hot}" class="category-card reveal" id="cat-combo">
-                <div class="category-img" style="background:linear-gradient(135deg,#1a1a2e,#e94560); display:flex; align-items:center; justify-content:center;">
-                    <div style="text-align:center; color:#fff; padding:20px;">
-                        <div style="font-size:3rem; line-height:1; margin-bottom:8px;">🔥</div>
-                        <div style="font-size:1.8rem; font-weight:900; letter-spacing:-.02em;">3+1</div>
-                        <div style="font-size:.75rem; opacity:.8; letter-spacing:.1em; text-transform:uppercase;">Free</div>
-                    </div>
+            <a th:href="@{/combo-hot}" class="category-card category-combo reveal" id="cat-combo">
+                <div class="combo-badge-block">
+                    <span class="combo-num">3+1</span>
+                    <span class="combo-label">FREE</span>
                 </div>
-                <div class="category-info">
+                <div class="combo-divider"></div>
+                <div class="combo-body">
                     <h3>Combo Hot</h3>
-                    <span class="category-subtitle">Mua 3 Tặng 1 · Siêu Tiết Kiệm</span>
-                    <span class="category-cta">Xem ngay &#8594;</span>
+                    <p>Mua 3 sản phẩm, tặng ngay 1 miễn phí — Tiết kiệm thông minh, phong cách đàn ông</p>
+                    <span class="category-cta">Xem ưu đãi &#8594;</span>
                 </div>
             </a>
         </div>
@@ -370,24 +368,6 @@
     </div>
 </section>
 
-<!-- Newsletter -->
-<section class="newsletter" id="newsletter">
-    <div class="container">
-        <div class="newsletter-inner reveal">
-            <div class="newsletter-text">
-                <h2>Nhận Ưu Đãi Độc Quyền</h2>
-                <p>Đăng ký email để nhận thông tin khuyến mãi, sản phẩm mới và giảm ngay 10% cho đơn hàng đầu tiên</p>
-            </div>
-            <form class="newsletter-form" id="newsletter-form">
-                <div class="form-group">
-                    <input type="email" placeholder="Nhập email của bạn..." class="newsletter-input" id="newsletter-input" required>
-                    <button type="submit" class="btn btn-primary newsletter-btn">ĐĂNG KÝ</button>
-                </div>
-                <p class="newsletter-note">Bằng cách đăng ký, bạn đồng ý nhận email marketing từ NB2 Boxer Men Việt Nam</p>
-            </form>
-        </div>
-    </div>
-</section>
 
 <div th:replace="~{fragments/footer :: bottom}"></div>
 
