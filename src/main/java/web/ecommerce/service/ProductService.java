@@ -59,21 +59,6 @@ public class ProductService {
         repo.deleteById(id);
     }
 
-    public void updateSale(String productId, int discountPct) {
-        repo.findById(productId).ifPresent(p -> {
-            if (discountPct > 0) {
-                long base = p.getOriginalPrice() > 0 ? p.getOriginalPrice() : p.getPrice();
-                p.setOriginalPrice(base);
-                p.setPrice(base * (100 - discountPct) / 100);
-                p.setDiscount(discountPct);
-            } else {
-                if (p.getOriginalPrice() > 0) p.setPrice(p.getOriginalPrice());
-                p.setOriginalPrice(0);
-                p.setDiscount(0);
-            }
-            repo.save(p);
-        });
-    }
 
     public String saveImage(MultipartFile file, String uploadDir) throws IOException {
         if (file == null || file.isEmpty()) return null;

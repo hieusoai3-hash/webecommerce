@@ -476,21 +476,4 @@ public class AdminController {
         return "redirect:/admin/coupons";
     }
 
-    // ── Flash Sale ───────────────────────────────────────────────────────
-
-    @GetMapping("/flash-sale")
-    public String flashSale(Model model) {
-        model.addAttribute("products", productService.getAll());
-        model.addAttribute("activePage", "flash-sale");
-        return "admin/flash-sale";
-    }
-
-    @PostMapping("/flash-sale/update")
-    public String flashSaleUpdate(@RequestParam String productId,
-                                  @RequestParam int discountPct,
-                                  RedirectAttributes ra) {
-        productService.updateSale(productId, discountPct);
-        ra.addFlashAttribute("success", "Đã cập nhật khuyến mãi.");
-        return "redirect:/admin/flash-sale";
-    }
 }
