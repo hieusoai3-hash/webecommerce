@@ -10,6 +10,7 @@ import web.ecommerce.model.Combo;
 import web.ecommerce.model.Coupon;
 import web.ecommerce.model.Product;
 import web.ecommerce.model.ProductColor;
+import web.ecommerce.model.ProductVariantStock;
 import web.ecommerce.service.ComboService;
 import web.ecommerce.service.CouponService;
 import web.ecommerce.service.OrderService;
@@ -205,6 +206,8 @@ public class AdminController {
     public String newProductForm(Model model) {
         model.addAttribute("product", new Product());
         model.addAttribute("isNew", true);
+        model.addAttribute("featuresStr", "");
+        model.addAttribute("sizesStr", "");
         return "admin/product-form";
     }
 
@@ -238,6 +241,9 @@ public class AdminController {
             @RequestParam(required = false) String sizesStr,
             @RequestParam(defaultValue = "0") int stock,
             @RequestParam(defaultValue = "false") boolean hot,
+            @RequestParam(required = false) List<String> variantColor,
+            @RequestParam(required = false) List<String> variantSize,
+            @RequestParam(required = false) List<String> variantQty,
             @RequestParam(required = false) List<String> colorName,
             @RequestParam(required = false) List<String> colorHex,
             @RequestParam(required = false) List<MultipartFile> colorImage,
@@ -258,27 +264,26 @@ public class AdminController {
         product.setStock(stock);
         product.setHot(hot);
 
-        if (featuresStr != null && !featuresStr.isBlank()) {
-            product.setFeatures(Arrays.stream(featuresStr.split("\n"))
-                    .map(String::trim).filter(s -> !s.isEmpty())
-                    .collect(Collectors.toList()));
-        }
+        product.setFeatures(featuresStr == null || featuresStr.isBlank()
+                ? new ArrayList<>()
+                : Arrays.stream(featuresStr.split("\n"))
+                        .map(String::trim).filter(s -> !s.isEmpty())
+                        .collect(Collectors.toList()));
 
-        if (sizesStr != null && !sizesStr.isBlank()) {
-            product.setSizes(Arrays.stream(sizesStr.split(","))
-                    .map(String::trim).filter(s -> !s.isEmpty())
-                    .collect(Collectors.toList()));
-        }
+        product.setSizes(sizesStr == null || sizesStr.isBlank()
+                ? new ArrayList<>()
+                : Arrays.stream(sizesStr.split(","))
+                        .map(String::trim).filter(s -> !s.isEmpty())
+                        .collect(Collectors.toList()));
 
         // Build color list from per-color inputs
-        if (colorName != null && !colorName.isEmpty()) {
-            List<ProductColor> colors = new ArrayList<>();
+        List<ProductColor> colors = new ArrayList<>();
+        if (colorName != null) {
             for (int i = 0; i < colorName.size(); i++) {
                 String cName = colorName.get(i).trim();
                 if (cName.isEmpty()) continue;
                 String cHex = (colorHex != null && i < colorHex.size()) ? colorHex.get(i) : "#000000";
                 String cUrl = (colorExistingUrl != null && i < colorExistingUrl.size()) ? colorExistingUrl.get(i) : "";
-                // Upload new image if provided for this color
                 if (colorImage != null && i < colorImage.size()) {
                     MultipartFile file = colorImage.get(i);
                     if (file != null && !file.isEmpty()) {
@@ -292,7 +297,27 @@ public class AdminController {
                 }
                 colors.add(new ProductColor(cName, cHex, cUrl));
             }
-            product.setColors(colors);
+        }
+        product.setColors(colors);
+
+        // Build variant stock list and auto-sum total stock
+        if (variantColor != null && !variantColor.isEmpty()) {
+            List<ProductVariantStock> variants = new ArrayList<>();
+            int total = 0;
+            for (int i = 0; i < variantColor.size(); i++) {
+                String cName = variantColor.get(i);
+                String sName = (variantSize != null && i < variantSize.size()) ? variantSize.get(i) : "";
+                int qty = 0;
+                if (variantQty != null && i < variantQty.size()) {
+                    try { qty = Integer.parseInt(variantQty.get(i).trim()); } catch (Exception ignored) {}
+                }
+                variants.add(new ProductVariantStock(cName, sName, qty));
+                total += qty;
+            }
+            product.setVariantStocks(variants);
+            product.setStock(total);
+        } else {
+            product.setVariantStocks(new ArrayList<>());
         }
 
         productService.save(product);

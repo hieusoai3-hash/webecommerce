@@ -209,25 +209,25 @@
                 <input type="text" id="p-search" placeholder="Tìm tên, ID, chất liệu...">
             </div>
             <div class="filter-pills">
-                <button class="fp active" data-filter="all">Tất cả</button>
-                <button class="fp red"   data-filter="hot">🔥 Nổi bật</button>
-                <button class="fp green" data-filter="sale">🏷 Sale</button>
-                <button class="fp"       data-filter="normal">Thường</button>
-                <button class="fp"       data-filter="nostock">⚠ Hết hàng</button>
+                <button type="button" class="fp active" data-filter="all">Tất cả</button>
+                <button type="button" class="fp red"   data-filter="hot">🔥 Nổi bật</button>
+                <button type="button" class="fp green" data-filter="sale">🏷 Sale</button>
+                <button type="button" class="fp"       data-filter="normal">Thường</button>
+                <button type="button" class="fp"       data-filter="nostock">⚠ Hết hàng</button>
             </div>
         </div>
 
         <!-- Category tabs -->
         <div class="cat-tabs">
-            <button class="cat-tab active" data-target="sec-qs">
+            <button type="button" class="cat-tab active" data-target="sec-qs">
                 <span class="cat-dot" style="background:#3b82f6;"></span> Quần sịp
                 <span class="tc" th:text="${#lists.size(products.?[category == 'quan-sip'])}">0</span>
             </button>
-            <button class="cat-tab" data-target="sec-vd">
+            <button type="button" class="cat-tab" data-target="sec-vd">
                 <span class="cat-dot" style="background:#f59e0b;"></span> Ví da
                 <span class="tc" th:text="${#lists.size(products.?[category == 'vi-da'])}">0</span>
             </button>
-            <button class="cat-tab" data-target="sec-tl">
+            <button type="button" class="cat-tab" data-target="sec-tl">
                 <span class="cat-dot" style="background:#10b981;"></span> Thắt lưng
                 <span class="tc" th:text="${#lists.size(products.?[category == 'that-lung'])}">0</span>
             </button>

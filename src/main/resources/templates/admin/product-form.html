@@ -88,11 +88,6 @@
                                     <input type="number" name="discount" class="form-control"
                                            th:value="${product.discount}" min="0" max="100">
                                 </div>
-                                <div class="form-group">
-                                    <label class="form-label">Tồn kho <span class="hint">(số lượng còn lại)</span></label>
-                                    <input type="number" name="stock" class="form-control"
-                                           th:value="${product.stock}" min="0">
-                                </div>
                             </div>
 
                             <div class="row-2">
@@ -126,8 +121,9 @@
                                 <label class="form-label">
                                     Kích thước <span class="hint">(cách nhau bằng dấu phẩy)</span>
                                 </label>
-                                <input type="text" name="sizesStr" class="form-control"
-                                       th:value="${sizesStr}" placeholder="XL, 2XL, 3XL, 4XL">
+                                <input type="text" name="sizesStr" id="sizes-input" class="form-control"
+                                       th:value="${sizesStr}" placeholder="XL, 2XL, 3XL, 4XL"
+                                       oninput="buildVariantTable()">
                             </div>
 
                             <div class="form-check">
@@ -172,7 +168,7 @@
                                      onerror="this.style.display='none'" alt="preview">
                                 <input type="hidden" name="colorExistingUrl" th:value="${color.imageUrl}">
                                 <button type="button" class="btn-nb2 btn-danger-outline btn-sm"
-                                        onclick="this.closest('.color-row').remove()">
+                                        onclick="this.closest('.color-row').remove(); buildVariantTable()">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>
@@ -182,6 +178,20 @@
                                 Chưa có màu nào. Nhấn "Thêm màu" để thêm.
                             </p>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Variant Stock -->
+                <div class="admin-card" style="margin-top:20px;">
+                    <div class="admin-card-header">
+                        <h6><i class="bi bi-box-seam me-2" style="color:var(--accent)"></i>Tồn kho theo biến thể</h6>
+                    </div>
+                    <div class="admin-card-body">
+                        <input type="hidden" name="stock" id="stock-total" th:value="${product.stock}">
+                        <div id="variant-stock-table"></div>
+                        <p id="variant-stock-hint" class="form-hint" style="text-align:center; padding:12px 0; margin:0;">
+                            Thêm màu sắc hoặc size ở trên để phân chia tồn kho theo biến thể.
+                        </p>
                     </div>
                 </div>
 
@@ -211,7 +221,98 @@
     </div>
 </div>
 
-<script>
+<script th:inline="javascript">
+const existingVariants = (/*[[${product.variantStocks}]]*/ null) || [];
+
+function buildVariantTable() {
+    const colors = [...document.querySelectorAll('#colors-container input[name="colorName"]')]
+        .map(i => i.value.trim()).filter(v => v);
+    const sizesRaw = document.getElementById('sizes-input')?.value || '';
+    const sizes = sizesRaw.split(',').map(s => s.trim()).filter(s => s);
+
+    const container = document.getElementById('variant-stock-table');
+    const hint = document.getElementById('variant-stock-hint');
+
+    if (colors.length === 0 && sizes.length === 0) {
+        container.innerHTML = '';
+        hint.style.display = '';
+        return;
+    }
+    hint.style.display = 'none';
+
+    // Save current qty values before rebuilding
+    const savedQty = {};
+    container.querySelectorAll('tr[data-key]').forEach(tr => {
+        const key = tr.dataset.key;
+        const qtyEl = tr.querySelector('.variant-qty');
+        const checked = tr.querySelector('.variant-check')?.checked;
+        if (checked && qtyEl) savedQty[key] = parseInt(qtyEl.value) || 0;
+    });
+
+    // Build combinations
+    let rows = [];
+    if (colors.length > 0 && sizes.length > 0) {
+        colors.forEach(c => sizes.forEach(s => rows.push({ color: c, size: s })));
+    } else if (colors.length > 0) {
+        rows = colors.map(c => ({ color: c, size: '' }));
+    } else {
+        rows = sizes.map(s => ({ color: '', size: s }));
+    }
+
+    function getQty(color, size) {
+        const key = color + '|' + size;
+        if (savedQty[key] !== undefined) return savedQty[key];
+        const found = existingVariants.find(v => v.colorName === color && v.sizeName === size);
+        return found ? found.qty : 0;
+    }
+
+    let html = '<table class="vstock-table"><thead><tr>';
+    if (colors.length > 0) html += '<th>Màu sắc</th>';
+    if (sizes.length > 0) html += '<th>Size</th>';
+    html += '<th style="width:48px;text-align:center;">Chọn</th><th style="width:100px;">Số lượng</th></tr></thead><tbody>';
+
+    rows.forEach(({ color, size }) => {
+        const key = color + '|' + size;
+        const qty = getQty(color, size);
+        const checked = qty > 0;
+        const dis = checked ? '' : 'disabled';
+        html += `<tr data-key="${key}">`;
+        if (colors.length > 0) html += `<td><span class="vstock-color-chip">${color}</span></td>`;
+        if (sizes.length > 0) html += `<td><span class="size-tag">${size}</span></td>`;
+        html += `
+            <td style="text-align:center;">
+                <input type="checkbox" class="variant-check" ${checked ? 'checked' : ''} onchange="toggleVariant(this)">
+            </td>
+            <td>
+                <input type="hidden" name="variantColor" value="${color}" ${dis}>
+                <input type="hidden" name="variantSize" value="${size}" ${dis}>
+                <input type="number" name="variantQty" class="variant-qty form-control"
+                       value="${qty}" min="0" style="width:80px;" ${dis}
+                       oninput="updateStockTotal()">
+            </td>
+        </tr>`;
+    });
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+    updateStockTotal();
+}
+
+function toggleVariant(checkbox) {
+    const row = checkbox.closest('tr');
+    row.querySelectorAll('input[name="variantColor"], input[name="variantSize"], .variant-qty')
+       .forEach(inp => inp.disabled = !checkbox.checked);
+    updateStockTotal();
+}
+
+function updateStockTotal() {
+    let total = 0;
+    document.querySelectorAll('.variant-qty:not([disabled])').forEach(inp => {
+        total += parseInt(inp.value) || 0;
+    });
+    document.getElementById('stock-total').value = total;
+}
+
 function addColorRow(name, hex, existingUrl) {
     name = name || '';
     hex = hex || '#1a1a2e';
@@ -235,10 +336,11 @@ function addColorRow(name, hex, existingUrl) {
             : `<div class="color-preview-img" style="background:var(--bg); display:flex; align-items:center; justify-content:center; font-size:.7rem; color:var(--text-soft);">Chưa có</div>`}
         <input type="hidden" name="colorExistingUrl" value="${existingUrl}">
         <button type="button" class="btn-nb2 btn-danger-outline btn-sm"
-                onclick="this.closest('.color-row').remove()">
+                onclick="this.closest('.color-row').remove(); buildVariantTable()">
             <i class="bi bi-trash"></i>
         </button>`;
     document.getElementById('colors-container').appendChild(row);
+    buildVariantTable();
 }
 
 function previewColorImg(input) {
@@ -261,6 +363,8 @@ function previewColorImg(input) {
     };
     reader.readAsDataURL(input.files[0]);
 }
+
+document.addEventListener('DOMContentLoaded', buildVariantTable);
 </script>
 </body>
 </html>

@@ -572,3 +572,48 @@ textarea.form-control { resize: vertical; min-height: 80px; line-height: 1.5; }
     color: var(--text);
     margin: 0;
 }
+
+/* ── Variant stock table (product-form) ──────────────────────── */
+.vstock-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .85rem;
+}
+.vstock-table th {
+    background: var(--bg);
+    padding: 7px 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+.vstock-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+.vstock-table tr:last-child td { border-bottom: none; }
+.vstock-table tr:hover td { background: var(--bg); }
+.vstock-color-chip {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: .8rem;
+    font-weight: 600;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+.size-tag {
+    display: inline-block;
+    padding: 1px 7px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--text);
+}
+.variant-check { width: 16px; height: 16px; cursor: pointer; }
+.variant-qty { text-align: center; }
+.variant-qty:disabled { opacity: .35; }

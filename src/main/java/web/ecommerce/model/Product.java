@@ -44,6 +44,10 @@ public class Product {
     private boolean hot;
     private int stock;
 
+    @ElementCollection
+    @CollectionTable(name = "product_variant_stocks", joinColumns = @JoinColumn(name = "product_id"))
+    private List<ProductVariantStock> variantStocks;
+
     public Product() {}
 
     // ── Formatted helpers for Thymeleaf ──────────────────────────────────
@@ -115,6 +119,9 @@ public class Product {
 
     public int getStock() { return stock; }
     public void setStock(int stock) { this.stock = stock; }
+
+    public List<ProductVariantStock> getVariantStocks() { return variantStocks; }
+    public void setVariantStocks(List<ProductVariantStock> variantStocks) { this.variantStocks = variantStocks; }
 
     /** Returns 0–100 representing how complete this product's data is. */
     public int getCompletenessPct() {
