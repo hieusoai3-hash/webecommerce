@@ -433,15 +433,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ===== Product Filters =====
-    filterBtns.forEach(btn => {
+    // ===== Product Filters (.filter-btn on homepage, .category-pill on san-pham) =====
+    const allFilterBtns = document.querySelectorAll('.filter-btn, .category-pill');
+    allFilterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            // Update active state
-            filterBtns.forEach(b => b.classList.remove('active'));
+            allFilterBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
             const filterValue = btn.dataset.filter;
 
+            // Show/hide product cards
             productCards.forEach(card => {
                 if (filterValue === 'all' || card.dataset.category === filterValue) {
                     card.style.display = '';
@@ -454,6 +455,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     card.style.transform = 'translateY(20px)';
                     setTimeout(() => { card.style.display = 'none'; }, 300);
                 }
+            });
+
+            // Show/hide section dividers + their sibling grids (san-pham page)
+            document.querySelectorAll('.section-divider').forEach(divider => {
+                const category = (divider.id || '').replace('section-', '');
+                const visible = filterValue === 'all' || category === filterValue;
+                divider.style.display = visible ? '' : 'none';
+                const grid = divider.nextElementSibling;
+                if (grid) grid.style.display = visible ? '' : 'none';
             });
         });
     });
