@@ -41,6 +41,11 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
+    public List<Product> getHot() {
+        return repo.findByHotTrue();
+    }
+
+    @Transactional(readOnly = true)
     public Optional<Product> getById(String id) {
         return repo.findById(id);
     }

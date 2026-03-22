@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tất Cả Sản Phẩm - NB2 Boxer Men</title>
-    <meta name="description" content="Khám phá toàn bộ sản phẩm NB2 Boxer Men - Quần lót nam, ví da &amp; phụ kiện cao cấp.">
+    <title th:text="${pageTitle} + ' - NB2 Boxer Men'">Tất Cả Sản Phẩm - NB2 Boxer Men</title>
+    <meta name="description" th:content="${pageDesc}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -19,10 +19,10 @@
     <div class="page-hero-content">
         <div class="container">
             <div class="breadcrumb">
-                <a th:href="@{/}">Trang chủ</a> <span>&#8250;</span> <span style="color:#fff;">Tất cả sản phẩm</span>
+                <a th:href="@{/}">Trang chủ</a> <span>&#8250;</span> <span style="color:#fff;" th:text="${pageTitle ?: 'Tất cả sản phẩm'}">Tất cả sản phẩm</span>
             </div>
-            <h1>Tất Cả Sản Phẩm</h1>
-            <p>Khám phá bộ sưu tập quần lót nam, ví da &amp; phụ kiện cao cấp từ NB2 Boxer Men</p>
+            <h1 th:text="${pageTitle ?: 'Tất Cả Sản Phẩm'}">Tất Cả Sản Phẩm</h1>
+            <p th:text="${pageDesc ?: 'Khám phá bộ sưu tập quần lót nam, ví da &amp; phụ kiện cao cấp từ NB2 Boxer Men'}">Khám phá bộ sưu tập quần lót nam, ví da &amp; phụ kiện cao cấp từ NB2 Boxer Men</p>
             <div class="category-nav">
                 <button class="category-pill active" data-filter="all">Tất cả</button>
                 <button class="category-pill" data-filter="quan-sip">Quần sịp</button>

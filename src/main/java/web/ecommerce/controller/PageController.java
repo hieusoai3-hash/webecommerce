@@ -34,8 +34,16 @@ public class PageController {
     }
 
     @GetMapping("/san-pham")
-    public String sanPham(Model model) {
-        model.addAttribute("products", productService.getAll());
+    public String sanPham(@RequestParam(required = false) String filter, Model model) {
+        if ("hot".equals(filter)) {
+            model.addAttribute("products", productService.getHot());
+            model.addAttribute("pageTitle", "Bán Chạy Nhất");
+            model.addAttribute("pageDesc", "Những sản phẩm được yêu thích và bán chạy nhất tại NB2 Boxer Men.");
+        } else {
+            model.addAttribute("products", productService.getAll());
+            model.addAttribute("pageTitle", "Tất Cả Sản Phẩm");
+            model.addAttribute("pageDesc", "Khám phá toàn bộ sản phẩm NB2 Boxer Men.");
+        }
         model.addAttribute("activePage", "san-pham");
         return "san-pham";
     }
