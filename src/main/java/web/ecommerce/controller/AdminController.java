@@ -11,10 +11,12 @@ import web.ecommerce.model.Coupon;
 import web.ecommerce.model.Product;
 import web.ecommerce.model.ProductColor;
 import web.ecommerce.model.ProductVariantStock;
+import web.ecommerce.model.SiteSettings;
 import web.ecommerce.service.ComboService;
 import web.ecommerce.service.CouponService;
 import web.ecommerce.service.OrderService;
 import web.ecommerce.service.ProductService;
+import web.ecommerce.service.SiteSettingsService;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -30,16 +32,19 @@ public class AdminController {
     private final OrderService orderService;
     private final ComboService comboService;
     private final CouponService couponService;
+    private final SiteSettingsService siteSettingsService;
 
     @Value("${upload.dir:src/main/resources/static}")
     private String uploadDir;
 
     public AdminController(ProductService productService, OrderService orderService,
-                           ComboService comboService, CouponService couponService) {
+                           ComboService comboService, CouponService couponService,
+                           SiteSettingsService siteSettingsService) {
         this.productService = productService;
         this.orderService = orderService;
         this.comboService = comboService;
         this.couponService = couponService;
+        this.siteSettingsService = siteSettingsService;
     }
 
     // ── Login ────────────────────────────────────────────────────────────
@@ -499,6 +504,30 @@ public class AdminController {
             couponService.save(c);
         });
         return "redirect:/admin/coupons";
+    }
+
+    // ── Site Settings ────────────────────────────────────────────────────
+
+    @GetMapping("/settings")
+    public String settingsPage(Model model) {
+        model.addAttribute("settings", siteSettingsService.getSettings());
+        model.addAttribute("activePage", "settings");
+        return "admin/settings";
+    }
+
+    @PostMapping("/settings")
+    public String saveSettings(
+            @RequestParam(defaultValue = "") String bannerText,
+            @RequestParam(defaultValue = "false") boolean bannerEnabled,
+            @RequestParam(defaultValue = "0") long saleEndEpoch,
+            RedirectAttributes ra) {
+        SiteSettings s = siteSettingsService.getSettings();
+        s.setBannerText(bannerText);
+        s.setBannerEnabled(bannerEnabled);
+        s.setSaleEndEpoch(saleEndEpoch);
+        siteSettingsService.save(s);
+        ra.addFlashAttribute("success", "Đã lưu cài đặt.");
+        return "redirect:/admin/settings";
     }
 
 }

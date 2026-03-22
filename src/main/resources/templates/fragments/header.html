@@ -4,9 +4,10 @@
 
 <div th:fragment="top">
     <!-- Announcement Bar -->
-    <div class="announcement-bar" id="announcement-bar">
+    <div class="announcement-bar" id="announcement-bar"
+         th:if="${siteSettings == null or siteSettings.bannerEnabled}">
         <div class="container">
-            <p>&#128293; <strong>FLASH SALE</strong> - Giảm đến 40% tất cả quần lót | Mua 3 tặng 1 | Miễn phí vận chuyển đơn từ 299K &#128293;</p>
+            <p th:text="${siteSettings != null ? siteSettings.bannerText : '🔥 FLASH SALE'}">🔥 FLASH SALE</p>
         </div>
         <button class="announcement-close" id="announcement-close" aria-label="Đóng thông báo">&times;</button>
     </div>

@@ -107,14 +107,21 @@
 <script th:src="@{/js/script.js}"></script>
 <script>
     (function () {
-        // Đặt thời điểm kết thúc flash sale: 3 ngày kể từ lần đầu vào trang
+        // Ưu tiên thời điểm do admin đặt; nếu không có thì dùng localStorage
+        var adminEpoch = /*[[${siteSettings != null and siteSettings.saleEndEpoch > 0 ? siteSettings.saleEndEpoch : 0}]]*/ 0;
         var storageKey = 'nb2_flash_sale_end';
-        var end = localStorage.getItem(storageKey);
-        if (!end) {
-            end = Date.now() + 3 * 24 * 60 * 60 * 1000;
+        var end;
+        if (adminEpoch > 0) {
+            end = adminEpoch;
             localStorage.setItem(storageKey, end);
         } else {
-            end = parseInt(end);
+            end = localStorage.getItem(storageKey);
+            if (!end) {
+                end = Date.now() + 3 * 24 * 60 * 60 * 1000;
+                localStorage.setItem(storageKey, end);
+            } else {
+                end = parseInt(end);
+            }
         }
 
         function pad(n) { return String(n).padStart(2, '0'); }
