@@ -6,6 +6,191 @@
     <title>Đơn hàng - NB2 Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        /* ── Order Stats Row ── */
+        .order-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+        .ostat {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow var(--transition), transform var(--transition);
+        }
+        .ostat:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+        .ostat-icon {
+            width: 44px; height: 44px;
+            border-radius: var(--radius-md);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+        .ostat-icon.all     { background: #f1f5f9; color: #475569; }
+        .ostat-icon.pending { background: var(--warning-light); color: #b45309; }
+        .ostat-icon.ship    { background: var(--info-light); color: #1d4ed8; }
+        .ostat-icon.done    { background: var(--success-light); color: #065f46; }
+        .ostat-body { min-width: 0; }
+        .ostat-val  { font-size: 1.55rem; font-weight: 800; color: var(--text); line-height: 1; display: block; }
+        .ostat-lbl  { font-size: .72rem; font-weight: 500; color: var(--text-muted); margin-top: 3px; display: block; }
+
+        /* ── Filter Bar ── */
+        .order-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            flex-wrap: wrap;
+        }
+        .filter-tabs { display: flex; gap: 4px; flex: 1; }
+        .filter-tab {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: .8rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            border: 1.5px solid transparent;
+            background: transparent;
+            color: var(--text-muted);
+            transition: all var(--transition);
+            white-space: nowrap;
+        }
+        .filter-tab:hover { background: var(--bg); color: var(--text); }
+        .filter-tab.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .filter-tab.active-pending  { background: var(--warning-light); color: #92400e; border-color: #fde68a; }
+        .filter-tab.active-shipped  { background: var(--info-light);    color: #1d4ed8; border-color: #bfdbfe; }
+        .filter-tab.active-completed{ background: var(--success-light);  color: #065f46; border-color: #a7f3d0; }
+        .filter-tab.active-paid     { background: #f5f3ff;              color: #6d28d9; border-color: #ddd6fe; }
+
+        .search-box {
+            position: relative;
+            flex-shrink: 0;
+        }
+        .search-box i {
+            position: absolute;
+            left: 10px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-soft);
+            font-size: .85rem;
+            pointer-events: none;
+        }
+        .search-box input {
+            padding: 7px 12px 7px 30px;
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            font-size: .82rem;
+            font-family: inherit;
+            color: var(--text);
+            background: var(--bg);
+            outline: none;
+            width: 200px;
+            transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+        }
+        .search-box input:focus {
+            border-color: var(--primary);
+            background: var(--surface);
+            box-shadow: 0 0 0 3px rgba(26,26,46,.07);
+        }
+
+        /* ── Table enhancements ── */
+        .order-id-chip {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: .78rem;
+            font-weight: 700;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            letter-spacing: .3px;
+        }
+        .customer-cell { display: flex; align-items: center; gap: 10px; }
+        .customer-avatar {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            font-size: .78rem;
+            font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            letter-spacing: .5px;
+        }
+        .customer-name  { font-size: .875rem; font-weight: 600; color: var(--text); }
+        .customer-phone { font-size: .75rem; color: var(--text-muted); margin-top: 1px; }
+
+        .product-list { display: flex; flex-direction: column; gap: 3px; }
+        .product-item { font-size: .8rem; color: var(--text-muted); display: flex; align-items: baseline; gap: 4px; }
+        .product-item .product-name { color: var(--text); font-weight: 500; }
+        .product-item .product-meta { color: var(--text-soft); font-size: .75rem; }
+
+        .amount-cell { font-size: .95rem; font-weight: 800; color: var(--text); letter-spacing: -.3px; }
+
+        .pay-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: .73rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .pay-cod   { background: #f3f4f6; color: #374151; }
+        .pay-momo  { background: #fdf2f8; color: #9d174d; }
+        .pay-bank  { background: var(--info-light); color: #1e40af; }
+        .pay-card  { background: var(--success-light); color: #065f46; }
+
+        .status-cell { display: flex; align-items: center; gap: 8px; }
+        .status-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-pending   { background: #f59e0b; box-shadow: 0 0 0 2px #fef3c7; }
+        .dot-paid      { background: #7c3aed; box-shadow: 0 0 0 2px #ede9fe; }
+        .dot-shipped   { background: #3b82f6; box-shadow: 0 0 0 2px #dbeafe; }
+        .dot-completed { background: #10b981; box-shadow: 0 0 0 2px #d1fae5; }
+
+        .action-btn {
+            width: 30px; height: 30px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: .8rem;
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
+        .action-btn:hover { background: var(--bg); color: var(--text); border-color: #d1d5db; }
+
+        .admin-table tbody tr { cursor: pointer; }
+        .admin-table tbody tr:hover { background: #f8fafc; }
+        .admin-table td { vertical-align: middle; }
+
+        /* no results */
+        .no-results {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-muted);
+            display: none;
+        }
+        .no-results i { font-size: 2rem; color: var(--text-soft); display: block; margin-bottom: 10px; }
+        .no-results.show { display: block; }
+    </style>
 </head>
 <body>
 <div th:replace="~{admin/layout :: sidebar}" th:with="activePage='orders'"></div>
@@ -13,6 +198,9 @@
 <div class="admin-wrapper">
     <div class="topbar">
         <h1>Đơn hàng</h1>
+        <div class="topbar-sep"></div>
+        <span style="font-size:.8rem; color:var(--text-muted);"
+              th:text="${#lists.size(orders)} + ' đơn hàng'"></span>
     </div>
 
     <div class="content-area">
@@ -21,18 +209,63 @@
             <span th:text="${success}"></span>
         </div>
 
-        <div class="admin-card">
-            <div class="admin-card-header">
-                <h6><i class="bi bi-bag-check me-2" style="color:var(--accent)"></i>Danh sách đơn hàng</h6>
-                <span style="font-size:.8rem; color:var(--text-muted);"
-                      th:text="${#lists.size(orders)} + ' đơn'"></span>
+        <!-- Stats -->
+        <div class="order-stats">
+            <div class="ostat">
+                <div class="ostat-icon all"><i class="bi bi-bag"></i></div>
+                <div class="ostat-body">
+                    <span class="ostat-val" id="stat-all">0</span>
+                    <span class="ostat-lbl">Tổng đơn</span>
+                </div>
             </div>
+            <div class="ostat">
+                <div class="ostat-icon pending"><i class="bi bi-clock"></i></div>
+                <div class="ostat-body">
+                    <span class="ostat-val" id="stat-pending">0</span>
+                    <span class="ostat-lbl">Chờ xử lý</span>
+                </div>
+            </div>
+            <div class="ostat">
+                <div class="ostat-icon ship"><i class="bi bi-truck"></i></div>
+                <div class="ostat-body">
+                    <span class="ostat-val" id="stat-shipped">0</span>
+                    <span class="ostat-lbl">Đang giao</span>
+                </div>
+            </div>
+            <div class="ostat">
+                <div class="ostat-icon done"><i class="bi bi-check2-circle"></i></div>
+                <div class="ostat-body">
+                    <span class="ostat-val" id="stat-completed">0</span>
+                    <span class="ostat-lbl">Hoàn thành</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order table card -->
+        <div class="admin-card">
+            <!-- Toolbar -->
+            <div class="order-toolbar">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">Tất cả</button>
+                    <button class="filter-tab" data-filter="PENDING">Chờ xử lý</button>
+                    <button class="filter-tab" data-filter="PAID">Đã thanh toán</button>
+                    <button class="filter-tab" data-filter="SHIPPED">Đang giao</button>
+                    <button class="filter-tab" data-filter="COMPLETED">Hoàn thành</button>
+                </div>
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="searchInput" placeholder="Tìm khách hàng, mã đơn…">
+                </div>
+            </div>
+
+            <!-- Table -->
             <div class="admin-card-body no-pad">
                 <div th:if="${#lists.isEmpty(orders)}" class="empty-state">
                     <i class="bi bi-inbox"></i>
                     <p>Chưa có đơn hàng nào.</p>
                 </div>
-                <table th:if="${!#lists.isEmpty(orders)}" class="admin-table">
+
+                <table th:if="${!#lists.isEmpty(orders)}" class="admin-table" id="ordersTable">
                     <thead>
                     <tr>
                         <th>Mã đơn</th>
@@ -41,90 +274,191 @@
                         <th>Tổng tiền</th>
                         <th>Thanh toán</th>
                         <th>Thời gian</th>
-                        <th width="210">Trạng thái</th>
+                        <th>Trạng thái</th>
+                        <th style="width:44px;"></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="order : ${orders}" style="cursor:pointer;"
-                        th:attr="onclick=|window.location.href='@{/admin/orders/detail(id=${order.id})}'|">
-                        <td><strong th:text="${order.id}"></strong></td>
+                    <tr th:each="order : ${orders}"
+                        th:attr="data-status=${order.status},
+                                 data-search=${#strings.toLowerCase(order.customerName) + ' ' + order.customerPhone + ' ' + #strings.toLowerCase(order.id)},
+                                 onclick=|window.location.href='@{/admin/orders/detail(id=${order.id})}'|">
+
+                        <!-- Order ID -->
                         <td>
-                            <div th:text="${order.customerName}"></div>
-                            <div style="font-size:.78rem; color:var(--text-muted);"
-                                 th:text="${order.customerPhone}"></div>
+                            <span class="order-id-chip" th:text="'#' + ${#strings.substring(order.id, 0, 8)}"></span>
                         </td>
+
+                        <!-- Customer -->
                         <td>
-                            <div style="font-size:.8rem; color:var(--text-muted); line-height:1.6;">
-                                <div th:each="item : ${order.items}">
-                                    <span th:text="${item.productName}"></span>
-                                    <span style="color:var(--text-soft);"
-                                          th:text="' ×' + ${item.quantity} + ' (' + ${item.size} + ')'"></span>
+                            <div class="customer-cell">
+                                <div class="customer-avatar"
+                                     th:text="${#strings.substring(#strings.toUpperCase(order.customerName), 0, 2)}"></div>
+                                <div>
+                                    <div class="customer-name" th:text="${order.customerName}"></div>
+                                    <div class="customer-phone" th:text="${order.customerPhone}"></div>
                                 </div>
                             </div>
                         </td>
-                        <td style="font-weight:700;" th:text="${order.formattedTotal}"></td>
+
+                        <!-- Products -->
                         <td>
-                            <span class="badge badge-gray"
-                                  th:text="${order.paymentMethod == 'cod'} ? 'COD' :
-                                           (${order.paymentMethod == 'momo'} ? 'MoMo' :
-                                           (${order.paymentMethod == 'bank'} ? 'Chuyển khoản' : 'Thẻ'))">
-                            </span>
+                            <div class="product-list">
+                                <div class="product-item" th:each="item : ${order.items}">
+                                    <span class="product-name" th:text="${item.productName}"></span>
+                                    <span class="product-meta"
+                                          th:text="'×' + ${item.quantity} + ' · ' + ${item.size}"></span>
+                                </div>
+                            </div>
                         </td>
-                        <td style="font-size:.8rem; color:var(--text-muted);"
-                            th:text="${#temporals.format(order.createdAt, 'dd/MM/yy HH:mm')}"></td>
+
+                        <!-- Amount -->
                         <td>
-                            <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="amount-cell" th:text="${order.formattedTotal}"></span>
+                        </td>
+
+                        <!-- Payment -->
+                        <td>
+                            <span th:if="${order.paymentMethod == 'cod'}"    class="pay-badge pay-cod"><i class="bi bi-cash"></i> COD</span>
+                            <span th:if="${order.paymentMethod == 'momo'}"   class="pay-badge pay-momo"><i class="bi bi-phone"></i> MoMo</span>
+                            <span th:if="${order.paymentMethod == 'bank'}"   class="pay-badge pay-bank"><i class="bi bi-bank"></i> Chuyển khoản</span>
+                            <span th:if="${order.paymentMethod == 'card'}"   class="pay-badge pay-card"><i class="bi bi-credit-card"></i> Thẻ</span>
+                        </td>
+
+                        <!-- Time -->
+                        <td style="font-size:.8rem; color:var(--text-muted); white-space:nowrap;"
+                            th:text="${#temporals.format(order.createdAt, 'dd/MM/yy HH:mm')}"></td>
+
+                        <!-- Status -->
+                        <td>
+                            <div class="status-cell">
+                                <span th:if="${order.status == 'PENDING'}"   class="status-dot dot-pending"></span>
+                                <span th:if="${order.status == 'PAID'}"      class="status-dot dot-paid"></span>
+                                <span th:if="${order.status == 'SHIPPED'}"   class="status-dot dot-shipped"></span>
+                                <span th:if="${order.status == 'COMPLETED'}" class="status-dot dot-completed"></span>
                                 <span class="badge"
-                                      th:classappend="${order.status == 'PENDING'} ? 'badge-pending' : (${order.status == 'PAID'} ? 'badge-paid' : (${order.status == 'SHIPPED'} ? 'badge-shipped' : 'badge-completed'))"
-                                      th:text="${order.status == 'PENDING'} ? 'Chờ xử lý' : (${order.status == 'PAID'} ? 'Đã thanh toán' : (${order.status == 'SHIPPED'} ? 'Đang giao' : 'Hoàn thành'))">
+                                      th:classappend="${order.status == 'PENDING'} ? 'badge-pending' :
+                                                      (${order.status == 'PAID'} ? 'badge-paid' :
+                                                      (${order.status == 'SHIPPED'} ? 'badge-shipped' : 'badge-completed'))"
+                                      th:text="${order.status == 'PENDING'} ? 'Chờ xử lý' :
+                                               (${order.status == 'PAID'} ? 'Đã thanh toán' :
+                                               (${order.status == 'SHIPPED'} ? 'Đang giao' : 'Hoàn thành'))">
                                 </span>
-                                <div class="dropdown" onclick="event.stopPropagation()">
-                                    <button class="btn-nb2 btn-outline btn-sm dropdown-toggle">
-                                        <i class="bi bi-chevron-down"></i>
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        <form th:action="@{/admin/orders/update-status}" method="post">
-                                            <input type="hidden" name="id" th:value="${order.id}">
-                                            <input type="hidden" name="status" value="PENDING">
-                                            <button type="submit" class="dropdown-item">
-                                                <i class="bi bi-clock" style="color:var(--warning);"></i> Chờ xử lý
-                                            </button>
-                                        </form>
-                                        <form th:if="${order.paymentMethod == 'cod'}"
-                                              th:action="@{/admin/orders/update-status}" method="post">
-                                            <input type="hidden" name="id" th:value="${order.id}">
-                                            <input type="hidden" name="status" value="PAID">
-                                            <button type="submit" class="dropdown-item">
-                                                <i class="bi bi-cash-coin" style="color:#7c3aed;"></i> Đã thanh toán (COD)
-                                            </button>
-                                        </form>
-                                        <form th:action="@{/admin/orders/update-status}" method="post">
-                                            <input type="hidden" name="id" th:value="${order.id}">
-                                            <input type="hidden" name="status" value="SHIPPED">
-                                            <button type="submit" class="dropdown-item">
-                                                <i class="bi bi-truck" style="color:var(--info);"></i> Đang giao
-                                            </button>
-                                        </form>
-                                        <form th:action="@{/admin/orders/update-status}" method="post">
-                                            <input type="hidden" name="id" th:value="${order.id}">
-                                            <input type="hidden" name="status" value="COMPLETED">
-                                            <button type="submit" class="dropdown-item">
-                                                <i class="bi bi-check-circle" style="color:var(--success);"></i> Hoàn thành
-                                            </button>
-                                        </form>
-                                    </div>
+                            </div>
+                        </td>
+
+                        <!-- Action -->
+                        <td onclick="event.stopPropagation()">
+                            <div class="dropdown">
+                                <button class="action-btn dropdown-toggle" title="Cập nhật trạng thái">
+                                    <i class="bi bi-chevron-down"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <form th:action="@{/admin/orders/update-status}" method="post">
+                                        <input type="hidden" name="id" th:value="${order.id}">
+                                        <input type="hidden" name="status" value="PENDING">
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="bi bi-clock" style="color:var(--warning);"></i> Chờ xử lý
+                                        </button>
+                                    </form>
+                                    <form th:if="${order.paymentMethod == 'cod'}"
+                                          th:action="@{/admin/orders/update-status}" method="post">
+                                        <input type="hidden" name="id" th:value="${order.id}">
+                                        <input type="hidden" name="status" value="PAID">
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="bi bi-cash-coin" style="color:#7c3aed;"></i> Đã thanh toán (COD)
+                                        </button>
+                                    </form>
+                                    <form th:action="@{/admin/orders/update-status}" method="post">
+                                        <input type="hidden" name="id" th:value="${order.id}">
+                                        <input type="hidden" name="status" value="SHIPPED">
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="bi bi-truck" style="color:var(--info);"></i> Đang giao
+                                        </button>
+                                    </form>
+                                    <form th:action="@{/admin/orders/update-status}" method="post">
+                                        <input type="hidden" name="id" th:value="${order.id}">
+                                        <input type="hidden" name="status" value="COMPLETED">
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="bi bi-check-circle" style="color:var(--success);"></i> Hoàn thành
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </td>
                     </tr>
                     </tbody>
                 </table>
+                <div class="no-results" id="noResults">
+                    <i class="bi bi-search"></i>
+                    <p>Không tìm thấy đơn hàng phù hợp.</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+// ── Stats ──────────────────────────────────────────
+const rows = Array.from(document.querySelectorAll('#ordersTable tbody tr'));
+const statAll       = document.getElementById('stat-all');
+const statPending   = document.getElementById('stat-pending');
+const statShipped   = document.getElementById('stat-shipped');
+const statCompleted = document.getElementById('stat-completed');
+
+function updateStats(visible) {
+    if (!statAll) return;
+    statAll.textContent       = visible.length;
+    statPending.textContent   = visible.filter(r => r.dataset.status === 'PENDING').length;
+    statShipped.textContent   = visible.filter(r => r.dataset.status === 'SHIPPED').length;
+    statCompleted.textContent = visible.filter(r => r.dataset.status === 'COMPLETED').length;
+}
+updateStats(rows);
+
+// ── Filtering ──────────────────────────────────────
+let activeFilter = 'all';
+let searchQuery  = '';
+
+function applyFilters() {
+    let visible = [];
+    rows.forEach(row => {
+        const matchStatus = activeFilter === 'all' || row.dataset.status === activeFilter;
+        const matchSearch = !searchQuery || row.dataset.search.includes(searchQuery);
+        const show = matchStatus && matchSearch;
+        row.style.display = show ? '' : 'none';
+        if (show) visible.push(row);
+    });
+    updateStats(visible);
+    const noResults = document.getElementById('noResults');
+    if (noResults) noResults.classList.toggle('show', visible.length === 0);
+}
+
+// Filter tabs
+document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.filter-tab').forEach(t => {
+            t.classList.remove('active','active-pending','active-shipped','active-completed','active-paid');
+        });
+        activeFilter = tab.dataset.filter;
+        const cls = {
+            PENDING: 'active-pending', SHIPPED: 'active-shipped',
+            COMPLETED: 'active-completed', PAID: 'active-paid'
+        }[activeFilter] || 'active';
+        tab.classList.add(cls);
+        applyFilters();
+    });
+});
+
+// Search
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+    searchInput.addEventListener('input', () => {
+        searchQuery = searchInput.value.toLowerCase().trim();
+        applyFilters();
+    });
+}
+
+// ── Dropdown ───────────────────────────────────────
 let activeMenu = null;
 
 function closeAll() {
@@ -138,11 +472,10 @@ document.querySelectorAll('.dropdown-toggle').forEach(btn => {
         const menu = btn.closest('.dropdown').querySelector('.dropdown-menu');
         if (menu === activeMenu) { closeAll(); return; }
         closeAll();
-
         const rect = btn.getBoundingClientRect();
-        menu.style.top  = (rect.bottom + 6) + 'px';
+        menu.style.top   = (rect.bottom + 6) + 'px';
         menu.style.right = (window.innerWidth - rect.right) + 'px';
-        menu.style.left = 'auto';
+        menu.style.left  = 'auto';
         menu.classList.add('open');
         activeMenu = menu;
     });
