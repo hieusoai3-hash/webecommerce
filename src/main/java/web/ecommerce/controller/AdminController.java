@@ -236,6 +236,7 @@ public class AdminController {
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String featuresStr,
             @RequestParam(required = false) String sizesStr,
+            @RequestParam(defaultValue = "0") int stock,
             @RequestParam(defaultValue = "false") boolean hot,
             @RequestParam(required = false) List<String> colorName,
             @RequestParam(required = false) List<String> colorHex,
@@ -254,6 +255,7 @@ public class AdminController {
         product.setRating(rating);
         product.setReviews(reviews);
         product.setDescription(description);
+        product.setStock(stock);
         product.setHot(hot);
 
         if (featuresStr != null && !featuresStr.isBlank()) {

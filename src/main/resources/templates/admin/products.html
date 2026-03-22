@@ -129,13 +129,12 @@
         .sold-rev { font-size:.74rem; color:var(--success); font-weight:600; margin-top:2px; }
         .sold-zero { font-size:.82rem; color:var(--text-soft); }
 
-        /* Completeness bar */
-        .comp-wrap { display:flex; flex-direction:column; gap:5px; min-width:90px; }
-        .comp-bar-track { height:6px; background:var(--bg); border-radius:99px; overflow:hidden; border:1px solid var(--border); }
-        .comp-bar-fill { height:100%; border-radius:99px; transition:width .4s ease; }
-        .comp-pct { font-size:.72rem; font-weight:700; }
-        .comp-checks { display:flex; gap:3px; flex-wrap:wrap; }
-        .comp-check { font-size:.65rem; padding:1px 5px; border-radius:4px; }
+        /* Stock cell */
+        .stock-wrap { display:flex; flex-direction:column; gap:5px; min-width:80px; }
+        .stock-row  { display:flex; align-items:center; gap:6px; font-size:.78rem; color:var(--text-muted); }
+        .stock-row i { font-size:.75rem; width:14px; text-align:center; }
+        .stock-val  { font-weight:700; color:var(--text); }
+        .stock-sku  { font-size:.72rem; color:var(--text-soft); font-weight:500; }
 
         /* Status col */
         .status-badges { display:flex; flex-direction:column; gap:4px; }
@@ -198,8 +197,8 @@
                 <div><strong th:text="${#lists.size(products.?[colors != null and !colors.empty])}">0</strong><br><span style="color:var(--text-muted);">Có ảnh màu</span></div>
             </div>
             <div class="s-pill">
-                <div class="s-icon" style="background:var(--bg); color:var(--text-muted);"><i class="bi bi-check2-circle"></i></div>
-                <div><strong th:text="${#lists.size(products.?[completenessPct == 100])}">0</strong><br><span style="color:var(--text-muted);">Hoàn chỉnh</span></div>
+                <div class="s-icon" style="background:#f0fdf4; color:#15803d;"><i class="bi bi-layers-fill"></i></div>
+                <div><strong th:text="${#lists.size(products.?[stock > 0])}">0</strong><br><span style="color:var(--text-muted);">Còn hàng</span></div>
             </div>
         </div>
 
@@ -214,7 +213,7 @@
                 <button class="fp red"   data-filter="hot">🔥 Nổi bật</button>
                 <button class="fp green" data-filter="sale">🏷 Sale</button>
                 <button class="fp"       data-filter="normal">Thường</button>
-                <button class="fp"       data-filter="incomplete">⚠ Thiếu dữ liệu</button>
+                <button class="fp"       data-filter="nostock">⚠ Hết hàng</button>
             </div>
         </div>
 
@@ -267,7 +266,7 @@
                         <th class="sortable" data-col="price">Giá <span class="sort-icon"></span></th>
                         <th class="sortable" data-col="sold">Đã bán <span class="sort-icon"></span></th>
                         <th class="sortable" data-col="rating">Đánh giá <span class="sort-icon"></span></th>
-                        <th>Hoàn chỉnh</th>
+                        <th>Tồn kho</th>
                         <th>Trạng thái</th>
                         <th width="120">Thao tác</th>
                     </tr></thead>
@@ -280,7 +279,7 @@
                 <div th:unless="${catProducts.empty}" class="sec-footer">
                     <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.empty ? 0 : totalColorsByCat[catProducts[0].category]}">0</strong></span>
                     <span>📐 SP có size: <strong th:text="${#lists.size(catProducts.?[sizes != null and !sizes.empty])}">0</strong></span>
-                    <span>✅ Hoàn chỉnh 100%: <strong th:text="${#lists.size(catProducts.?[completenessPct == 100])}">0</strong></span>
+                    <span>📦 Còn hàng: <strong th:text="${#lists.size(catProducts.?[stock > 0])}">0</strong></span>
                 </div>
             </div>
         </div>
@@ -318,7 +317,7 @@
                         <th class="sortable" data-col="price">Giá <span class="sort-icon"></span></th>
                         <th class="sortable" data-col="sold">Đã bán <span class="sort-icon"></span></th>
                         <th class="sortable" data-col="rating">Đánh giá <span class="sort-icon"></span></th>
-                        <th>Hoàn chỉnh</th>
+                        <th>Tồn kho</th>
                         <th>Trạng thái</th>
                         <th width="120">Thao tác</th>
                     </tr></thead>
@@ -331,7 +330,7 @@
                 <div th:unless="${catProducts.empty}" class="sec-footer">
                     <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.empty ? 0 : totalColorsByCat[catProducts[0].category]}">0</strong></span>
                     <span>📐 SP có size: <strong th:text="${#lists.size(catProducts.?[sizes != null and !sizes.empty])}">0</strong></span>
-                    <span>✅ Hoàn chỉnh 100%: <strong th:text="${#lists.size(catProducts.?[completenessPct == 100])}">0</strong></span>
+                    <span>📦 Còn hàng: <strong th:text="${#lists.size(catProducts.?[stock > 0])}">0</strong></span>
                 </div>
             </div>
         </div>
@@ -369,7 +368,7 @@
                         <th class="sortable" data-col="price">Giá <span class="sort-icon"></span></th>
                         <th class="sortable" data-col="sold">Đã bán <span class="sort-icon"></span></th>
                         <th class="sortable" data-col="rating">Đánh giá <span class="sort-icon"></span></th>
-                        <th>Hoàn chỉnh</th>
+                        <th>Tồn kho</th>
                         <th>Trạng thái</th>
                         <th width="120">Thao tác</th>
                     </tr></thead>
@@ -382,7 +381,7 @@
                 <div th:unless="${catProducts.empty}" class="sec-footer">
                     <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.empty ? 0 : totalColorsByCat[catProducts[0].category]}">0</strong></span>
                     <span>📐 SP có size: <strong th:text="${#lists.size(catProducts.?[sizes != null and !sizes.empty])}">0</strong></span>
-                    <span>✅ Hoàn chỉnh 100%: <strong th:text="${#lists.size(catProducts.?[completenessPct == 100])}">0</strong></span>
+                    <span>📦 Còn hàng: <strong th:text="${#lists.size(catProducts.?[stock > 0])}">0</strong></span>
                 </div>
             </div>
         </div>
@@ -399,7 +398,8 @@
     th:attr="data-search=${#strings.toLowerCase(p.name + ' ' + p.id + ' ' + (p.material != null ? p.material : ''))},
              data-hot=${p.hot},
              data-sale=${p.discount > 0},
-             data-pct=${pct}"
+             data-pct=${pct},
+             data-stock=${p.stock}"
     th:data-name="${p.name}"
     th:data-price="${p.price}"
     th:data-sold="${sold}"
@@ -479,35 +479,17 @@
         <div class="rev-cnt" th:text="${p.formattedReviews} + ' đánh giá'"></div>
     </td>
 
-    <!-- Completeness -->
+    <!-- Stock -->
     <td>
-        <div class="comp-wrap">
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-                <span class="comp-pct"
-                      th:style="${pct == 100} ? 'color:var(--success)' : (${pct >= 60} ? 'color:var(--warning)' : 'color:var(--danger)')"
-                      th:text="${pct} + '%'">0%</span>
-            </div>
-            <div class="comp-bar-track">
-                <div class="comp-bar-fill"
-                     th:style="'width:' + ${pct} + '%; background:' + (${pct == 100} ? 'var(--success)' : (${pct >= 60} ? 'var(--warning)' : 'var(--danger)'))"></div>
-            </div>
-            <div class="comp-checks">
-                <span class="comp-check"
-                      th:style="${p.colors != null and !p.colors.empty} ? 'background:var(--success-light);color:#065f46' : 'background:var(--danger-light);color:#991b1b'"
-                      th:title="'Ảnh màu'">🖼</span>
-                <span class="comp-check"
-                      th:style="${p.description != null and !p.description.isEmpty()} ? 'background:var(--success-light);color:#065f46' : 'background:var(--danger-light);color:#991b1b'"
-                      th:title="'Mô tả'">📝</span>
-                <span class="comp-check"
-                      th:style="${p.features != null and !p.features.empty} ? 'background:var(--success-light);color:#065f46' : 'background:var(--danger-light);color:#991b1b'"
-                      th:title="'Tính năng'">✅</span>
-                <span class="comp-check"
-                      th:style="${p.sizes != null and !p.sizes.empty} ? 'background:var(--success-light);color:#065f46' : 'background:var(--danger-light);color:#991b1b'"
-                      th:title="'Kích thước'">📐</span>
-                <span class="comp-check"
-                      th:style="${p.reviews > 0} ? 'background:var(--success-light);color:#065f46' : 'background:var(--danger-light);color:#991b1b'"
-                      th:title="'Đánh giá'">⭐</span>
-            </div>
+        <div class="stock-wrap">
+            <span class="stock-val"
+                  th:style="${p.stock == 0} ? 'color:var(--danger); font-size:1rem;' :
+                             (${p.stock <= 5} ? 'color:var(--warning); font-size:1rem;' :
+                             'color:var(--success); font-size:1rem;')"
+                  th:text="${p.stock}">0</span>
+            <span class="stock-sku"
+                  th:text="${p.stock == 0} ? 'Hết hàng' :
+                             (${p.stock <= 5} ? 'Sắp hết' : 'Còn hàng')"></span>
         </div>
     </td>
 
@@ -604,7 +586,7 @@ function applyFilters(q) {
         if (activeFilter === 'hot')        matchFilter = row.dataset.hot === 'true';
         else if (activeFilter === 'sale')  matchFilter = row.dataset.sale === 'true';
         else if (activeFilter === 'normal') matchFilter = row.dataset.hot === 'false' && row.dataset.sale === 'false';
-        else if (activeFilter === 'incomplete') matchFilter = parseInt(row.dataset.pct) < 100;
+        else if (activeFilter === 'nostock') matchFilter = parseInt(row.dataset.stock || '0') === 0;
         const show = matchSearch && matchFilter;
         row.classList.toggle('row-hidden', !show);
         if (show) anyVisible = true;

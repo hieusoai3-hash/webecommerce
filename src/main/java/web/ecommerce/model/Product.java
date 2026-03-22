@@ -42,6 +42,7 @@ public class Product {
     private List<String> sizes;
 
     private boolean hot;
+    private int stock;
 
     public Product() {}
 
@@ -111,6 +112,9 @@ public class Product {
 
     public boolean isHot() { return hot; }
     public void setHot(boolean hot) { this.hot = hot; }
+
+    public int getStock() { return stock; }
+    public void setStock(int stock) { this.stock = stock; }
 
     /** Returns 0–100 representing how complete this product's data is. */
     public int getCompletenessPct() {
