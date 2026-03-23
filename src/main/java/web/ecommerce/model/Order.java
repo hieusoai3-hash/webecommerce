@@ -1,6 +1,7 @@
 package web.ecommerce.model;
 
 import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -29,6 +30,8 @@ public class Order {
     private LocalDateTime createdAt;
     private String couponCode;
     private long couponDiscount;
+    @Column(length = 1000)
+    private String customerNote;
 
     public Order() {
         this.createdAt = LocalDateTime.now();
@@ -67,6 +70,9 @@ public class Order {
 
     public long getCouponDiscount() { return couponDiscount; }
     public void setCouponDiscount(long couponDiscount) { this.couponDiscount = couponDiscount; }
+
+    public String getCustomerNote() { return customerNote; }
+    public void setCustomerNote(String customerNote) { this.customerNote = customerNote; }
 
     public String getFormattedTotal() {
         return String.format("%,d", total).replace(",", ".") + "₫";

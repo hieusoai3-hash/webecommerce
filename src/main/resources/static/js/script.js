@@ -959,6 +959,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 customerName:    document.getElementById('checkout-name').value.trim(),
                 customerPhone:   document.getElementById('checkout-phone').value.trim(),
                 customerAddress: address,
+                customerNote:    (document.getElementById('checkout-note') || {value:''}).value.trim(),
                 paymentMethod:   selectedPayment,
                 total:           Math.max(0, total),
                 couponCode:      appliedCoupon.code,

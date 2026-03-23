@@ -562,12 +562,21 @@
                                 <div class="info-val" th:text="${order.customerAddress}"></div>
                             </div>
                         </div>
-                        <div class="info-row" style="border-bottom:none;">
+                        <div class="info-row">
                             <i class="bi bi-box-seam"></i>
                             <div>
                                 <div style="font-size:.72rem; color:var(--text-soft); margin-bottom:1px;">Số lượng sản phẩm</div>
                                 <div class="info-val"
                                      th:text="${#lists.size(order.items)} + ' món trong đơn'"></div>
+                            </div>
+                        </div>
+                        <div class="info-row" style="border-bottom:none;"
+                             th:if="${order.customerNote != null and !#strings.isEmpty(order.customerNote)}">
+                            <i class="bi bi-chat-left-text"></i>
+                            <div>
+                                <div style="font-size:.72rem; color:var(--text-soft); margin-bottom:1px;">Ghi chú của khách</div>
+                                <div class="info-val" style="color:var(--warning); font-style:italic;"
+                                     th:text="${order.customerNote}"></div>
                             </div>
                         </div>
                     </div>

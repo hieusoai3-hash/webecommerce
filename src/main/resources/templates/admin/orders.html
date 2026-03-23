@@ -297,6 +297,11 @@
                                 <div>
                                     <div class="customer-name" th:text="${order.customerName}"></div>
                                     <div class="customer-phone" th:text="${order.customerPhone}"></div>
+                                    <div th:if="${order.customerNote != null and !#strings.isEmpty(order.customerNote)}"
+                                         style="font-size:.7rem; color:var(--warning); margin-top:2px; display:flex; align-items:center; gap:3px;">
+                                        <i class="bi bi-chat-left-text-fill" style="font-size:.65rem;"></i>
+                                        <span th:text="${#strings.abbreviate(order.customerNote, 40)}"></span>
+                                    </div>
                                 </div>
                             </div>
                         </td>

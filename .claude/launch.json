@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Spring Boot",
+      "runtimeExecutable": "/opt/homebrew/bin/node",
+      "runtimeArgs": ["/Users/chiseled/Documents/GitHub/webecommerce/proxy.js"],
+      "port": 3000
+    }
+  ]
+}
