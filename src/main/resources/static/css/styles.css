@@ -3220,40 +3220,74 @@ button {
 /* === Combo Selection Guide === */
 .size-guide-body.p-0 {
     padding: 0;
-    background-color: #fcecef;
-    /* Soft pink background matching image */
+    background: #f4f6f9;
 }
 
 .combo-selection-container {
-    padding: 10px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
 .selection-group {
-    background: white;
-    border-radius: 8px;
-    padding: 12px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
+    border: 1px solid #e8ecf1;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.selection-group-label {
+    font-size: .68rem;
+    font-weight: 800;
+    color: var(--color-gray-400);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f3f5;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .selection-group.size-group {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 8px;
 }
 
 .selection-item {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
     cursor: pointer;
-    font-size: 15px;
-    color: #333;
-    line-height: 1.4;
+    padding: 11px 13px;
+    border-radius: 9px;
+    border: 1.5px solid #e8ecf1;
+    background: #fafbfc;
+    transition: all 0.18s ease;
+    font-size: .85rem;
+    color: var(--color-primary);
+    font-weight: 500;
+    position: relative;
+}
+
+.selection-item:hover {
+    border-color: #e94560;
+    background: #fff5f7;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(233,69,96,0.1);
+}
+
+.selection-item:has(input:checked) {
+    border-color: #e94560;
+    background: #fff5f7;
+    box-shadow: 0 0 0 3px rgba(233,69,96,0.12);
 }
 
 .selection-item input {
@@ -3261,38 +3295,87 @@ button {
 }
 
 .custom-checkbox {
-    width: 20px;
-    height: 20px;
-    border: 1.5px solid #ccc;
-    border-radius: 4px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 2px;
-    transition: all 0.2s;
+    transition: all 0.18s;
     background: white;
 }
 
-.selection-item input:checked+.custom-checkbox {
-    border-color: #1e3a8a;
-    background-color: #1e3a8a;
+.selection-item input:checked + .custom-checkbox {
+    border-color: #e94560;
+    background: #e94560;
 }
 
-.selection-item input:checked+.custom-checkbox::after {
-    content: "✓";
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
+.selection-item input:checked + .custom-checkbox::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: white;
+    display: block;
 }
 
 .selection-text {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.selection-title {
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.selection-item:has(input:checked) .selection-title {
+    color: #e94560;
+}
+
+.selection-meta {
+    font-size: .73rem;
+    color: var(--color-gray-400);
+    font-weight: 400;
+}
+
+.selection-price {
+    font-size: .8rem;
+    font-weight: 800;
+    color: #e94560;
+    background: #fff0f3;
+    padding: 2px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.selection-badge {
+    font-size: .65rem;
+    font-weight: 800;
+    color: #fff;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    padding: 2px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    letter-spacing: .2px;
+    text-transform: uppercase;
 }
 
 .extra-fee {
-    color: #666;
-    font-size: 13px;
+    color: #e94560;
+    font-size: .65rem;
+    font-weight: 700;
+    background: #fff0f3;
+    padding: 1px 5px;
+    border-radius: 4px;
 }
 
 .free-shipping-banner {
@@ -3300,17 +3383,14 @@ button {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 12px;
-    color: #1e3a8a;
-    font-weight: 600;
-    font-size: 16px;
-    background: transparent;
-    margin-top: 4px;
-}
-
-.free-shipping-banner svg {
-    width: 20px;
-    height: 20px;
+    padding: 11px 16px;
+    color: #065f46;
+    font-weight: 700;
+    font-size: .85rem;
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    border-radius: 10px;
+    border: 1px solid #6ee7b7;
+    letter-spacing: .2px;
 }
 
 /* === Product Description Drawer === */
