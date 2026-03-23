@@ -1731,8 +1731,9 @@ button {
 /* === Back to Top === */
 .back-to-top {
     position: fixed;
-    bottom: var(--space-6);
-    right: var(--space-6);
+    bottom: 28px;
+    left: 24px;
+    right: auto;
     width: 48px;
     height: 48px;
     border-radius: var(--radius-full);
