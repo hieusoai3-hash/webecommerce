@@ -1,6 +1,5 @@
 package web.ecommerce.config;
 
-import jakarta.servlet.MultipartConfigElement;
 import org.apache.catalina.connector.Connector;
 import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
@@ -25,11 +24,5 @@ public class TomcatConfig {
             connector.setMaxPostSize(-1);
             connector.setMaxSavePostSize(-1);
         });
-    }
-
-    /** Remove servlet-level multipart size limits (-1L = unlimited) */
-    @Bean
-    public MultipartConfigElement multipartConfigElement() {
-        return new MultipartConfigElement("", -1L, -1L, -1);
     }
 }

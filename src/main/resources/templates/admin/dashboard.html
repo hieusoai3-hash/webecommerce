@@ -19,12 +19,14 @@
         .kpi-card.green  { border-left: 4px solid var(--success); }
         .kpi-card.amber  { border-left: 4px solid var(--amber); }
         .kpi-card.purple { border-left: 4px solid #8b5cf6; }
+        .kpi-card.teal   { border-left: 4px solid #0d9488; }
         .kpi-icon { font-size: 1.4rem; margin-bottom: 10px; }
         .kpi-icon.accent { color: var(--accent); }
         .kpi-icon.blue   { color: var(--info); }
         .kpi-icon.green  { color: var(--success); }
         .kpi-icon.amber  { color: var(--amber); }
         .kpi-icon.purple { color: #8b5cf6; }
+        .kpi-icon.teal   { color: #0d9488; }
         .kpi-value { font-size: 1.45rem; font-weight: 800; color: var(--text); line-height: 1.1; }
         .kpi-label { font-size: .73rem; color: var(--text-muted); font-weight: 500; margin-top: 4px; }
 
@@ -61,6 +63,22 @@
         .dot-pending   { background: var(--warning); }
         .dot-shipped   { background: var(--info); }
         .dot-completed { background: var(--success); }
+
+        /* Traffic */
+        .traffic-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .chart-wrap-traffic { position: relative; height: 180px; }
+        .pv-list { display: flex; flex-direction: column; gap: 10px; }
+        .pv-row  { display: flex; align-items: center; gap: 10px; }
+        .pv-thumb { width: 36px; height: 36px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border); flex-shrink: 0; }
+        .pv-no-img { width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-soft); font-size: .85rem; flex-shrink: 0; }
+        .pv-info { flex: 1; min-width: 0; }
+        .pv-name { font-size: .82rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .pv-bar-track { height: 4px; background: var(--bg); border-radius: 99px; overflow: hidden; margin-top: 4px; }
+        .pv-bar-fill  { height: 100%; background: #0d9488; border-radius: 99px; }
+        .pv-count { font-weight: 700; font-size: .8rem; color: #0d9488; flex-shrink: 0; }
+        .traffic-delta { font-size: .7rem; margin-top: 4px; font-weight: 600; }
+        .delta-up   { color: var(--success); }
+        .delta-same { color: var(--text-muted); }
 
         /* Top products */
         .rank-badge {
@@ -127,6 +145,14 @@
                 <div class="kpi-icon purple"><i class="bi bi-graph-up-arrow"></i></div>
                 <div class="kpi-value" th:text="${avgOrderValue}">0₫</div>
                 <div class="kpi-label">Giá trị đơn trung bình</div>
+            </div>
+            <div class="kpi-card teal">
+                <div class="kpi-icon teal"><i class="bi bi-eye"></i></div>
+                <div class="kpi-value" th:text="${todayVisits}">0</div>
+                <div class="kpi-label">Lượt xem hôm nay</div>
+                <div class="traffic-delta delta-up"
+                     th:text="${'↑ Hôm qua: ' + yesterdayVisits}">
+                </div>
             </div>
         </div>
 
@@ -210,6 +236,50 @@
                     </div>
                     <div th:if="${totalOrders == 0}" class="empty-state" style="padding:20px 0;">
                         <p>Chưa có đơn hàng nào.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Traffic ───────────────────────────────────────────────────── -->
+        <div class="traffic-row">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h6><i class="bi bi-bar-chart-line" style="color:#0d9488;margin-right:6px"></i>Lưu lượng truy cập 7 ngày</h6>
+                    <span style="font-size:.78rem;color:var(--text-muted);">Tổng tuần: <strong th:text="${weekVisits}">0</strong> lượt</span>
+                </div>
+                <div class="admin-card-body">
+                    <div class="chart-wrap-traffic">
+                        <canvas id="trafficChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h6><i class="bi bi-eye" style="color:#0d9488;margin-right:6px"></i>Sản phẩm xem nhiều nhất</h6>
+                </div>
+                <div class="admin-card-body">
+                    <div th:if="${topViewedProducts.isEmpty()}" class="empty-state" style="padding:12px 0;">
+                        <i class="bi bi-eye-slash" style="font-size:1.5rem;color:var(--text-soft);"></i>
+                        <p>Chưa có lượt xem sản phẩm.</p>
+                    </div>
+                    <div th:if="${!topViewedProducts.isEmpty()}" class="pv-list">
+                        <div class="pv-row" th:each="entry : ${topViewedProducts}" th:with="p=${entry['product']}">
+                            <img th:if="${p.colors != null and !p.colors.empty}"
+                                 th:src="@{'/' + ${p.colors[0].imageUrl}}"
+                                 class="pv-thumb" alt=""
+                                 onerror="this.style.display='none'">
+                            <div th:unless="${p.colors != null and !p.colors.empty}" class="pv-no-img">
+                                <i class="bi bi-image"></i>
+                            </div>
+                            <div class="pv-info">
+                                <div class="pv-name" th:text="${p.name}"></div>
+                                <div class="pv-bar-track">
+                                    <div class="pv-bar-fill" th:style="'width:' + ${entry['viewsPct']} + '%'"></div>
+                                </div>
+                            </div>
+                            <span class="pv-count" th:text="${entry['views']} + ' lượt'"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -488,12 +558,12 @@
     </div><!-- /content-area -->
 </div><!-- /admin-wrapper -->
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script th:src="@{/js/chart.umd.min.js}"></script>
 <script th:inline="javascript">
 (function () {
     // ── 7-day orders bar chart ────────────────────────────────────────
-    const labels = /*[[${last7Days.keySet()}]]*/ [];
-    const data   = /*[[${last7Days.values()}]]*/ [];
+    const labels = /*[[${last7DaysLabels}]]*/ [];
+    const data   = /*[[${last7DaysData}]]*/ [];
 
     const ordersCtx = document.getElementById('ordersChart');
     if (ordersCtx) {
@@ -522,10 +592,43 @@
         });
     }
 
+    // ── 7-day traffic line chart ──────────────────────────────────────
+    const trafficCtx = document.getElementById('trafficChart');
+    if (trafficCtx) {
+        const trafficLabels = /*[[${trafficLabels}]]*/ [];
+        const trafficData   = /*[[${trafficData}]]*/ [];
+        new Chart(trafficCtx, {
+            type: 'line',
+            data: {
+                labels: trafficLabels,
+                datasets: [{
+                    label: 'Lượt xem',
+                    data: trafficData,
+                    borderColor: '#0d9488',
+                    backgroundColor: 'rgba(13,148,136,.08)',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#0d9488',
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: true,
+                    tension: 0.4,
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.parsed.y} lượt` } } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } }, grid: { color: 'rgba(0,0,0,.05)' } },
+                    x: { ticks: { font: { size: 11 } }, grid: { display: false } }
+                }
+            }
+        });
+    }
+
     // ── Revenue by category horizontal bar chart ──────────────────────
     const catRevCtx = document.getElementById('catRevChart');
     if (catRevCtx) {
-        const catRevs = /*[[${revByCategory.values()}]]*/ [0, 0, 0];
+        const catRevs = /*[[${revByCategoryData}]]*/ [0, 0, 0];
         new Chart(catRevCtx, {
             type: 'bar',
             data: {

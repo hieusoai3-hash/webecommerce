@@ -18,6 +18,7 @@ import web.ecommerce.model.Product;
 import web.ecommerce.model.ProductColor;
 import web.ecommerce.model.ProductVariantStock;
 import web.ecommerce.model.SiteSettings;
+import web.ecommerce.repository.PageViewRepository;
 import web.ecommerce.service.ComboService;
 import web.ecommerce.service.CouponService;
 import web.ecommerce.service.OrderService;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,6 +43,7 @@ public class AdminController {
     private final ComboService comboService;
     private final CouponService couponService;
     private final SiteSettingsService siteSettingsService;
+    private final PageViewRepository pageViewRepository;
     private final InMemoryUserDetailsManager userDetailsManager;
     private final PasswordEncoder passwordEncoder;
 
@@ -53,6 +56,7 @@ public class AdminController {
     public AdminController(ProductService productService, OrderService orderService,
                            ComboService comboService, CouponService couponService,
                            SiteSettingsService siteSettingsService,
+                           PageViewRepository pageViewRepository,
                            InMemoryUserDetailsManager userDetailsManager,
                            PasswordEncoder passwordEncoder) {
         this.productService = productService;
@@ -60,6 +64,7 @@ public class AdminController {
         this.comboService = comboService;
         this.couponService = couponService;
         this.siteSettingsService = siteSettingsService;
+        this.pageViewRepository = pageViewRepository;
         this.userDetailsManager = userDetailsManager;
         this.passwordEncoder = passwordEncoder;
     }
@@ -116,6 +121,8 @@ public class AdminController {
                     .count();
             last7Days.put(day.format(fmt), count);
         }
+        List<String> last7DaysLabels = new ArrayList<>(last7Days.keySet());
+        List<Long>   last7DaysData   = new ArrayList<>(last7Days.values());
 
         // ── Per-product sales → top products ─────────────────────────────
         Map<String, Long> dashSales = new HashMap<>();
@@ -170,26 +177,72 @@ public class AdminController {
             }
         }
 
-        model.addAttribute("totalProducts",   products.size());
-        model.addAttribute("totalOrders",     orders.size());
-        model.addAttribute("totalRevenue",    String.format("%,d", totalRevenue).replace(",", ".") + "₫");
-        model.addAttribute("pendingOrders",   pendingCount);
-        model.addAttribute("paidOrders",      paidCount);
-        model.addAttribute("shippedOrders",   shippedCount);
-        model.addAttribute("completedOrders", completedCount);
-        model.addAttribute("hotCount",        hotCount);
-        model.addAttribute("onSaleCount",     onSaleCount);
-        model.addAttribute("quanSip",         quanSip);
-        model.addAttribute("viDa",            viDa);
-        model.addAttribute("thatLung",        thatLung);
+        // ── Traffic stats ─────────────────────────────────────────────────
+        long todayVisits = 0, yesterdayVisits = 0, weekVisits = 0;
+        List<String> trafficLabels = new ArrayList<>();
+        List<Long>   trafficData   = new ArrayList<>();
+        List<Map<String, Object>> topViewedProducts = new ArrayList<>();
+        long maxProductViews = 1L;
+        try {
+            LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+            todayVisits     = pageViewRepository.countByViewedAtBetween(todayStart, todayStart.plusDays(1));
+            yesterdayVisits = pageViewRepository.countByViewedAtBetween(todayStart.minusDays(1), todayStart);
+            weekVisits      = pageViewRepository.countByViewedAtBetween(todayStart.minusDays(7), LocalDateTime.now());
+
+            for (int i = 6; i >= 0; i--) {
+                LocalDate day = LocalDate.now().minusDays(i);
+                trafficLabels.add(day.format(fmt));
+                trafficData.add(pageViewRepository.countByViewedAtBetween(day.atStartOfDay(), day.plusDays(1).atStartOfDay()));
+            }
+
+            List<Object[]> topProductViewsRaw = pageViewRepository.findTopProductViewsFrom(LocalDate.now().minusDays(7).atStartOfDay());
+            for (Object[] row : topProductViewsRaw.stream().limit(5).toList()) {
+                String pid = (String) row[0];
+                long views = ((Number) row[1]).longValue();
+                Product p = products.stream().filter(x -> x.getId().equals(pid)).findFirst().orElse(null);
+                if (p == null) continue;
+                Map<String, Object> entry = new LinkedHashMap<>();
+                entry.put("product", p);
+                entry.put("views", views);
+                topViewedProducts.add(entry);
+                if (views > maxProductViews) maxProductViews = views;
+            }
+            final long maxPV = maxProductViews;
+            topViewedProducts.forEach(e -> e.put("viewsPct", (int)((Long) e.get("views") * 100 / maxPV)));
+        } catch (Exception ignored) {
+            // traffic table may not exist yet on first boot
+        }
+
+        model.addAttribute("totalProducts",    products.size());
+        model.addAttribute("totalOrders",      orders.size());
+        model.addAttribute("totalRevenue",     String.format("%,d", totalRevenue).replace(",", ".") + "₫");
+        model.addAttribute("pendingOrders",    pendingCount);
+        model.addAttribute("paidOrders",       paidCount);
+        model.addAttribute("shippedOrders",    shippedCount);
+        model.addAttribute("completedOrders",  completedCount);
+        model.addAttribute("hotCount",         hotCount);
+        model.addAttribute("onSaleCount",      onSaleCount);
+        model.addAttribute("quanSip",          quanSip);
+        model.addAttribute("viDa",             viDa);
+        model.addAttribute("thatLung",         thatLung);
         model.addAttribute("paymentBreakdown", paymentBreakdown);
-        model.addAttribute("last7Days",       last7Days);
-        model.addAttribute("recentOrders",    orders.stream().limit(8).toList());
+        model.addAttribute("last7Days",        last7Days);
+        model.addAttribute("last7DaysLabels",  last7DaysLabels);
+        model.addAttribute("last7DaysData",    last7DaysData);
+        model.addAttribute("recentOrders",     orders.stream().limit(8).toList());
         long incompleteCount = products.stream().filter(p -> p.getCompletenessPct() < 100).count();
         model.addAttribute("topProducts",      topProducts);
         model.addAttribute("avgOrderValue",    String.format("%,d", avgOrderValue).replace(",", ".") + "₫");
         model.addAttribute("revByCategory",    revByCategory);
+        model.addAttribute("revByCategoryData", new ArrayList<>(revByCategory.values()));
         model.addAttribute("incompleteCount",  incompleteCount);
+        model.addAttribute("todayVisits",         todayVisits);
+        model.addAttribute("yesterdayVisits",    yesterdayVisits);
+        model.addAttribute("weekVisits",         weekVisits);
+        model.addAttribute("trafficLabels",      trafficLabels);
+        model.addAttribute("trafficData",        trafficData);
+        model.addAttribute("topViewedProducts",  topViewedProducts);
+        model.addAttribute("maxProductViews",    maxProductViews);
         return "admin/dashboard";
     }
 

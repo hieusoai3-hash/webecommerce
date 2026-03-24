@@ -592,7 +592,7 @@ function buildVariantTable() {
             <td>
                 <div class="qty-step">
                     <button type="button" onclick="stepQty(this,-1)" ${dis}>−</button>
-                    <input type="number" class="variant-qty" value="${qty}" min="0" ${dis}
+                    <input type="number" name="variantQty" class="variant-qty" value="${qty}" min="0" ${dis}
                            oninput="updateTotal()">
                     <button type="button" onclick="stepQty(this,1)" ${dis}>+</button>
                 </div>
