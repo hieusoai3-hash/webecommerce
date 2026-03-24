@@ -90,13 +90,27 @@ public class PageController {
     }
 
     @GetMapping("/tra-don-hang")
-    public String traDonHang(@RequestParam(required = false) String id, Model model) {
+    public String traDonHang(
+            @RequestParam(required = false) String id,
+            @RequestParam(required = false) String phone,
+            Model model) {
         if (id != null && !id.isBlank()) {
-            orderService.getById(id.trim()).ifPresentOrElse(
+            String normalized = id.trim().toUpperCase().startsWith("#") ? id.trim() : "#" + id.trim();
+            orderService.getById(normalized).ifPresentOrElse(
                 order -> model.addAttribute("order", order),
                 () -> model.addAttribute("notFound", true)
             );
             model.addAttribute("query", id.trim());
+            model.addAttribute("searchType", "id");
+        } else if (phone != null && !phone.isBlank()) {
+            List<web.ecommerce.model.Order> orders = orderService.findByPhone(phone.trim());
+            if (orders.isEmpty()) {
+                model.addAttribute("notFound", true);
+            } else {
+                model.addAttribute("orders", orders);
+            }
+            model.addAttribute("query", phone.trim());
+            model.addAttribute("searchType", "phone");
         }
         model.addAttribute("activePage", "tra-don-hang");
         return "tra-don-hang";

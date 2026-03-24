@@ -3105,6 +3105,15 @@ button {
 
 .success-actions {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+}
+.success-actions .btn {
+    width: 100%;
     justify-content: center;
 }
 

@@ -35,6 +35,11 @@ public class OrderService {
         return repo.findById(id);
     }
 
+    @Transactional(readOnly = true)
+    public List<Order> findByPhone(String phone) {
+        return repo.findByCustomerPhoneOrderByCreatedAtDesc(phone);
+    }
+
     public Optional<Order> updateStatus(String id, String status) {
         return repo.findById(id).map(o -> {
             o.setStatus(status);
