@@ -53,13 +53,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Back to top visibility
-        if (scrollY > 500) {
-            backToTop.classList.add('visible');
-        } else {
-            backToTop.classList.remove('visible');
+        if (backToTop) {
+            if (scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
         }
-
-        // scroll tracking
     });
 
     // ===== Back to Top =====

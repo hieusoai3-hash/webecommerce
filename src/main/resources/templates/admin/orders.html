@@ -265,6 +265,7 @@
                     <p>Chưa có đơn hàng nào.</p>
                 </div>
 
+                <div class="table-responsive">
                 <table th:if="${!#lists.isEmpty(orders)}" class="admin-table" id="ordersTable">
                     <thead>
                     <tr>
@@ -393,7 +394,7 @@
                         </td>
                     </tr>
                     </tbody>
-                </table>
+                </table></div>
                 <div class="no-results" id="noResults">
                     <i class="bi bi-search"></i>
                     <p>Không tìm thấy đơn hàng phù hợp.</p>

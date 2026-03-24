@@ -258,7 +258,7 @@
                 <div th:if="${catProducts.empty}" class="empty-state">
                     <i class="bi bi-inbox"></i><p>Chưa có sản phẩm trong danh mục này.</p>
                 </div>
-                <table th:unless="${catProducts.empty}" class="admin-table" id="tbl-qs">
+                <div class="table-responsive"><table th:unless="${catProducts.empty}" class="admin-table" id="tbl-qs">
                     <thead><tr>
                         <th width="76">Ảnh</th>
                         <th class="sortable" data-col="name">Sản phẩm <span class="sort-icon"></span></th>
@@ -275,7 +275,7 @@
                         <tr th:replace="~{admin/products :: productRow(p=${p}, salesByProduct=${salesByProduct}, revByProduct=${revByProduct})}"></tr>
                     </th:block>
                     </tbody>
-                </table>
+                </table></div>
                 <div th:unless="${catProducts.empty}" class="sec-footer">
                     <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.empty ? 0 : totalColorsByCat[catProducts[0].category]}">0</strong></span>
                     <span>📐 SP có size: <strong th:text="${#lists.size(catProducts.?[sizes != null and !sizes.empty])}">0</strong></span>
@@ -309,7 +309,7 @@
                 <div th:if="${catProducts.empty}" class="empty-state">
                     <i class="bi bi-inbox"></i><p>Chưa có sản phẩm trong danh mục này.</p>
                 </div>
-                <table th:unless="${catProducts.empty}" class="admin-table" id="tbl-vd">
+                <div class="table-responsive"><table th:unless="${catProducts.empty}" class="admin-table" id="tbl-vd">
                     <thead><tr>
                         <th width="76">Ảnh</th>
                         <th class="sortable" data-col="name">Sản phẩm <span class="sort-icon"></span></th>
@@ -326,7 +326,7 @@
                         <tr th:replace="~{admin/products :: productRow(p=${p}, salesByProduct=${salesByProduct}, revByProduct=${revByProduct})}"></tr>
                     </th:block>
                     </tbody>
-                </table>
+                </table></div>
                 <div th:unless="${catProducts.empty}" class="sec-footer">
                     <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.empty ? 0 : totalColorsByCat[catProducts[0].category]}">0</strong></span>
                     <span>📐 SP có size: <strong th:text="${#lists.size(catProducts.?[sizes != null and !sizes.empty])}">0</strong></span>
@@ -360,7 +360,7 @@
                 <div th:if="${catProducts.empty}" class="empty-state">
                     <i class="bi bi-inbox"></i><p>Chưa có sản phẩm trong danh mục này.</p>
                 </div>
-                <table th:unless="${catProducts.empty}" class="admin-table" id="tbl-tl">
+                <div class="table-responsive"><table th:unless="${catProducts.empty}" class="admin-table" id="tbl-tl">
                     <thead><tr>
                         <th width="76">Ảnh</th>
                         <th class="sortable" data-col="name">Sản phẩm <span class="sort-icon"></span></th>
@@ -377,7 +377,7 @@
                         <tr th:replace="~{admin/products :: productRow(p=${p}, salesByProduct=${salesByProduct}, revByProduct=${revByProduct})}"></tr>
                     </th:block>
                     </tbody>
-                </table>
+                </table></div>
                 <div th:unless="${catProducts.empty}" class="sec-footer">
                     <span>🎨 Tổng màu sắc: <strong th:text="${catProducts.empty ? 0 : totalColorsByCat[catProducts[0].category]}">0</strong></span>
                     <span>📐 SP có size: <strong th:text="${#lists.size(catProducts.?[sizes != null and !sizes.empty])}">0</strong></span>

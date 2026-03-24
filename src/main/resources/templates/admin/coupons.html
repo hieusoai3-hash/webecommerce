@@ -34,7 +34,7 @@
                     <p>Chưa có mã giảm giá nào.</p>
                     <a th:href="@{/admin/coupons/new}" class="btn-nb2 btn-accent btn-sm">Tạo mã đầu tiên</a>
                 </div>
-                <table th:if="${!#lists.isEmpty(coupons)}" class="admin-table">
+                <div class="table-responsive"><table th:if="${!#lists.isEmpty(coupons)}" class="admin-table">
                     <thead>
                     <tr>
                         <th>Mã</th>
@@ -96,7 +96,7 @@
                         </td>
                     </tr>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>
