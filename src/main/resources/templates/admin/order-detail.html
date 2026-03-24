@@ -237,6 +237,28 @@
 
         /* ── Copy feedback ── */
         .copy-ok { display: none; color: var(--success); font-size: .72rem; font-weight: 600; }
+
+        /* ── Shipping form ── */
+        .ship-field { margin-bottom: 12px; }
+        .ship-label { font-size: .72rem; font-weight: 700; color: var(--text-muted);
+                      text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; display: block; }
+        .ship-input {
+            width: 100%; padding: 8px 11px;
+            border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+            font-size: .83rem; font-family: inherit; color: var(--text);
+            background: var(--bg); outline: none;
+            transition: border-color var(--transition), box-shadow var(--transition);
+            box-sizing: border-box;
+        }
+        .ship-input:focus { border-color: var(--primary); background: var(--surface);
+                            box-shadow: 0 0 0 3px rgba(26,26,46,.07); }
+        .ship-track-display {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 11px; background: var(--bg);
+            border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+            font-size: .83rem; font-family: monospace; font-weight: 700;
+            color: var(--accent); letter-spacing: .5px;
+        }
     </style>
 </head>
 <body>
@@ -521,6 +543,66 @@
                                 </div>
                             </div>
 
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping info card -->
+                <div class="od-card">
+                    <div class="od-card-head">
+                        <h6><i class="bi bi-truck"></i>Thông tin vận chuyển</h6>
+                        <span th:if="${order.shippingCarrier != null and !#strings.isEmpty(order.shippingCarrier)}"
+                              style="font-size:.72rem; font-weight:600; color:var(--success); display:flex; align-items:center; gap:4px;">
+                            <i class="bi bi-check-circle-fill"></i> Đã cập nhật
+                        </span>
+                    </div>
+                    <div class="od-card-body">
+                        <form th:action="@{/admin/orders/update-shipping}" method="post">
+                            <input type="hidden" name="id" th:value="${order.id}">
+                            <div class="ship-field">
+                                <label class="ship-label">Đơn vị vận chuyển</label>
+                                <select name="shippingCarrier" class="ship-input">
+                                    <option value="">-- Chọn đơn vị --</option>
+                                    <option value="Giao Hàng Nhanh"
+                                            th:selected="${order.shippingCarrier == 'Giao Hàng Nhanh'}">Giao Hàng Nhanh (GHN)</option>
+                                    <option value="Giao Hàng Tiết Kiệm"
+                                            th:selected="${order.shippingCarrier == 'Giao Hàng Tiết Kiệm'}">Giao Hàng Tiết Kiệm (GHTK)</option>
+                                    <option value="J&T Express"
+                                            th:selected="${order.shippingCarrier == 'J&T Express'}">J&amp;T Express</option>
+                                    <option value="Viettel Post"
+                                            th:selected="${order.shippingCarrier == 'Viettel Post'}">Viettel Post</option>
+                                    <option value="Vietnam Post"
+                                            th:selected="${order.shippingCarrier == 'Vietnam Post'}">Vietnam Post (VNPost)</option>
+                                    <option value="Ninja Van"
+                                            th:selected="${order.shippingCarrier == 'Ninja Van'}">Ninja Van</option>
+                                    <option value="Best Express"
+                                            th:selected="${order.shippingCarrier == 'Best Express'}">Best Express</option>
+                                </select>
+                            </div>
+                            <div class="ship-field">
+                                <label class="ship-label">Mã vận đơn</label>
+                                <input type="text" name="trackingCode" class="ship-input"
+                                       placeholder="VD: GHN1234567890"
+                                       th:value="${order.trackingCode}"
+                                       autocomplete="off" spellcheck="false">
+                            </div>
+                            <button type="submit" class="btn-nb2 btn-accent btn-sm" style="width:100%; justify-content:center;">
+                                <i class="bi bi-check2"></i> Lưu thông tin vận chuyển
+                            </button>
+                        </form>
+
+                        <!-- Display current values if set -->
+                        <div th:if="${order.shippingCarrier != null and !#strings.isEmpty(order.shippingCarrier)}"
+                             style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">
+                            <div class="meta-row" style="padding:5px 0;">
+                                <span class="meta-key"><i class="bi bi-truck"></i> Đơn vị</span>
+                                <span class="meta-val" th:text="${order.shippingCarrier}"></span>
+                            </div>
+                            <div class="meta-row" style="padding:5px 0;" th:if="${order.trackingCode != null and !#strings.isEmpty(order.trackingCode)}">
+                                <span class="meta-key"><i class="bi bi-upc-scan"></i> Mã vận đơn</span>
+                                <span class="meta-val" style="font-family:monospace; color:var(--accent);"
+                                      th:text="${order.trackingCode}"></span>
+                            </div>
                         </div>
                     </div>
                 </div>

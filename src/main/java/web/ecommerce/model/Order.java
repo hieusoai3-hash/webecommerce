@@ -32,6 +32,8 @@ public class Order {
     private long couponDiscount;
     @Column(length = 1000)
     private String customerNote;
+    private String shippingCarrier;
+    private String trackingCode;
 
     public Order() {
         this.createdAt = LocalDateTime.now();
@@ -73,6 +75,12 @@ public class Order {
 
     public String getCustomerNote() { return customerNote; }
     public void setCustomerNote(String customerNote) { this.customerNote = customerNote; }
+
+    public String getShippingCarrier() { return shippingCarrier; }
+    public void setShippingCarrier(String shippingCarrier) { this.shippingCarrier = shippingCarrier; }
+
+    public String getTrackingCode() { return trackingCode; }
+    public void setTrackingCode(String trackingCode) { this.trackingCode = trackingCode; }
 
     public String getFormattedTotal() {
         return String.format("%,d", total).replace(",", ".") + "₫";

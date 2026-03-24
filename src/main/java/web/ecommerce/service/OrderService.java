@@ -46,4 +46,12 @@ public class OrderService {
             return repo.save(o);
         });
     }
+
+    public Optional<Order> updateShipping(String id, String carrier, String trackingCode) {
+        return repo.findById(id).map(o -> {
+            o.setShippingCarrier(carrier);
+            o.setTrackingCode(trackingCode);
+            return repo.save(o);
+        });
+    }
 }

@@ -364,6 +364,18 @@ public class AdminController {
         return "redirect:/admin/orders";
     }
 
+    @PostMapping("/orders/update-shipping")
+    public String updateOrderShipping(@RequestParam String id,
+                                      @RequestParam(required = false) String shippingCarrier,
+                                      @RequestParam(required = false) String trackingCode,
+                                      RedirectAttributes redirectAttributes) {
+        orderService.updateShipping(id,
+                shippingCarrier != null ? shippingCarrier.trim() : null,
+                trackingCode    != null ? trackingCode.trim()    : null);
+        redirectAttributes.addFlashAttribute("success", "Đã cập nhật thông tin vận chuyển.");
+        return "redirect:/admin/orders/detail?id=" + java.net.URLEncoder.encode(id, java.nio.charset.StandardCharsets.UTF_8);
+    }
+
     // ── Combos ───────────────────────────────────────────────────────────
 
     @GetMapping("/combos")
