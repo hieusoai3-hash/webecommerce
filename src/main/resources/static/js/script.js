@@ -1210,7 +1210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Buy now from detail page
+    // Buy now from detail page — add to cart then go straight to checkout
     if (pdBuyNowBtn) {
         pdBuyNowBtn.addEventListener('click', () => {
             const selectedSize = document.querySelector('#pd-sizes .pd-size-btn.active');
@@ -1218,8 +1218,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('Vui lòng chọn size trước!');
                 return;
             }
-            // Trigger add then open checkout
-            pdAddCartBtn && pdAddCartBtn.click();
+            const selectedColor = document.querySelector('#pd-colors .pd-color-btn.active');
+            const name      = pdAddCartBtn.dataset.productName || document.querySelector('.pd-title')?.textContent?.trim() || '';
+            const priceRaw  = parseInt(pdAddCartBtn.dataset.productPrice, 10) || 0;
+            const productId = pdAddCartBtn.dataset.productId || '';
+            const image     = pdMainImg ? pdMainImg.src : '';
+            const size      = selectedSize.dataset.size;
+            const color     = selectedColor ? selectedColor.dataset.color : '';
+
+            const existing = cart.find(i => i.productId === productId && i.size === size && i.color === color);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ productId, name, price: priceRaw, image, size, color, qty: 1 });
+            }
+            updateCartUI();
+            openCheckout();
         });
     }
 
