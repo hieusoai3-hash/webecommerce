@@ -269,7 +269,7 @@ button {
     align-items: center;
     justify-content: space-between;
     height: 100%;
-    gap: var(--space-6);
+    gap: var(--space-4);
 }
 
 /* Logo */
@@ -303,18 +303,19 @@ button {
 .nav-list {
     display: flex;
     align-items: center;
-    gap: var(--space-1);
+    gap: 2px;
 }
 
 .nav-link {
-    padding: var(--space-2) var(--space-4);
+    padding: var(--space-2) 0.65rem;
     font-weight: 600;
-    font-size: var(--font-size-sm);
-    letter-spacing: 1px;
+    font-size: 0.78rem;
+    letter-spacing: 0.6px;
     color: var(--color-gray-700);
     border-radius: var(--radius-sm);
     transition: all var(--transition-fast);
     position: relative;
+    white-space: nowrap;
 }
 
 .nav-link::after {

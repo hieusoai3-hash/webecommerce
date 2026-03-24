@@ -259,7 +259,7 @@
                 <strong th:text="${query}"></strong>
             </p>
             <div class="orders-list">
-                <div th:each="o, st : ${orders}" class="oc">
+                <div th:each="o, st : ${orders}" class="oc" onclick="toggleOC(this)" style="cursor:pointer;">
                     <div class="oc-trigger">
                         <div class="oc-left">
                             <div class="oc-id" th:text="${o.id}"></div>
@@ -305,7 +305,7 @@
                                 <div>
                                     <div class="order-item-name" th:text="${item.productName}"></div>
                                     <div class="order-item-meta"
-                                         th:text="'Size ' + ${item.size} + ' · ' + ${item.color} + ' × ' + ${item.quantity}"></div>
+                                         th:text="'Size ' + ${item.size} + ' × ' + ${item.quantity}"></div>
                                 </div>
                                 <div class="order-item-price"
                                      th:text="${#numbers.formatInteger(item.price * item.quantity, 0, 'COMMA').replace(',','.')} + '₫'"></div>
@@ -415,7 +415,7 @@
                             <div>
                                 <div class="order-item-name" th:text="${item.productName}"></div>
                                 <div class="order-item-meta"
-                                     th:text="'Size ' + ${item.size} + ' · ' + ${item.color} + ' × ' + ${item.quantity}"></div>
+                                     th:text="'Size ' + ${item.size} + ' × ' + ${item.quantity}"></div>
                             </div>
                             <div class="order-item-price"
                                  th:text="${#numbers.formatInteger(item.price * item.quantity, 0, 'COMMA').replace(',','.')} + '₫'"></div>
@@ -450,25 +450,14 @@ function switchTab(type) {
 }
 
 /* Expand/collapse order cards */
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.oc').forEach(function (card) {
-        var detail  = card.querySelector('.oc-detail');
-        var chevron = card.querySelector('.oc-chevron');
-
-        function toggle(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            var opening = detail.style.display !== 'block';
-            detail.style.display = opening ? 'block' : 'none';
-            if (chevron) chevron.style.transform = opening ? 'rotate(180deg)' : '';
-        }
-
-        ['.oc-trigger', '.oc-summary'].forEach(function (sel) {
-            var el = card.querySelector(sel);
-            if (el) el.addEventListener('click', toggle);
-        });
-    });
-});
+function toggleOC(card) {
+    var detail  = card.querySelector('.oc-detail');
+    var chevron = card.querySelector('.oc-chevron');
+    if (!detail) return;
+    var opening = detail.style.display !== 'block';
+    detail.style.display = opening ? 'block' : 'none';
+    if (chevron) chevron.style.transform = opening ? 'rotate(180deg)' : '';
+}
 </script>
 </body>
 </html>
