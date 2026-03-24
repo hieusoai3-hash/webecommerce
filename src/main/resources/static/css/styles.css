@@ -4069,7 +4069,7 @@ button {
 
 /* ── vi-da.html ── */
         .belt-hero { position: relative; width: 100%; overflow: hidden; height: clamp(420px, 60vh, 620px); margin-top: 70px; }
-        .belt-hero-bg { position: absolute; inset: 0; background-image: url('images/banners/wallet_hero_bg.png'); background-size: cover; background-position: center; }
+        .belt-hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
         .belt-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgba(26,26,46,0.85) 0%, rgba(26,26,46,0.6) 50%, rgba(26,26,46,0.2) 100%); }
         .belt-hero-content { position: relative; z-index: 10; max-width: 1280px; margin: 0 auto; padding: 0 24px; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         .belt-hero-sub { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 3px; color: #e94560; text-transform: uppercase; margin-bottom: 16px; }
@@ -4139,7 +4139,7 @@ button {
 
 /* ── that-lung.html ── */
         .belt-hero { position: relative; width: 100%; overflow: hidden; height: clamp(420px, 60vh, 620px); margin-top: 70px; }
-        .belt-hero-bg { position: absolute; inset: 0; background-image: url('images/banners/belt_hero_banner.png'); background-size: cover; background-position: center; }
+        .belt-hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
         .belt-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgba(26,26,46,0.85) 0%, rgba(26,26,46,0.6) 50%, rgba(26,26,46,0.2) 100%); }
         .belt-hero-content { position: relative; z-index: 10; max-width: 1280px; margin: 0 auto; padding: 0 24px; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         .belt-hero-sub { font-size: 13px; font-weight: 600; letter-spacing: 3px; color: #e94560; text-transform: uppercase; margin-bottom: 12px; font-family: 'Inter', sans-serif; }

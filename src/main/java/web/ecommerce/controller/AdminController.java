@@ -26,6 +26,8 @@ import web.ecommerce.service.ProductService;
 import web.ecommerce.service.SiteSettingsService;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -226,7 +228,6 @@ public class AdminController {
         model.addAttribute("viDa",             viDa);
         model.addAttribute("thatLung",         thatLung);
         model.addAttribute("paymentBreakdown", paymentBreakdown);
-        model.addAttribute("last7Days",        last7Days);
         model.addAttribute("last7DaysLabels",  last7DaysLabels);
         model.addAttribute("last7DaysData",    last7DaysData);
         model.addAttribute("recentOrders",     orders.stream().limit(8).toList());
@@ -462,7 +463,7 @@ public class AdminController {
         orderService.updateStatus(id, status);
         redirectAttributes.addFlashAttribute("success", "Đã cập nhật trạng thái đơn hàng.");
         if ("detail".equals(from)) {
-            return "redirect:/admin/orders/detail?id=" + java.net.URLEncoder.encode(id, java.nio.charset.StandardCharsets.UTF_8);
+            return "redirect:/admin/orders/detail?id=" + URLEncoder.encode(id, StandardCharsets.UTF_8);
         }
         return "redirect:/admin/orders";
     }
@@ -476,7 +477,7 @@ public class AdminController {
                 shippingCarrier != null ? shippingCarrier.trim() : null,
                 trackingCode    != null ? trackingCode.trim()    : null);
         redirectAttributes.addFlashAttribute("success", "Đã cập nhật thông tin vận chuyển.");
-        return "redirect:/admin/orders/detail?id=" + java.net.URLEncoder.encode(id, java.nio.charset.StandardCharsets.UTF_8);
+        return "redirect:/admin/orders/detail?id=" + URLEncoder.encode(id, StandardCharsets.UTF_8);
     }
 
     @PostMapping("/orders/cancel")
@@ -487,7 +488,7 @@ public class AdminController {
         orderService.cancelOrder(id, cancelReason);
         redirectAttributes.addFlashAttribute("success", "Đã huỷ đơn hàng.");
         if ("detail".equals(from)) {
-            return "redirect:/admin/orders/detail?id=" + java.net.URLEncoder.encode(id, java.nio.charset.StandardCharsets.UTF_8);
+            return "redirect:/admin/orders/detail?id=" + URLEncoder.encode(id, StandardCharsets.UTF_8);
         }
         return "redirect:/admin/orders";
     }
@@ -516,7 +517,7 @@ public class AdminController {
                 o.getCreatedAt() != null ? o.getCreatedAt().format(fmt) : ""
             )).append("\n");
         }
-        byte[] bytes = sb.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        byte[] bytes = sb.toString().getBytes(StandardCharsets.UTF_8);
         return ResponseEntity.ok()
             .header("Content-Disposition", "attachment; filename=\"orders.csv\"")
             .header("Content-Type", "text/csv; charset=UTF-8")
@@ -774,9 +775,9 @@ public class AdminController {
         try {
             Path propsPath = Path.of("src/main/resources/application.properties");
             if (Files.exists(propsPath)) {
-                String content = Files.readString(propsPath, java.nio.charset.StandardCharsets.UTF_8);
+                String content = Files.readString(propsPath, StandardCharsets.UTF_8);
                 content = content.replaceAll("(?m)^admin\\.password=.*$", "admin.password=" + newPassword);
-                Files.writeString(propsPath, content, java.nio.charset.StandardCharsets.UTF_8);
+                Files.writeString(propsPath, content, StandardCharsets.UTF_8);
             }
         } catch (Exception ignored) {}
         ra.addFlashAttribute("success", "Đã đổi mật khẩu thành công.");
