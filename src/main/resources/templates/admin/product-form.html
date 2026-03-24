@@ -55,7 +55,7 @@
         .tsw-track::after { content:''; position:absolute; top:3px; left:3px;
                             width:18px; height:18px; border-radius:50%; background:#fff;
                             transition:transform .2s; box-shadow:0 1px 3px rgba(0,0,0,.15); }
-        .tsw input:checked + .tsw-track { background:var(--accent); }
+        .tsw input:checked + .tsw-track { background:#e94560 !important; }
         .tsw input:checked + .tsw-track::after { transform:translateX(18px); }
 
         /* ── Size chips ── */
@@ -586,7 +586,7 @@ function buildVariantTable() {
             <td style="text-align:center;">
                 <label class="tsw" style="margin:0 auto;">
                     <input type="checkbox" class="variant-check" ${checked ? 'checked' : ''} onchange="toggleVariant(this)">
-                    <span class="tsw-track"></span>
+                    <span class="tsw-track" style="background:${checked ? '#e94560' : ''}"></span>
                 </label>
             </td>
             <td>
@@ -611,6 +611,8 @@ function stepQty(btn, d) {
 }
 
 function toggleVariant(cb) {
+    const track = cb.nextElementSibling;
+    if (track) track.style.background = cb.checked ? '#e94560' : '';
     const row = cb.closest('tr'); const dis = !cb.checked;
     row.querySelectorAll('input[name="variantColor"], input[name="variantSize"], .variant-qty')
        .forEach(i => i.disabled = dis);

@@ -34,6 +34,8 @@ public class Order {
     private String customerNote;
     private String shippingCarrier;
     private String trackingCode;
+    @Column(length = 500)
+    private String cancelReason;
 
     public Order() {
         this.createdAt = LocalDateTime.now();
@@ -81,6 +83,9 @@ public class Order {
 
     public String getTrackingCode() { return trackingCode; }
     public void setTrackingCode(String trackingCode) { this.trackingCode = trackingCode; }
+
+    public String getCancelReason() { return cancelReason; }
+    public void setCancelReason(String cancelReason) { this.cancelReason = cancelReason; }
 
     public String getFormattedTotal() {
         return String.format("%,d", total).replace(",", ".") + "₫";

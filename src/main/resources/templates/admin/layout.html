@@ -31,8 +31,18 @@
         <a th:href="@{/admin/products}" th:classappend="${activePage == 'products'} ? ' active'">
             <i class="bi bi-box-seam"></i> Sản phẩm
         </a>
-        <a th:href="@{/admin/orders}" th:classappend="${activePage == 'orders'} ? ' active'">
-            <i class="bi bi-bag-check"></i> Đơn hàng
+        <a th:href="@{/admin/orders}" th:classappend="${activePage == 'orders'} ? ' active'"
+           style="display:flex; align-items:center; justify-content:space-between;">
+            <span><i class="bi bi-bag-check"></i> Đơn hàng</span>
+            <span th:if="${newOrderBadge != null and newOrderBadge > 0}"
+                  id="order-badge"
+                  style="background:#ef4444; color:#fff; border-radius:99px;
+                         font-size:.65rem; font-weight:700; padding:2px 7px; min-width:20px;
+                         text-align:center; line-height:16px;"
+                  th:text="${newOrderBadge}"></span>
+        </a>
+        <a th:href="@{/admin/customers}" th:classappend="${activePage == 'customers'} ? ' active'">
+            <i class="bi bi-people"></i> Khách hàng
         </a>
         <a th:href="@{/admin/combos}" th:classappend="${activePage == 'combos'} ? ' active'">
             <i class="bi bi-gift"></i> Combo Hot

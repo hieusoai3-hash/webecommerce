@@ -516,6 +516,12 @@
                class="btn-nb2 btn-outline btn-sm" style="justify-content:center;">
                 <i class="bi bi-eye"></i> Xem
             </a>
+            <form th:action="@{'/admin/products/' + ${p.id} + '/duplicate'}" method="post">
+                <button type="submit" class="btn-nb2 btn-outline btn-sm btn-full"
+                        style="justify-content:center; color:var(--text-muted);">
+                    <i class="bi bi-copy"></i> Nhân bản
+                </button>
+            </form>
             <form th:action="@{'/admin/products/' + ${p.id} + '/delete'}" method="post"
                   onsubmit="return confirm('Xóa sản phẩm \'' + this.dataset.name + '\'?')"
                   th:attr="data-name=${p.name}">

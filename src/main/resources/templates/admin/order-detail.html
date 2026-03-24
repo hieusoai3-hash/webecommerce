@@ -239,26 +239,94 @@
         .copy-ok { display: none; color: var(--success); font-size: .72rem; font-weight: 600; }
 
         /* ── Shipping form ── */
-        .ship-field { margin-bottom: 12px; }
-        .ship-label { font-size: .72rem; font-weight: 700; color: var(--text-muted);
-                      text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; display: block; }
-        .ship-input {
-            width: 100%; padding: 8px 11px;
-            border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-            font-size: .83rem; font-family: inherit; color: var(--text);
-            background: var(--bg); outline: none;
-            transition: border-color var(--transition), box-shadow var(--transition);
-            box-sizing: border-box;
+        .ship-section-lbl {
+            font-size: .68rem; font-weight: 700; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: .08em;
+            margin-bottom: 8px; display: flex; align-items: center; gap: 5px;
         }
-        .ship-input:focus { border-color: var(--primary); background: var(--surface);
-                            box-shadow: 0 0 0 3px rgba(26,26,46,.07); }
-        .ship-track-display {
+        .ship-section-lbl i { font-size: .75rem; }
+
+        /* Carrier chips grid */
+        .carrier-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+        .carrier-chip {
             display: flex; align-items: center; gap: 8px;
-            padding: 8px 11px; background: var(--bg);
-            border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-            font-size: .83rem; font-family: monospace; font-weight: 700;
-            color: var(--accent); letter-spacing: .5px;
+            padding: 9px 10px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: .78rem;
         }
+        .carrier-chip:hover { border-color: var(--primary); background: var(--surface); }
+        .carrier-chip.selected {
+            border-color: var(--primary);
+            background: var(--accent-light);
+            box-shadow: 0 0 0 2px rgba(26,26,46,.06);
+        }
+        .carrier-chip input[type="radio"] { display: none; }
+        .carrier-logo {
+            width: 28px; height: 28px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .6rem; font-weight: 900; flex-shrink: 0;
+            letter-spacing: -.3px;
+        }
+        .carrier-name { font-weight: 600; color: var(--text); line-height: 1.2; }
+        .carrier-code { font-size: .68rem; color: var(--text-muted); }
+
+        /* Tracking input with icon */
+        .track-input-wrap {
+            position: relative; margin-bottom: 14px;
+        }
+        .track-input-wrap i {
+            position: absolute; left: 11px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-soft); font-size: .85rem; pointer-events: none;
+        }
+        .ship-text-input {
+            width: 100%; height: 40px;
+            padding: 0 36px 0 34px;
+            border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+            font-size: .83rem; font-family: 'SF Mono', 'Fira Code', monospace;
+            color: var(--text); background: var(--bg); outline: none;
+            transition: border-color var(--transition), box-shadow var(--transition);
+            box-sizing: border-box; letter-spacing: .3px;
+        }
+        .ship-text-input:focus {
+            border-color: var(--primary); background: var(--surface);
+            box-shadow: 0 0 0 3px rgba(26,26,46,.07);
+        }
+        .ship-text-input::placeholder { font-family: inherit; letter-spacing: 0; color: var(--text-soft); }
+
+        /* Saved state banner */
+        .ship-saved-banner {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 13px;
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1px solid #bbf7d0;
+            border-radius: var(--radius-sm);
+            margin-top: 14px;
+        }
+        .ship-saved-banner i { color: #16a34a; font-size: .95rem; flex-shrink: 0; }
+        .ship-saved-info { flex: 1; min-width: 0; }
+        .ship-saved-carrier { font-size: .8rem; font-weight: 700; color: #15803d; }
+        .ship-saved-code {
+            font-size: .78rem; font-family: 'SF Mono', 'Fira Code', monospace;
+            color: #166534; letter-spacing: .4px; margin-top: 1px;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .ship-copy-mini {
+            padding: 2px 7px; font-size: .68rem; font-weight: 700;
+            border: 1px solid #86efac; border-radius: 4px;
+            background: transparent; color: #16a34a; cursor: pointer;
+            font-family: inherit; transition: all .15s;
+        }
+        .ship-copy-mini:hover { background: #16a34a; color: #fff; border-color: #16a34a; }
     </style>
 </head>
 <body>
@@ -550,58 +618,89 @@
                 <!-- Shipping info card -->
                 <div class="od-card">
                     <div class="od-card-head">
-                        <h6><i class="bi bi-truck"></i>Thông tin vận chuyển</h6>
+                        <h6><i class="bi bi-truck"></i>Vận chuyển</h6>
                         <span th:if="${order.shippingCarrier != null and !#strings.isEmpty(order.shippingCarrier)}"
-                              style="font-size:.72rem; font-weight:600; color:var(--success); display:flex; align-items:center; gap:4px;">
-                            <i class="bi bi-check-circle-fill"></i> Đã cập nhật
+                              style="font-size:.7rem; font-weight:700; color:#16a34a; background:#dcfce7;
+                                     padding:2px 8px; border-radius:20px; display:flex; align-items:center; gap:4px;">
+                            <i class="bi bi-check2-circle"></i> Đã gán vận đơn
+                        </span>
+                        <span th:unless="${order.shippingCarrier != null and !#strings.isEmpty(order.shippingCarrier)}"
+                              style="font-size:.7rem; font-weight:600; color:var(--text-soft); background:var(--bg);
+                                     padding:2px 8px; border-radius:20px; border:1px solid var(--border);">
+                            Chưa cập nhật
                         </span>
                     </div>
                     <div class="od-card-body">
-                        <form th:action="@{/admin/orders/update-shipping}" method="post">
+                        <form th:action="@{/admin/orders/update-shipping}" method="post" id="shipForm">
                             <input type="hidden" name="id" th:value="${order.id}">
-                            <div class="ship-field">
-                                <label class="ship-label">Đơn vị vận chuyển</label>
-                                <select name="shippingCarrier" class="ship-input">
-                                    <option value="">-- Chọn đơn vị --</option>
-                                    <option value="Giao Hàng Nhanh"
-                                            th:selected="${order.shippingCarrier == 'Giao Hàng Nhanh'}">Giao Hàng Nhanh (GHN)</option>
-                                    <option value="Giao Hàng Tiết Kiệm"
-                                            th:selected="${order.shippingCarrier == 'Giao Hàng Tiết Kiệm'}">Giao Hàng Tiết Kiệm (GHTK)</option>
-                                    <option value="J&T Express"
-                                            th:selected="${order.shippingCarrier == 'J&T Express'}">J&amp;T Express</option>
-                                    <option value="Viettel Post"
-                                            th:selected="${order.shippingCarrier == 'Viettel Post'}">Viettel Post</option>
-                                    <option value="Vietnam Post"
-                                            th:selected="${order.shippingCarrier == 'Vietnam Post'}">Vietnam Post (VNPost)</option>
-                                    <option value="Ninja Van"
-                                            th:selected="${order.shippingCarrier == 'Ninja Van'}">Ninja Van</option>
-                                    <option value="Best Express"
-                                            th:selected="${order.shippingCarrier == 'Best Express'}">Best Express</option>
-                                </select>
+
+                            <!-- Carrier chips -->
+                            <div class="ship-section-lbl"><i class="bi bi-building"></i> Đơn vị vận chuyển</div>
+                            <div class="carrier-grid">
+                                <label class="carrier-chip" th:classappend="${order.shippingCarrier == 'Giao Hàng Nhanh'} ? ' selected'">
+                                    <input type="radio" name="shippingCarrier" value="Giao Hàng Nhanh"
+                                           th:checked="${order.shippingCarrier == 'Giao Hàng Nhanh'}">
+                                    <div class="carrier-logo" style="background:#e8f5e9; color:#2e7d32;">GHN</div>
+                                    <div><div class="carrier-name">Giao Hàng Nhanh</div><div class="carrier-code">GHN</div></div>
+                                </label>
+                                <label class="carrier-chip" th:classappend="${order.shippingCarrier == 'Giao Hàng Tiết Kiệm'} ? ' selected'">
+                                    <input type="radio" name="shippingCarrier" value="Giao Hàng Tiết Kiệm"
+                                           th:checked="${order.shippingCarrier == 'Giao Hàng Tiết Kiệm'}">
+                                    <div class="carrier-logo" style="background:#e3f2fd; color:#1565c0;">GHTK</div>
+                                    <div><div class="carrier-name">Tiết Kiệm</div><div class="carrier-code">GHTK</div></div>
+                                </label>
+                                <label class="carrier-chip" th:classappend="${order.shippingCarrier == 'J&T Express'} ? ' selected'">
+                                    <input type="radio" name="shippingCarrier" value="J&amp;T Express"
+                                           th:checked="${order.shippingCarrier == 'J&T Express'}">
+                                    <div class="carrier-logo" style="background:#fce4ec; color:#c62828;">J&amp;T</div>
+                                    <div><div class="carrier-name">J&amp;T Express</div><div class="carrier-code">J&amp;T</div></div>
+                                </label>
+                                <label class="carrier-chip" th:classappend="${order.shippingCarrier == 'Viettel Post'} ? ' selected'">
+                                    <input type="radio" name="shippingCarrier" value="Viettel Post"
+                                           th:checked="${order.shippingCarrier == 'Viettel Post'}">
+                                    <div class="carrier-logo" style="background:#fff3e0; color:#e65100;">VTP</div>
+                                    <div><div class="carrier-name">Viettel Post</div><div class="carrier-code">VTP</div></div>
+                                </label>
+                                <label class="carrier-chip" th:classappend="${order.shippingCarrier == 'Vietnam Post'} ? ' selected'">
+                                    <input type="radio" name="shippingCarrier" value="Vietnam Post"
+                                           th:checked="${order.shippingCarrier == 'Vietnam Post'}">
+                                    <div class="carrier-logo" style="background:#f3e5f5; color:#6a1b9a;">VNP</div>
+                                    <div><div class="carrier-name">Vietnam Post</div><div class="carrier-code">VNPost</div></div>
+                                </label>
+                                <label class="carrier-chip" th:classappend="${order.shippingCarrier == 'Ninja Van'} ? ' selected'">
+                                    <input type="radio" name="shippingCarrier" value="Ninja Van"
+                                           th:checked="${order.shippingCarrier == 'Ninja Van'}">
+                                    <div class="carrier-logo" style="background:#e8eaf6; color:#283593;">NJV</div>
+                                    <div><div class="carrier-name">Ninja Van</div><div class="carrier-code">NJV</div></div>
+                                </label>
                             </div>
-                            <div class="ship-field">
-                                <label class="ship-label">Mã vận đơn</label>
-                                <input type="text" name="trackingCode" class="ship-input"
+
+                            <!-- Tracking code -->
+                            <div class="ship-section-lbl"><i class="bi bi-upc-scan"></i> Mã vận đơn</div>
+                            <div class="track-input-wrap">
+                                <i class="bi bi-hash"></i>
+                                <input type="text" name="trackingCode" class="ship-text-input"
                                        placeholder="VD: GHN1234567890"
                                        th:value="${order.trackingCode}"
-                                       autocomplete="off" spellcheck="false">
+                                       autocomplete="off" spellcheck="false" id="trackingInput">
                             </div>
-                            <button type="submit" class="btn-nb2 btn-accent btn-sm" style="width:100%; justify-content:center;">
+
+                            <button type="submit" class="btn-nb2 btn-accent"
+                                    style="width:100%; justify-content:center; height:38px; font-size:.83rem;">
                                 <i class="bi bi-check2"></i> Lưu thông tin vận chuyển
                             </button>
                         </form>
 
-                        <!-- Display current values if set -->
-                        <div th:if="${order.shippingCarrier != null and !#strings.isEmpty(order.shippingCarrier)}"
-                             style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">
-                            <div class="meta-row" style="padding:5px 0;">
-                                <span class="meta-key"><i class="bi bi-truck"></i> Đơn vị</span>
-                                <span class="meta-val" th:text="${order.shippingCarrier}"></span>
-                            </div>
-                            <div class="meta-row" style="padding:5px 0;" th:if="${order.trackingCode != null and !#strings.isEmpty(order.trackingCode)}">
-                                <span class="meta-key"><i class="bi bi-upc-scan"></i> Mã vận đơn</span>
-                                <span class="meta-val" style="font-family:monospace; color:var(--accent);"
-                                      th:text="${order.trackingCode}"></span>
+                        <!-- Saved state banner -->
+                        <div class="ship-saved-banner"
+                             th:if="${order.shippingCarrier != null and !#strings.isEmpty(order.shippingCarrier)}">
+                            <i class="bi bi-truck"></i>
+                            <div class="ship-saved-info">
+                                <div class="ship-saved-carrier" th:text="${order.shippingCarrier}"></div>
+                                <div class="ship-saved-code" th:if="${order.trackingCode != null and !#strings.isEmpty(order.trackingCode)}">
+                                    <span th:text="${order.trackingCode}" id="savedTrackingCode"></span>
+                                    <button type="button" class="ship-copy-mini" id="copyTrackingBtn">Sao chép</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -680,6 +779,26 @@ if (copyBtn) {
         navigator.clipboard.writeText(copyBtn.dataset.id).then(() => {
             copyOk.style.display = 'inline-flex';
             setTimeout(() => { copyOk.style.display = 'none'; }, 2000);
+        });
+    });
+}
+
+// Carrier chip selection
+document.querySelectorAll('.carrier-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+        document.querySelectorAll('.carrier-chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+    });
+});
+
+// Copy tracking code
+const copyTrackingBtn = document.getElementById('copyTrackingBtn');
+if (copyTrackingBtn) {
+    copyTrackingBtn.addEventListener('click', () => {
+        const code = document.getElementById('savedTrackingCode').textContent.trim();
+        navigator.clipboard.writeText(code).then(() => {
+            copyTrackingBtn.textContent = 'Đã sao chép!';
+            setTimeout(() => { copyTrackingBtn.textContent = 'Sao chép'; }, 2000);
         });
     });
 }

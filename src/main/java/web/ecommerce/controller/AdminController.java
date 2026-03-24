@@ -1,6 +1,11 @@
 package web.ecommerce.controller;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import web.ecommerce.model.Combo;
 import web.ecommerce.model.Coupon;
+import web.ecommerce.model.Order;
 import web.ecommerce.model.Product;
 import web.ecommerce.model.ProductColor;
 import web.ecommerce.model.ProductVariantStock;
@@ -19,6 +25,8 @@ import web.ecommerce.service.ProductService;
 import web.ecommerce.service.SiteSettingsService;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -33,18 +41,34 @@ public class AdminController {
     private final ComboService comboService;
     private final CouponService couponService;
     private final SiteSettingsService siteSettingsService;
+    private final InMemoryUserDetailsManager userDetailsManager;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${upload.dir:src/main/resources/static}")
     private String uploadDir;
 
+    @Value("${admin.username:admin}")
+    private String adminUsername;
+
     public AdminController(ProductService productService, OrderService orderService,
                            ComboService comboService, CouponService couponService,
-                           SiteSettingsService siteSettingsService) {
+                           SiteSettingsService siteSettingsService,
+                           InMemoryUserDetailsManager userDetailsManager,
+                           PasswordEncoder passwordEncoder) {
         this.productService = productService;
         this.orderService = orderService;
         this.comboService = comboService;
         this.couponService = couponService;
         this.siteSettingsService = siteSettingsService;
+        this.userDetailsManager = userDetailsManager;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    // ── Global model attribute for sidebar badge ──────────────────────────
+
+    @ModelAttribute("newOrderBadge")
+    public long newOrderBadge() {
+        return orderService.countPending();
     }
 
     // ── Login ────────────────────────────────────────────────────────────
@@ -337,6 +361,32 @@ public class AdminController {
         return "redirect:/admin/products";
     }
 
+    @PostMapping("/products/{id}/duplicate")
+    public String duplicateProduct(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        productService.getById(id).ifPresent(p -> {
+            Product copy = new Product();
+            copy.setId("P" + System.currentTimeMillis());
+            copy.setName(p.getName() + " (Copy)");
+            copy.setCategory(p.getCategory());
+            copy.setMaterial(p.getMaterial());
+            copy.setPrice(p.getPrice());
+            copy.setOriginalPrice(p.getOriginalPrice());
+            copy.setDiscount(p.getDiscount());
+            copy.setRating(p.getRating());
+            copy.setReviews(p.getReviews());
+            copy.setDescription(p.getDescription());
+            copy.setFeatures(p.getFeatures() != null ? new ArrayList<>(p.getFeatures()) : new ArrayList<>());
+            copy.setSizes(p.getSizes() != null ? new ArrayList<>(p.getSizes()) : new ArrayList<>());
+            copy.setColors(p.getColors() != null ? new ArrayList<>(p.getColors()) : new ArrayList<>());
+            copy.setVariantStocks(p.getVariantStocks() != null ? new ArrayList<>(p.getVariantStocks()) : new ArrayList<>());
+            copy.setHot(false);
+            copy.setStock(p.getStock());
+            productService.save(copy);
+            redirectAttributes.addFlashAttribute("success", "Đã nhân bản: " + p.getName());
+        });
+        return "redirect:/admin/products";
+    }
+
     // ── Orders ───────────────────────────────────────────────────────────
 
     @GetMapping("/orders")
@@ -374,6 +424,94 @@ public class AdminController {
                 trackingCode    != null ? trackingCode.trim()    : null);
         redirectAttributes.addFlashAttribute("success", "Đã cập nhật thông tin vận chuyển.");
         return "redirect:/admin/orders/detail?id=" + java.net.URLEncoder.encode(id, java.nio.charset.StandardCharsets.UTF_8);
+    }
+
+    @PostMapping("/orders/cancel")
+    public String cancelOrder(@RequestParam String id,
+                              @RequestParam(required = false) String cancelReason,
+                              @RequestParam(defaultValue = "list") String from,
+                              RedirectAttributes redirectAttributes) {
+        orderService.cancelOrder(id, cancelReason);
+        redirectAttributes.addFlashAttribute("success", "Đã huỷ đơn hàng.");
+        if ("detail".equals(from)) {
+            return "redirect:/admin/orders/detail?id=" + java.net.URLEncoder.encode(id, java.nio.charset.StandardCharsets.UTF_8);
+        }
+        return "redirect:/admin/orders";
+    }
+
+    @GetMapping("/orders/export.csv")
+    @ResponseBody
+    public ResponseEntity<byte[]> exportOrdersCsv() throws IOException {
+        List<Order> orders = orderService.getAll();
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        StringBuilder sb = new StringBuilder("\uFEFF"); // BOM for Excel UTF-8
+        sb.append("Mã đơn,Khách hàng,SĐT,Địa chỉ,Sản phẩm,Tổng tiền,Thanh toán,Trạng thái,Thời gian\n");
+        for (Order o : orders) {
+            String items = o.getItems() == null ? "" :
+                o.getItems().stream()
+                    .map(i -> i.getProductName() + " x" + i.getQuantity())
+                    .collect(Collectors.joining("; "));
+            sb.append(String.join(",",
+                escCsv(o.getId()),
+                escCsv(o.getCustomerName()),
+                escCsv(o.getCustomerPhone()),
+                escCsv(o.getCustomerAddress()),
+                escCsv(items),
+                String.valueOf(o.getTotal()),
+                escCsv(o.getPaymentMethod()),
+                escCsv(o.getStatus()),
+                o.getCreatedAt() != null ? o.getCreatedAt().format(fmt) : ""
+            )).append("\n");
+        }
+        byte[] bytes = sb.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        return ResponseEntity.ok()
+            .header("Content-Disposition", "attachment; filename=\"orders.csv\"")
+            .header("Content-Type", "text/csv; charset=UTF-8")
+            .body(bytes);
+    }
+
+    private String escCsv(String s) {
+        if (s == null) return "";
+        if (s.contains(",") || s.contains("\"") || s.contains("\n"))
+            return "\"" + s.replace("\"", "\"\"") + "\"";
+        return s;
+    }
+
+    // ── Customers ────────────────────────────────────────────────────────
+
+    @GetMapping("/customers")
+    public String customers(Model model) {
+        List<Order> orders = orderService.getAll();
+        Map<String, List<Order>> byPhone = orders.stream()
+            .collect(Collectors.groupingBy(
+                o -> o.getCustomerPhone() != null ? o.getCustomerPhone() : "unknown"));
+        List<Map<String, Object>> customers = new ArrayList<>();
+        for (Map.Entry<String, List<Order>> e : byPhone.entrySet()) {
+            List<Order> cOrders = e.getValue().stream()
+                .sorted(Comparator.comparing(Order::getCreatedAt).reversed())
+                .collect(Collectors.toList());
+            Order last = cOrders.get(0);
+            long totalSpent = cOrders.stream().mapToLong(Order::getTotal).sum();
+            long completedCount = cOrders.stream().filter(o -> "COMPLETED".equals(o.getStatus())).count();
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("phone", e.getKey());
+            row.put("name", last.getCustomerName());
+            row.put("orderCount", cOrders.size());
+            row.put("completedCount", completedCount);
+            row.put("totalSpentRaw", totalSpent);
+            row.put("totalSpent", String.format("%,d", totalSpent).replace(",", ".") + "₫");
+            row.put("lastOrderAt", last.getCreatedAt());
+            row.put("lastOrderId", last.getId());
+            row.put("address", last.getCustomerAddress());
+            customers.add(row);
+        }
+        customers.sort((a, b) -> Long.compare((long) b.get("totalSpentRaw"), (long) a.get("totalSpentRaw")));
+        model.addAttribute("customers", customers);
+        model.addAttribute("totalCustomers", customers.size());
+        long repeatCount = customers.stream().filter(c -> (int) c.get("orderCount") > 1).count();
+        model.addAttribute("repeatCustomers", repeatCount);
+        model.addAttribute("activePage", "customers");
+        return "admin/customers";
     }
 
     // ── Combos ───────────────────────────────────────────────────────────
@@ -532,13 +670,63 @@ public class AdminController {
             @RequestParam(defaultValue = "") String bannerText,
             @RequestParam(defaultValue = "false") boolean bannerEnabled,
             @RequestParam(defaultValue = "0") long saleEndEpoch,
+            @RequestParam(required = false) String shopPhone,
+            @RequestParam(required = false) String shopEmail,
+            @RequestParam(required = false) String shopAddress,
+            @RequestParam(required = false) String facebookUrl,
+            @RequestParam(required = false) String zaloPhone,
+            @RequestParam(required = false) String tiktokUrl,
             RedirectAttributes ra) {
         SiteSettings s = siteSettingsService.getSettings();
         s.setBannerText(bannerText);
         s.setBannerEnabled(bannerEnabled);
         s.setSaleEndEpoch(saleEndEpoch);
+        s.setShopPhone(shopPhone != null ? shopPhone.trim() : null);
+        s.setShopEmail(shopEmail != null ? shopEmail.trim() : null);
+        s.setShopAddress(shopAddress != null ? shopAddress.trim() : null);
+        s.setFacebookUrl(facebookUrl != null ? facebookUrl.trim() : null);
+        s.setZaloPhone(zaloPhone != null ? zaloPhone.trim() : null);
+        s.setTiktokUrl(tiktokUrl != null ? tiktokUrl.trim() : null);
         siteSettingsService.save(s);
         ra.addFlashAttribute("success", "Đã lưu cài đặt.");
+        return "redirect:/admin/settings";
+    }
+
+    @PostMapping("/settings/change-password")
+    public String changePassword(
+            @RequestParam String currentPassword,
+            @RequestParam String newPassword,
+            @RequestParam String confirmPassword,
+            RedirectAttributes ra) {
+        if (newPassword == null || newPassword.length() < 6) {
+            ra.addFlashAttribute("pwError", "Mật khẩu mới phải có ít nhất 6 ký tự.");
+            return "redirect:/admin/settings";
+        }
+        if (!newPassword.equals(confirmPassword)) {
+            ra.addFlashAttribute("pwError", "Mật khẩu xác nhận không khớp.");
+            return "redirect:/admin/settings";
+        }
+        UserDetails current = userDetailsManager.loadUserByUsername(adminUsername);
+        if (!passwordEncoder.matches(currentPassword, current.getPassword())) {
+            ra.addFlashAttribute("pwError", "Mật khẩu hiện tại không đúng.");
+            return "redirect:/admin/settings";
+        }
+        UserDetails updated = User.builder()
+            .username(adminUsername)
+            .password(passwordEncoder.encode(newPassword))
+            .roles("ADMIN")
+            .build();
+        userDetailsManager.updateUser(updated);
+        // Persist to application.properties for restart survival
+        try {
+            Path propsPath = Path.of("src/main/resources/application.properties");
+            if (Files.exists(propsPath)) {
+                String content = Files.readString(propsPath, java.nio.charset.StandardCharsets.UTF_8);
+                content = content.replaceAll("(?m)^admin\\.password=.*$", "admin.password=" + newPassword);
+                Files.writeString(propsPath, content, java.nio.charset.StandardCharsets.UTF_8);
+            }
+        } catch (Exception ignored) {}
+        ra.addFlashAttribute("success", "Đã đổi mật khẩu thành công.");
         return "redirect:/admin/settings";
     }
 

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khách hàng - NB2 Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        .cust-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:20px; }
+        .cstat {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:var(--radius-lg); padding:18px 20px;
+            display:flex; align-items:center; gap:14px;
+            box-shadow:var(--shadow-sm);
+        }
+        .cstat-icon {
+            width:46px; height:46px; border-radius:var(--radius-md);
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.2rem; flex-shrink:0;
+        }
+        .cstat-val  { font-size:1.6rem; font-weight:800; color:var(--text); line-height:1; display:block; }
+        .cstat-lbl  { font-size:.72rem; font-weight:500; color:var(--text-muted); margin-top:3px; display:block; }
+
+        /* toolbar */
+        .cust-toolbar {
+            display:flex; align-items:center; gap:10px;
+            padding:14px 20px; border-bottom:1px solid var(--border);
+            background:var(--surface); flex-wrap:wrap;
+        }
+        .search-box {
+            position:relative; flex-shrink:0;
+        }
+        .search-box i {
+            position:absolute; left:10px; top:50%; transform:translateY(-50%);
+            color:var(--text-soft); font-size:.85rem; pointer-events:none;
+        }
+        .search-box input {
+            padding:7px 12px 7px 30px; border:1.5px solid var(--border);
+            border-radius:20px; font-size:.82rem; font-family:inherit;
+            color:var(--text); background:var(--bg); outline:none; width:220px;
+            transition:border-color .2s;
+        }
+        .search-box input:focus { border-color:var(--primary); }
+
+        /* table */
+        .cust-avatar {
+            width:38px; height:38px; border-radius:50%; flex-shrink:0;
+            display:flex; align-items:center; justify-content:center;
+            font-size:.82rem; font-weight:700; color:#fff; letter-spacing:.5px;
+        }
+        .cust-name  { font-size:.875rem; font-weight:600; color:var(--text); }
+        .cust-phone { font-size:.75rem; color:var(--text-muted); margin-top:1px; font-family:monospace; }
+        .cust-addr  { font-size:.72rem; color:var(--text-soft); margin-top:2px; }
+
+        .repeat-badge {
+            display:inline-flex; align-items:center; gap:4px;
+            padding:3px 9px; border-radius:99px;
+            font-size:.7rem; font-weight:700;
+            background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0;
+        }
+
+        .order-count { font-size:1.1rem; font-weight:800; color:var(--text); }
+        .order-sub   { font-size:.72rem; color:var(--text-muted); margin-top:1px; }
+
+        .total-spent { font-size:.95rem; font-weight:800; color:var(--text); letter-spacing:-.3px; }
+
+        .admin-table tbody tr:hover { background:#f8fafc; cursor:default; }
+        .admin-table td { vertical-align:middle; }
+    </style>
+</head>
+<body>
+<div th:replace="~{admin/layout :: sidebar}" th:with="activePage='customers'"></div>
+
+<div class="admin-wrapper">
+    <div class="topbar">
+        <h1>Khách hàng</h1>
+        <div class="topbar-sep"></div>
+        <span style="font-size:.8rem; color:var(--text-muted);"
+              th:text="${totalCustomers} + ' khách hàng'"></span>
+    </div>
+
+    <div class="content-area">
+
+        <!-- Stats -->
+        <div class="cust-stats">
+            <div class="cstat">
+                <div class="cstat-icon" style="background:#eff6ff; color:#2563eb;"><i class="bi bi-people-fill"></i></div>
+                <div>
+                    <span class="cstat-val" th:text="${totalCustomers}">0</span>
+                    <span class="cstat-lbl">Tổng khách hàng</span>
+                </div>
+            </div>
+            <div class="cstat">
+                <div class="cstat-icon" style="background:#f0fdf4; color:#16a34a;"><i class="bi bi-arrow-repeat"></i></div>
+                <div>
+                    <span class="cstat-val" th:text="${repeatCustomers}">0</span>
+                    <span class="cstat-lbl">Khách quay lại</span>
+                </div>
+            </div>
+            <div class="cstat">
+                <div class="cstat-icon" style="background:#fefce8; color:#ca8a04;"><i class="bi bi-person-check-fill"></i></div>
+                <div>
+                    <span class="cstat-val"
+                          th:text="${totalCustomers > 0 ? #numbers.formatDecimal(repeatCustomers * 100.0 / totalCustomers, 1, 'POINT', 1, 'COMMA') + '%' : '0%'}">0%</span>
+                    <span class="cstat-lbl">Tỷ lệ quay lại</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="admin-card">
+            <div class="cust-toolbar">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="custSearch" placeholder="Tìm tên, SĐT…">
+                </div>
+                <span style="font-size:.8rem; color:var(--text-muted); margin-left:auto;"
+                      id="custCount"></span>
+            </div>
+            <div class="admin-card-body no-pad">
+                <div th:if="${#lists.isEmpty(customers)}" class="empty-state">
+                    <i class="bi bi-people"></i>
+                    <p>Chưa có đơn hàng nào để thống kê khách hàng.</p>
+                </div>
+                <div class="table-responsive">
+                <table th:unless="${#lists.isEmpty(customers)}" class="admin-table" id="custTable">
+                    <thead>
+                    <tr>
+                        <th>Khách hàng</th>
+                        <th>Địa chỉ</th>
+                        <th style="text-align:center;">Đơn hàng</th>
+                        <th>Tổng chi tiêu</th>
+                        <th>Đơn gần nhất</th>
+                        <th>Loại KH</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="c,i : ${customers}"
+                        th:attr="data-search=${#strings.toLowerCase(c.name + ' ' + c.phone)}">
+                        <!-- Customer info -->
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div class="cust-avatar"
+                                     th:style="'background:' + (${i.index % 4 == 0} ? '#3b82f6' : (${i.index % 4 == 1} ? '#8b5cf6' : (${i.index % 4 == 2} ? '#10b981' : '#f59e0b')))"
+                                     th:text="${#strings.substring(#strings.toUpperCase(c.name), 0, 2)}"></div>
+                                <div>
+                                    <div class="cust-name" th:text="${c.name}"></div>
+                                    <div class="cust-phone" th:text="${c.phone}"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <!-- Address -->
+                        <td>
+                            <div class="cust-addr" th:text="${c.address != null and !#strings.isEmpty(c.address) ? #strings.abbreviate(c.address, 50) : '—'}"></div>
+                        </td>
+                        <!-- Order count -->
+                        <td style="text-align:center;">
+                            <div class="order-count" th:text="${c.orderCount}"></div>
+                            <div class="order-sub"
+                                 th:text="${c.completedCount} + ' hoàn thành'"></div>
+                        </td>
+                        <!-- Total spent -->
+                        <td>
+                            <span class="total-spent" th:text="${c.totalSpent}"></span>
+                        </td>
+                        <!-- Last order date -->
+                        <td style="font-size:.8rem; color:var(--text-muted); white-space:nowrap;"
+                            th:text="${c.lastOrderAt != null ? #temporals.format(c.lastOrderAt, 'dd/MM/yy HH:mm') : '—'}"></td>
+                        <!-- Type -->
+                        <td>
+                            <span th:if="${c.orderCount > 1}" class="repeat-badge">
+                                <i class="bi bi-star-fill" style="font-size:.65rem;"></i> Quen
+                            </span>
+                            <span th:unless="${c.orderCount > 1}"
+                                  style="font-size:.75rem; color:var(--text-soft);">Mới</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                </div>
+                <div class="no-results" id="noResults" style="display:none; text-align:center; padding:40px; color:var(--text-muted);">
+                    <i class="bi bi-search" style="font-size:2rem; display:block; margin-bottom:8px; color:var(--text-soft);"></i>
+                    <p>Không tìm thấy khách hàng phù hợp.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const custRows = Array.from(document.querySelectorAll('#custTable tbody tr'));
+const custCountEl = document.getElementById('custCount');
+function updateCustCount(n) {
+    if (custCountEl) custCountEl.textContent = n + ' khách';
+}
+updateCustCount(custRows.length);
+
+const custSearch = document.getElementById('custSearch');
+if (custSearch) {
+    custSearch.addEventListener('input', () => {
+        const q = custSearch.value.toLowerCase().trim();
+        let visible = 0;
+        custRows.forEach(row => {
+            const show = !q || row.dataset.search.includes(q);
+            row.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+        updateCustCount(visible);
+        document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+    });
+}
+</script>
+</body>
+</html>

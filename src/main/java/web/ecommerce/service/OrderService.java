@@ -54,4 +54,17 @@ public class OrderService {
             return repo.save(o);
         });
     }
+
+    public Optional<Order> cancelOrder(String id, String reason) {
+        return repo.findById(id).map(o -> {
+            o.setStatus("CANCELLED");
+            o.setCancelReason(reason != null ? reason.trim() : null);
+            return repo.save(o);
+        });
+    }
+
+    public long countPending() {
+        return repo.findAllByOrderByCreatedAtDesc().stream()
+                .filter(o -> "PENDING".equals(o.getStatus())).count();
+    }
 }

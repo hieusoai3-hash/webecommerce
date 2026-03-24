@@ -17,6 +17,17 @@ public class SiteSettings {
     // Sale countdown end time (epoch millis). 0 = not set (client handles via localStorage)
     private long saleEndEpoch = 0L;
 
+    // Contact info
+    private String shopPhone;
+    private String shopEmail;
+    @Column(length = 500)
+    private String shopAddress;
+
+    // Social media
+    private String facebookUrl;
+    private String zaloPhone;
+    private String tiktokUrl;
+
     public SiteSettings() {}
 
     public Long getId() { return id; }
@@ -30,4 +41,22 @@ public class SiteSettings {
 
     public long getSaleEndEpoch() { return saleEndEpoch; }
     public void setSaleEndEpoch(long saleEndEpoch) { this.saleEndEpoch = saleEndEpoch; }
+
+    public String getShopPhone() { return shopPhone; }
+    public void setShopPhone(String shopPhone) { this.shopPhone = shopPhone; }
+
+    public String getShopEmail() { return shopEmail; }
+    public void setShopEmail(String shopEmail) { this.shopEmail = shopEmail; }
+
+    public String getShopAddress() { return shopAddress; }
+    public void setShopAddress(String shopAddress) { this.shopAddress = shopAddress; }
+
+    public String getFacebookUrl() { return facebookUrl; }
+    public void setFacebookUrl(String facebookUrl) { this.facebookUrl = facebookUrl; }
+
+    public String getZaloPhone() { return zaloPhone; }
+    public void setZaloPhone(String zaloPhone) { this.zaloPhone = zaloPhone; }
+
+    public String getTiktokUrl() { return tiktokUrl; }
+    public void setTiktokUrl(String tiktokUrl) { this.tiktokUrl = tiktokUrl; }
 }

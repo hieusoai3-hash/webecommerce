@@ -190,6 +190,38 @@
         }
         .no-results i { font-size: 2rem; color: var(--text-soft); display: block; margin-bottom: 10px; }
         .no-results.show { display: block; }
+
+        .dot-cancelled { background: #ef4444; box-shadow: 0 0 0 2px #fee2e2; }
+        .filter-tab.active-cancelled { background: #fef2f2; color: #b91c1c; border-color: #fca5a5; }
+
+        /* ── Date filter ── */
+        .date-filter { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+        .date-filter input {
+            padding:6px 10px; border:1.5px solid var(--border); border-radius:var(--radius-sm);
+            font-size:.8rem; font-family:inherit; color:var(--text); background:var(--bg);
+            outline:none; transition:border-color .2s;
+        }
+        .date-filter input:focus { border-color:var(--primary); }
+        .date-filter label { font-size:.78rem; color:var(--text-muted); white-space:nowrap; }
+
+        /* ── Cancel modal ── */
+        .modal-overlay {
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,.45); z-index:9999;
+            align-items:center; justify-content:center;
+        }
+        .modal-overlay.open { display:flex; }
+        .modal-box {
+            background:var(--surface); border-radius:var(--radius-lg);
+            padding:28px; width:420px; max-width:calc(100vw - 32px);
+            box-shadow:0 20px 60px rgba(0,0,0,.25);
+        }
+        .modal-title {
+            font-size:1.05rem; font-weight:700; color:var(--text);
+            margin-bottom:16px; display:flex; align-items:center; gap:8px;
+        }
+        .modal-title i { color:var(--danger,#ef4444); }
+        .modal-actions { display:flex; gap:10px; margin-top:20px; justify-content:flex-end; }
     </style>
 </head>
 <body>
@@ -201,6 +233,10 @@
         <div class="topbar-sep"></div>
         <span style="font-size:.8rem; color:var(--text-muted);"
               th:text="${#lists.size(orders)} + ' đơn hàng'"></span>
+        <a th:href="@{/admin/orders/export.csv}"
+           class="btn-nb2 btn-outline btn-sm" style="margin-left:auto; flex-shrink:0;">
+            <i class="bi bi-download"></i> Xuất CSV
+        </a>
     </div>
 
     <div class="content-area">
@@ -251,6 +287,13 @@
                     <button type="button" class="filter-tab" data-filter="PAID">Đã thanh toán</button>
                     <button type="button" class="filter-tab" data-filter="SHIPPED">Đang giao</button>
                     <button type="button" class="filter-tab" data-filter="COMPLETED">Hoàn thành</button>
+                    <button type="button" class="filter-tab" data-filter="CANCELLED">Đã huỷ</button>
+                </div>
+                <div class="date-filter">
+                    <label>Từ</label>
+                    <input type="date" id="dateFrom">
+                    <label>đến</label>
+                    <input type="date" id="dateTo">
                 </div>
                 <div class="search-box">
                     <i class="bi bi-search"></i>
@@ -282,6 +325,7 @@
                     <tbody>
                     <tr th:each="order : ${orders}"
                         th:attr="data-status=${order.status},
+                                 data-date=${order.createdAt != null ? #temporals.format(order.createdAt, 'yyyy-MM-dd') : ''},
                                  data-search=${#strings.toLowerCase(order.customerName) + ' ' + order.customerPhone + ' ' + #strings.toLowerCase(order.id)},
                                  onclick=|window.location.href='@{/admin/orders/detail(id=${order.id})}'|">
 
@@ -342,13 +386,16 @@
                                 <span th:if="${order.status == 'PAID'}"      class="status-dot dot-paid"></span>
                                 <span th:if="${order.status == 'SHIPPED'}"   class="status-dot dot-shipped"></span>
                                 <span th:if="${order.status == 'COMPLETED'}" class="status-dot dot-completed"></span>
+                                <span th:if="${order.status == 'CANCELLED'}" class="status-dot dot-cancelled"></span>
                                 <span class="badge"
                                       th:classappend="${order.status == 'PENDING'} ? 'badge-pending' :
                                                       (${order.status == 'PAID'} ? 'badge-paid' :
-                                                      (${order.status == 'SHIPPED'} ? 'badge-shipped' : 'badge-completed'))"
+                                                      (${order.status == 'SHIPPED'} ? 'badge-shipped' :
+                                                      (${order.status == 'COMPLETED'} ? 'badge-completed' : 'badge-cancelled')))"
                                       th:text="${order.status == 'PENDING'} ? 'Chờ xử lý' :
                                                (${order.status == 'PAID'} ? 'Đã thanh toán' :
-                                               (${order.status == 'SHIPPED'} ? 'Đang giao' : 'Hoàn thành'))">
+                                               (${order.status == 'SHIPPED'} ? 'Đang giao' :
+                                               (${order.status == 'COMPLETED'} ? 'Hoàn thành' : 'Đã huỷ')))">
                                 </span>
                             </div>
                         </td>
@@ -389,6 +436,12 @@
                                             <i class="bi bi-check-circle" style="color:var(--success);"></i> Hoàn thành
                                         </button>
                                     </form>
+                                    <div style="border-top:1px solid var(--border); margin:4px 0;"></div>
+                                    <button type="button" class="dropdown-item"
+                                            style="color:#ef4444;"
+                                            th:attr="onclick=|openCancel('${order.id}', '${order.customerName}')|">
+                                        <i class="bi bi-x-circle"></i> Huỷ đơn…
+                                    </button>
                                 </div>
                             </div>
                         </td>
@@ -401,6 +454,37 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- ── Cancel Modal ─────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="cancelModal">
+    <div class="modal-box">
+        <div class="modal-title"><i class="bi bi-x-octagon-fill"></i> Huỷ đơn hàng</div>
+        <p style="font-size:.875rem; color:var(--text-muted); margin-bottom:14px;">
+            Đơn hàng của <strong id="cancelCustomerName"></strong> sẽ bị huỷ.<br>
+            Vui lòng nhập lý do (không bắt buộc):
+        </p>
+        <textarea id="cancelReasonInput" rows="3" style="width:100%; box-sizing:border-box;
+            padding:10px 12px; border:1.5px solid var(--border); border-radius:var(--radius-sm);
+            font-family:inherit; font-size:.875rem; resize:vertical; color:var(--text);
+            background:var(--bg); outline:none; transition:border-color .2s;"
+            onfocus="this.style.borderColor='var(--primary)'"
+            onblur="this.style.borderColor='var(--border)'"
+            placeholder="Ví dụ: Khách huỷ yêu cầu, hết hàng..."></textarea>
+        <form id="cancelForm" th:action="@{/admin/orders/cancel}" method="post">
+            <input type="hidden" name="id" id="cancelOrderId">
+            <input type="hidden" name="cancelReason" id="cancelReasonHidden">
+            <input type="hidden" name="from" value="list">
+            <div class="modal-actions">
+                <button type="button" class="btn-nb2 btn-outline btn-sm" onclick="closeCancel()">Bỏ qua</button>
+                <button type="submit" class="btn-nb2 btn-sm"
+                        style="background:#ef4444; border-color:#ef4444; color:#fff;"
+                        onclick="document.getElementById('cancelReasonHidden').value=document.getElementById('cancelReasonInput').value">
+                    <i class="bi bi-x-circle"></i> Xác nhận huỷ
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -424,13 +508,17 @@ updateStats(rows);
 // ── Filtering ──────────────────────────────────────
 let activeFilter = 'all';
 let searchQuery  = '';
+let dateFrom = '', dateTo = '';
 
 function applyFilters() {
     let visible = [];
     rows.forEach(row => {
         const matchStatus = activeFilter === 'all' || row.dataset.status === activeFilter;
         const matchSearch = !searchQuery || row.dataset.search.includes(searchQuery);
-        const show = matchStatus && matchSearch;
+        const rowDate = row.dataset.date || '';
+        const matchFrom = !dateFrom || rowDate >= dateFrom;
+        const matchTo   = !dateTo   || rowDate <= dateTo;
+        const show = matchStatus && matchSearch && matchFrom && matchTo;
         row.style.display = show ? '' : 'none';
         if (show) visible.push(row);
     });
@@ -443,12 +531,13 @@ function applyFilters() {
 document.querySelectorAll('.filter-tab').forEach(tab => {
     tab.addEventListener('click', () => {
         document.querySelectorAll('.filter-tab').forEach(t => {
-            t.classList.remove('active','active-pending','active-shipped','active-completed','active-paid');
+            t.classList.remove('active','active-pending','active-shipped','active-completed','active-paid','active-cancelled');
         });
         activeFilter = tab.dataset.filter;
         const cls = {
             PENDING: 'active-pending', SHIPPED: 'active-shipped',
-            COMPLETED: 'active-completed', PAID: 'active-paid'
+            COMPLETED: 'active-completed', PAID: 'active-paid',
+            CANCELLED: 'active-cancelled'
         }[activeFilter] || 'active';
         tab.classList.add(cls);
         applyFilters();
@@ -463,6 +552,26 @@ if (searchInput) {
         applyFilters();
     });
 }
+
+// Date filter
+const dateFromInput = document.getElementById('dateFrom');
+const dateToInput   = document.getElementById('dateTo');
+if (dateFromInput) dateFromInput.addEventListener('change', () => { dateFrom = dateFromInput.value; applyFilters(); });
+if (dateToInput)   dateToInput.addEventListener('change',   () => { dateTo   = dateToInput.value;   applyFilters(); });
+
+// ── Cancel modal ───────────────────────────────────
+function openCancel(orderId, customerName) {
+    document.getElementById('cancelOrderId').value = orderId;
+    document.getElementById('cancelCustomerName').textContent = customerName;
+    document.getElementById('cancelReasonInput').value = '';
+    document.getElementById('cancelModal').classList.add('open');
+}
+function closeCancel() {
+    document.getElementById('cancelModal').classList.remove('open');
+}
+document.getElementById('cancelModal').addEventListener('click', function(e) {
+    if (e.target === this) closeCancel();
+});
 
 // ── Dropdown ───────────────────────────────────────
 let activeMenu = null;
