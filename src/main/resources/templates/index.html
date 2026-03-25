@@ -17,7 +17,7 @@
 <!-- Hero Section -->
 <section class="hero" id="hero">
     <div class="hero-bg">
-        <img th:src="@{/images/banners/hero_banner.png}" alt="NB2 Boxer Men" loading="eager">
+        <img src="https://images.unsplash.com/photo-1584940121396-17ed95a72c29?auto=format&fit=crop&w=1920&q=80" alt="NB2 Boxer Men" loading="eager">
     </div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
@@ -72,7 +72,7 @@
             </a>
             <a th:href="@{/vi-da}" class="category-card reveal" id="cat-vi-da">
                 <div class="category-img">
-                    <img th:src="@{/images/products/wallets/wallet_premium_brown.png}" alt="Ví Da Cao Cấp" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=80" alt="Ví Da Cao Cấp" loading="lazy">
                 </div>
                 <div class="category-info">
                     <h3>Ví Da Cao Cấp</h3>
@@ -82,7 +82,7 @@
             </a>
             <a th:href="@{/that-lung}" class="category-card reveal" id="cat-that-lung">
                 <div class="category-img">
-                    <img th:src="@{/images/categories/category_brief.png}" alt="Thắt Lưng Da" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1664285612706-b32633c95820?auto=format&fit=crop&w=800&q=80" alt="Thắt Lưng Da" loading="lazy">
                 </div>
                 <div class="category-info">
                     <h3>Thắt Lưng Da</h3>
@@ -90,7 +90,8 @@
                     <span class="category-cta">Khám phá &#8594;</span>
                 </div>
             </a>
-            <a th:href="@{/combo-hot}" class="category-card category-combo reveal" id="cat-combo">
+            <a th:href="@{/combo-hot}" class="category-card category-combo reveal" id="cat-combo"
+               style="background-image: linear-gradient(120deg, rgba(13,13,26,.92) 0%, rgba(26,10,46,.80) 55%, rgba(42,10,30,.70) 100%), url('https://images.unsplash.com/photo-1748577018714-d41f19f8faec?auto=format&fit=crop&w=1200&q=80'); background-size: cover; background-position: center;">
                 <div class="combo-badge-block">
                     <span class="combo-num">3+1</span>
                     <span class="combo-label">FREE</span>
@@ -154,7 +155,7 @@
 <!-- Combo Section -->
 <section th:if="${combos != null and !#lists.isEmpty(combos)}"
          id="combo-section"
-         style="padding:80px 0; background:linear-gradient(135deg,#1a1a2e 0%,#0f3460 100%); position:relative; overflow:hidden;">
+         style="padding:80px 0; background:linear-gradient(120deg,rgba(13,13,26,.92) 0%,rgba(26,10,46,.85) 55%,rgba(42,10,30,.80) 100%), url('https://images.unsplash.com/photo-1748577018714-d41f19f8faec?auto=format&fit=crop&w=1920&q=80'); background-size:cover; background-position:center; position:relative; overflow:hidden;">
 
     <!-- Background glow -->
     <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(233,69,96,.18) 0%,transparent 65%);pointer-events:none;"></div>
