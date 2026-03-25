@@ -22,7 +22,6 @@ public class TomcatConfig {
     public WebServerFactoryCustomizer<TomcatServletWebServerFactory> tomcatCustomizer() {
         return factory -> factory.addConnectorCustomizers((Connector connector) -> {
             connector.setMaxPostSize(-1);
-            connector.setMaxSavePostSize(-1);
         });
     }
 }

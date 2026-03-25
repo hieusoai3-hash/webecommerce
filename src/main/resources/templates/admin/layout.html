@@ -71,6 +71,30 @@
         </form>
     </nav>
 </aside>
+<!-- Order notification toast -->
+<div id="order-toast" style="
+    position:fixed; top:20px; right:20px; z-index:9999;
+    background:#1e1e2e; color:#fff;
+    border-left:4px solid #e94560;
+    border-radius:12px;
+    padding:14px 18px;
+    min-width:280px; max-width:340px;
+    box-shadow:0 8px 32px rgba(0,0,0,.35);
+    display:flex; align-items:flex-start; gap:12px;
+    transform:translateX(120%);
+    transition:transform .35s cubic-bezier(.4,0,.2,1);
+    cursor:pointer;">
+    <div style="font-size:1.4rem;line-height:1;flex-shrink:0;">🔔</div>
+    <div style="flex:1;min-width:0;">
+        <div style="font-weight:700;font-size:.88rem;margin-bottom:3px;">Đơn hàng mới!</div>
+        <div id="toast-body" style="font-size:.78rem;color:rgba(255,255,255,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:6px;">Nhấn để xem đơn hàng →</div>
+    </div>
+    <button onclick="document.getElementById('order-toast').style.transform='translateX(120%)'"
+            style="background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;
+                   font-size:1rem;padding:0;line-height:1;flex-shrink:0;">✕</button>
+</div>
+
 <script>
 (function(){
     var sidebar = document.getElementById('sidebar');
@@ -90,6 +114,77 @@
     if(openBtn)  openBtn.addEventListener('click', openSidebar);
     if(closeBtn) closeBtn.addEventListener('click', closeSidebar);
     if(overlay)  overlay.addEventListener('click', closeSidebar);
+})();
+
+// ── New order polling ──────────────────────────────────────────────────
+(function(){
+    var knownLatestId = null;
+    var isFirstPoll = true;
+    var toast = document.getElementById('order-toast');
+    var toastBody = document.getElementById('toast-body');
+    var badge = document.getElementById('order-badge');
+    var toastTimer = null;
+
+    // Navigate to orders on toast click
+    if (toast) {
+        toast.addEventListener('click', function(e) {
+            if (e.target.tagName === 'BUTTON') return;
+            window.location.href = '/admin/orders';
+        });
+    }
+
+    function formatVnd(n) {
+        return Number(n).toLocaleString('vi-VN') + '₫';
+    }
+
+    function showToast(name, total) {
+        if (!toast) return;
+        toastBody.textContent = (name || 'Khách hàng') + ' — ' + formatVnd(total || 0);
+        toast.style.transform = 'translateX(0)';
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function() {
+            toast.style.transform = 'translateX(120%)';
+        }, 6000);
+        // Browser notification (if granted)
+        if (Notification && Notification.permission === 'granted') {
+            new Notification('🔔 Đơn hàng mới — NB2 Admin', {
+                body: (name || 'Khách hàng') + ' vừa đặt hàng ' + formatVnd(total || 0),
+                icon: '/images/banners/hero_banner.png'
+            });
+        }
+    }
+
+    function updateBadge(count) {
+        if (!badge) return;
+        badge.textContent = count;
+        badge.style.display = count > 0 ? '' : 'none';
+    }
+
+    function poll() {
+        fetch('/admin/orders/poll', { credentials: 'same-origin' })
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(data) {
+                if (!data) return;
+                updateBadge(data.pending || 0);
+                if (isFirstPoll) {
+                    knownLatestId = data.latestId;
+                    isFirstPoll = false;
+                    return;
+                }
+                if (data.latestId && data.latestId !== knownLatestId) {
+                    knownLatestId = data.latestId;
+                    showToast(data.latestName, data.latestTotal);
+                }
+            })
+            .catch(function() {}); // silent fail
+    }
+
+    // Request browser notification permission once
+    if (Notification && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+
+    setInterval(poll, 30000); // Poll every 30 s
 })();
 </script>
 </th:block>

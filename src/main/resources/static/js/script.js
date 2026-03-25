@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const productCards = document.querySelectorAll('.product-card');
     const sizeBtns = document.querySelectorAll('.size-btn');
     const colorSwatches = document.querySelectorAll('.color-swatch');
-    const newsletterForm = document.getElementById('newsletter-form');
 
     // ===== Cart State =====
     let cart = [];
@@ -515,18 +514,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     revealElements.forEach(el => revealObserver.observe(el));
-
-    // ===== Newsletter Form =====
-    if (newsletterForm) {
-        newsletterForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const input = document.getElementById('newsletter-input');
-            if (input.value) {
-                showToast('🎉 Đăng ký thành công! Kiểm tra email để nhận mã giảm 10%');
-                input.value = '';
-            }
-        });
-    }
 
     // ===== Checkout Button =====
     const checkoutBtn = document.getElementById('checkout-btn');
@@ -1108,46 +1095,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ===== Product Description Drawer =====
-    const productDescDrawer = document.getElementById('product-desc-drawer');
-    const productDescOverlay = document.getElementById('product-desc-overlay');
-    const productDescCloseBtn = document.getElementById('product-desc-close');
-
-    function openProductDesc(e) {
-        if (e) e.preventDefault();
-        productDescDrawer.classList.add('active');
-        productDescOverlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeProductDesc() {
-        productDescDrawer.classList.remove('active');
-        productDescOverlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    if (productDescCloseBtn) productDescCloseBtn.addEventListener('click', closeProductDesc);
-    if (productDescOverlay) productDescOverlay.addEventListener('click', closeProductDesc);
-
-    // Bind the new buttons inside Checkout Modal
-    const checkoutSizeGuideBtn = document.getElementById('checkout-size-guide-btn');
-    const checkoutDescBtn = document.getElementById('checkout-desc-btn');
-
-    if (checkoutSizeGuideBtn) {
-        checkoutSizeGuideBtn.addEventListener('click', () => {
-            // Close checkout first to prevent stacking issues (optional, but cleaner)
-            closeCheckout();
-            setTimeout(openSizeGuide, 300); // Wait for transition
-        });
-    }
-
-    if (checkoutDescBtn) {
-        checkoutDescBtn.addEventListener('click', () => {
-            closeCheckout();
-            setTimeout(openProductDesc, 300);
-        });
-    }
-
     // ===== Product Detail Page =====
     const pdMainImg = document.getElementById('pd-main-img');
     const pdColorBtns = document.querySelectorAll('#pd-colors .pd-color-btn');
@@ -1387,45 +1334,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-(function() {
-// Set active state for mobile nav
-function updateMobileNav() {
-    const mobileNavItems = document.querySelectorAll('.mb-nav-item');
-    if (!mobileNavItems.length) return;
-    
-    let currentPath = window.location.pathname.split('/').pop() || 'index.html';
-    const currentHash = window.location.hash;
-    
-    let foundMatch = false;
-    
-    // First try to match exact path + hash
-    mobileNavItems.forEach(item => {
-        item.classList.remove('active');
-        const href = item.getAttribute('href');
-        if (href === currentPath + currentHash || (currentPath === '' && href === 'index.html' + currentHash)) {
-            item.classList.add('active');
-            foundMatch = true;
-        }
-    });
-    
-    // If no exact match with hash, just match on path
-    if (!foundMatch) {
-         mobileNavItems.forEach(item => {
-            const href = item.getAttribute('href');
-            // Ignore items with hash if we are just matching path
-            if (!href.includes('#') && (href === currentPath || (currentPath === '' && href === 'index.html'))) {
-                item.classList.add('active');
-            }
-        });
-    }
-    
-    // Center the active item in the scroll view
-    const activeItem = document.querySelector('.mb-nav-item.active');
-    if (activeItem) {
-        activeItem.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-    }
-}
-
-document.addEventListener('DOMContentLoaded', updateMobileNav);
-window.addEventListener('hashchange', updateMobileNav);
-})();

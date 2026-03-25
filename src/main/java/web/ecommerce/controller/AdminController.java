@@ -243,7 +243,6 @@ public class AdminController {
         model.addAttribute("trafficLabels",      trafficLabels);
         model.addAttribute("trafficData",        trafficData);
         model.addAttribute("topViewedProducts",  topViewedProducts);
-        model.addAttribute("maxProductViews",    maxProductViews);
         return "admin/dashboard";
     }
 
@@ -782,6 +781,23 @@ public class AdminController {
         } catch (Exception ignored) {}
         ra.addFlashAttribute("success", "Đã đổi mật khẩu thành công.");
         return "redirect:/admin/settings";
+    }
+
+    // ── Order notification polling ────────────────────────────────────────
+
+    @GetMapping("/orders/poll")
+    @ResponseBody
+    public Map<String, Object> pollOrders() {
+        List<Order> orders = orderService.getAll();
+        Map<String, Object> result = new HashMap<>();
+        result.put("pending", orderService.countPending());
+        result.put("latestId", orders.isEmpty() ? null : orders.get(0).getId());
+        if (!orders.isEmpty()) {
+            Order latest = orders.get(0);
+            result.put("latestName", latest.getCustomerName());
+            result.put("latestTotal", latest.getTotal());
+        }
+        return result;
     }
 
 }
