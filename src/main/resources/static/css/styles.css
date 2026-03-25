@@ -558,6 +558,9 @@ button {
     animation: cartBump 0.4s ease;
 }
 
+/* Nav close button — hidden on desktop */
+.nav-close-btn { display: none; }
+
 /* Mobile Menu Button */
 .mobile-menu-btn {
     display: none;
@@ -589,6 +592,12 @@ button {
 
 .mobile-menu-btn.active span:nth-child(3) {
     transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Hide hamburger when nav is open — close button inside nav takes over */
+.mobile-menu-btn.active {
+    opacity: 0;
+    pointer-events: none;
 }
 
 /* === Hero Section === */
@@ -999,6 +1008,8 @@ button {
     transition: all var(--transition-base);
     background: var(--color-white);
     border: 1px solid var(--color-gray-100);
+    display: flex;
+    flex-direction: column;
 }
 
 .product-card:hover {
@@ -1172,6 +1183,9 @@ button {
 /* Product Info */
 .product-info {
     padding: var(--space-4);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .product-colors {
@@ -1271,6 +1285,7 @@ button {
     justify-content: space-between;
     gap: 8px;
     margin-bottom: 4px;
+    margin-top: auto;
 }
 .card-buy-row {
     position: relative;
@@ -2291,6 +2306,30 @@ button {
         transition: transform var(--transition-slow);
     }
     .main-nav.active { transform: translateX(0); }
+
+    /* Close button — only visible in mobile nav panel */
+    .nav-close-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 44px;
+        height: 44px;
+        background: var(--color-gray-100);
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        color: var(--color-primary);
+        transition: background .15s, color .15s;
+        z-index: 10;
+    }
+    .nav-close-btn:hover {
+        background: var(--color-accent);
+        color: #fff;
+    }
+
     .nav-list { flex-direction: column; gap: var(--space-2); }
     .nav-link { font-size: var(--font-size-2xl); padding: var(--space-3) var(--space-6); }
     .mega-menu { display: none; }
@@ -2492,19 +2531,45 @@ button {
         gap: var(--space-3);
     }
 
+    /* Combo card fills the 4th grid slot — matches other category cards */
     .category-combo {
-        grid-column: 1 / -1;
-        height: 120px;
-        padding: 0 var(--space-4);
-        gap: var(--space-4);
+        grid-column: auto;
+        aspect-ratio: 3/4;
+        height: auto;
+        /* Override inline gradient with a lighter overlay so image shows through */
+        background: linear-gradient(to bottom, rgba(0,0,0,.18) 0%, rgba(0,0,0,.62) 100%),
+                    url('/images/banners/combo_banner.jpg') !important;
+        background-size: cover !important;
+        background-position: center !important;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-end;
+        padding: var(--space-4);
+        gap: var(--space-1);
+        text-align: left;
     }
 
     .combo-num {
-        font-size: 2.5rem;
+        font-size: 2rem;
+        line-height: 1;
+    }
+
+    .combo-label {
+        font-size: .6rem;
+        margin-top: 2px;
+    }
+
+    .combo-badge-block {
+        margin-bottom: 4px;
     }
 
     .combo-divider {
-        height: 56px;
+        display: none;
+    }
+
+    .combo-body h3 {
+        font-size: 1rem;
+        margin-bottom: 6px;
     }
 
     .combo-body p {
@@ -2570,6 +2635,64 @@ button {
     .newsletter-input,
     .newsletter-btn {
         width: 100%;
+    }
+
+    /* ── Product card: hide image hover overlay on mobile ── */
+    /* Size selection happens via "Mua ngay" popup instead */
+    .quick-add { display: none !important; }
+
+    /* ── Product card buy row: stack price then full-width buttons ── */
+    .product-price-row {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+    }
+    .card-buy-row {
+        flex-direction: row;
+        align-items: stretch;
+        width: 100%;
+        gap: 6px;
+    }
+    .card-buy-btn {
+        flex: 1;
+        font-size: .75rem;
+        padding: 10px 8px;
+        text-align: center;
+        white-space: nowrap;
+        border-radius: 8px;
+    }
+    .card-cart-row { flex-shrink: 0; display: flex; }
+    .card-cart-btn {
+        width: 44px;
+        min-height: 0;
+        padding: 0;
+        border-radius: 8px;
+        align-self: stretch;
+    }
+    .card-cart-btn svg {
+        width: 17px;
+        height: 17px;
+    }
+
+    /* ── Card size picker popups (mobile) ── */
+    .card-size-picker,
+    .card-cart-size-picker {
+        left: 0;
+        right: 0;
+        bottom: calc(100% + 6px);
+        flex-wrap: wrap;
+        gap: 5px;
+        padding: 8px 10px;
+        z-index: 30;
+    }
+    .card-size-opt,
+    .card-cart-size-opt {
+        padding: 5px 9px;
+        font-size: .75rem;
+    }
+    .card-size-picker-label {
+        width: 100%;
+        margin-bottom: 2px;
     }
 }
 
@@ -3957,6 +4080,25 @@ button {
 
 /* ── product-detail.html ── */
         .pd-wrapper { padding: 30px 0 60px; }
+
+        /* Back button — hidden on desktop, shown on mobile */
+        .pd-back-btn {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            font-size: .9rem;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            padding: 0;
+            margin-bottom: 16px;
+            font-family: inherit;
+            transition: color .15s;
+        }
+        .pd-back-btn:hover { color: #e94560; }
+
         .pd-breadcrumb { display:flex; align-items:center; gap:8px; font-size:0.85rem; color:#999; margin-bottom:30px; }
         .pd-breadcrumb a { color:#555; transition:color 0.3s; }
         .pd-breadcrumb a:hover { color:#e94560; }
@@ -4059,6 +4201,23 @@ button {
         .btn-related-more { display:inline-block; padding:13px 40px; border:2px solid #1a1a2e; border-radius:50px; font-size:0.95rem; font-weight:700; color:#1a1a2e; text-decoration:none; letter-spacing:0.03em; transition:background 0.2s,color 0.2s; }
         .btn-related-more:hover { background:#1a1a2e; color:#fff; }
         @media (max-width:768px) {
+            .pd-back-btn { display:flex; }
+            .pd-breadcrumb {
+                font-size:.75rem;
+                flex-wrap: wrap;
+                gap: 4px;
+                margin-bottom: 16px;
+                white-space: nowrap;
+                overflow: hidden;
+            }
+            /* Truncate long product name on mobile */
+            .pd-breadcrumb span:last-child {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 140px;
+                display: inline-block;
+                vertical-align: middle;
+            }
             .pd-layout { grid-template-columns:1fr; gap:30px; }
             .pd-gallery { position:static; }
             .pd-title { font-size:1.4rem; }

@@ -78,6 +78,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Close button inside mobile nav
+    const navCloseBtn = document.getElementById('nav-close-btn');
+    if (navCloseBtn) {
+        navCloseBtn.addEventListener('click', () => {
+            mobileMenuBtn.classList.remove('active');
+            mainNav.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    }
+
     // Close mobile menu on nav link click
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', () => {
