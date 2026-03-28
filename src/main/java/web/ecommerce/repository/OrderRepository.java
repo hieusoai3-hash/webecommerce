@@ -8,4 +8,5 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, String> {
     List<Order> findAllByOrderByCreatedAtDesc();
     List<Order> findByCustomerPhoneOrderByCreatedAtDesc(String phone);
+    long countByStatus(String status);
 }

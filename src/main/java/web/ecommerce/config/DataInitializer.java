@@ -64,8 +64,7 @@ public class DataInitializer {
     @Bean
     CommandLineRunner seedProducts(ProductRepository repo) {
         return args -> {
-            if (repo.count() >= 16) return; // already fully seeded
-            repo.deleteAll(); // wipe partial/corrupt data before re-seeding
+            if (repo.count() > 0) return; // already seeded — never wipe existing products
 
             // ── Quần sịp ──────────────────────────────────────────────────
             save(repo, "trunk-bamboo", "Quần Lót Nam Trunk Bamboo", "quan-sip", "Bamboo",

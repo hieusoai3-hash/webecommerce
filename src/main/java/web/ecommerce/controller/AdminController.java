@@ -28,8 +28,6 @@ import web.ecommerce.service.SiteSettingsService;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -525,6 +523,10 @@ public class AdminController {
 
     private String escCsv(String s) {
         if (s == null) return "";
+        // Neutralise formula injection: prefix cells starting with formula chars
+        if (!s.isEmpty() && "=+-@\t\r".indexOf(s.charAt(0)) >= 0) {
+            s = "'" + s;
+        }
         if (s.contains(",") || s.contains("\"") || s.contains("\n"))
             return "\"" + s.replace("\"", "\"\"") + "\"";
         return s;
@@ -770,16 +772,7 @@ public class AdminController {
             .roles("ADMIN")
             .build();
         userDetailsManager.updateUser(updated);
-        // Persist to application.properties for restart survival
-        try {
-            Path propsPath = Path.of("src/main/resources/application.properties");
-            if (Files.exists(propsPath)) {
-                String content = Files.readString(propsPath, StandardCharsets.UTF_8);
-                content = content.replaceAll("(?m)^admin\\.password=.*$", "admin.password=" + newPassword);
-                Files.writeString(propsPath, content, StandardCharsets.UTF_8);
-            }
-        } catch (Exception ignored) {}
-        ra.addFlashAttribute("success", "Đã đổi mật khẩu thành công.");
+        ra.addFlashAttribute("success", "Đã đổi mật khẩu thành công. Để giữ mật khẩu sau khi restart, hãy cập nhật biến môi trường ADMIN_PASSWORD.");
         return "redirect:/admin/settings";
     }
 

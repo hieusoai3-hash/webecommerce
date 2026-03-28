@@ -1,33 +1,40 @@
 # =============================================
-# HƯỚNG DẪN CHẠY TRÊN MÁY KHÁC
+# SETUP DOCKER (build image + tạo container, chưa chạy)
 # =============================================
 #
-# Máy chỉ cần cài Docker, không cần JDK hay Maven.
+# Máy chỉ cần cài Docker Desktop — không cần JDK, Maven hay PostgreSQL.
 #
-# [CÁCH 1] Build trực tiếp từ source code:
+# Bước 1 — Cài Docker Desktop:
+#   https://www.docker.com/products/docker-desktop
+#   Mở Docker Desktop, đợi icon taskbar chuyển xanh là sẵn sàng.
 #
-#   Bước 1 - Build image (Docker tự build JAR):
-#     docker build -t webecommerce:latest .
+# Bước 2 — Clone repo về máy:
+#   git clone <repo-url>
+#   cd webecommerce
 #
-#   Bước 2 - Chạy container:
-#     docker run -d -p 8080:8080 --name webecommerce webecommerce:latest
+# Bước 3 — Build image và tạo container (chưa chạy):
+#   docker compose up --no-start --build
 #
-# -----------------------------------------------
+#   Docker sẽ tự động:
+#     - Build Spring Boot app thành image
+#     - Tạo các container (nb2-app, nb2-postgres)
+#     - KHÔNG tự khởi động — mở Docker Desktop rồi bấm Start thủ công
 #
-# [CÁCH 2] Dùng file .tar.gz (không cần source code):
+#   Lần đầu mất vài phút để tải và build. Từ lần sau sẽ nhanh hơn.
 #
-#   Bước 1 - Export image ra file (trên máy đã build):
-#     docker save webecommerce:latest | gzip > webecommerce.tar.gz
+# Bước 4 — Mở Docker Desktop, vào Containers, bấm Start các container.
+#   App chạy tại: http://localhost:8080
+#   Admin panel:  http://localhost:8080/admin
 #
-#   Bước 2 - Copy file webecommerce.tar.gz sang máy kia
+# Các lệnh thường dùng:
+#   docker compose up --no-start --build  → Build lại + tạo container (chưa chạy)
+#   docker compose up --no-start          → Tạo container (không build lại)
+#   docker compose down                   → Xóa container (giữ nguyên data)
+#   docker compose logs -f                → Xem log realtime
 #
-#   Bước 3 - Load image:
-#     docker load < webecommerce.tar.gz
-#
-#   Bước 4 - Chạy container:
-#     docker run -d -p 8080:8080 --name webecommerce webecommerce:latest
-#
-# Truy cập: http://localhost:8080
+# Lưu ý:
+#   - Dữ liệu lưu trong Docker volume nb2-pgdata, không mất khi dừng container
+#   - Nếu sửa code, chạy lại: docker compose up --no-start --build
 # =============================================
 
 # Stage 1: Build JAR
@@ -43,6 +50,5 @@ RUN ./mvnw clean package -DskipTests
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
-COPY data/ data/
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

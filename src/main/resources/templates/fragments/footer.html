@@ -143,23 +143,19 @@
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3H8l-2 4h12l-2-4z"/></svg>
                         Chọn combo
                     </div>
-                    <label class="selection-item">
-                        <input type="radio" name="order_combo" value="combo_3">
+                    <label th:each="combo, stat : ${qCombos}" class="selection-item">
+                        <input type="radio" name="order_combo"
+                               th:value="'combo_' + ${combo.buyQuantity}"
+                               th:data-name="${combo.name}"
+                               th:data-price="${combo.price}">
                         <span class="custom-checkbox"></span>
                         <span class="selection-text">
-                            <span class="selection-title">Combo mua 3 tặng 1</span>
-                            <span class="selection-meta">199.000₫ · Miễn phí ship</span>
+                            <span class="selection-title" th:text="${combo.label}">Combo</span>
+                            <span class="selection-meta" th:text="${combo.formattedPrice} + ' · Miễn phí ship'"></span>
                         </span>
-                        <span class="selection-price">199K</span>
-                    </label>
-                    <label class="selection-item">
-                        <input type="radio" name="order_combo" value="combo_5">
-                        <span class="custom-checkbox"></span>
-                        <span class="selection-text">
-                            <span class="selection-title">Combo mua 5 tặng 2</span>
-                            <span class="selection-meta">299.000₫ · Miễn phí ship</span>
-                        </span>
-                        <span class="selection-badge">Tiết kiệm nhất</span>
+                        <span th:if="${stat.last}" class="selection-badge">Tiết kiệm nhất</span>
+                        <span th:unless="${stat.last}" class="selection-price"
+                              th:text="${#numbers.formatDecimal(combo.price / 1000, 0, 0) + 'K'}"></span>
                     </label>
                 </div>
                 <div class="selection-group size-group">

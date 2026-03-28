@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,8 +18,14 @@ public class Order {
 
     @Id
     private String id;
+    @NotBlank(message = "Vui lòng nhập tên người nhận")
     private String customerName;
+
+    @NotBlank(message = "Vui lòng nhập số điện thoại")
+    @Pattern(regexp = "^(0[3|5|7|8|9])+([0-9]{8})$", message = "Số điện thoại không hợp lệ")
     private String customerPhone;
+
+    @NotBlank(message = "Vui lòng nhập địa chỉ giao hàng")
     private String customerAddress;
 
     @ElementCollection

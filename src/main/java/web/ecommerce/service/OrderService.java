@@ -20,7 +20,13 @@ public class OrderService {
     }
 
     public Order create(Order order) {
-        order.setId("#CF" + UUID.randomUUID().toString().substring(0, 6).toUpperCase());
+        String id;
+        int attempts = 0;
+        do {
+            id = "#CF" + UUID.randomUUID().toString().replace("-", "").substring(0, 6).toUpperCase();
+            attempts++;
+        } while (repo.existsById(id) && attempts < 10);
+        order.setId(id);
         order.setStatus("PENDING");
         return repo.save(order);
     }
@@ -64,7 +70,6 @@ public class OrderService {
     }
 
     public long countPending() {
-        return repo.findAllByOrderByCreatedAtDesc().stream()
-                .filter(o -> "PENDING".equals(o.getStatus())).count();
+        return repo.countByStatus("PENDING");
     }
 }

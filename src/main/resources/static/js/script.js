@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ===== Cart State =====
     let cart = [];
+    try { cart = JSON.parse(localStorage.getItem('nb2_cart') || '[]'); } catch (e) { cart = []; }
 
     // ===== Announcement Bar =====
     if (announcementClose) {
@@ -341,6 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateCartUI() {
+        try { localStorage.setItem('nb2_cart', JSON.stringify(cart)); } catch (e) {}
         const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
         const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
@@ -997,6 +999,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Clear cart & reset form
                 cart = [];
+                try { localStorage.removeItem('nb2_cart'); } catch (e) {}
                 appliedCoupon = { code: null, discount: 0 };
                 const cinput = document.getElementById('coupon-input');
                 if (cinput) { cinput.value = ''; document.getElementById('coupon-msg').textContent = ''; }
@@ -1081,11 +1084,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!comboInput) { showToast('Vui lòng chọn combo!'); return; }
             if (!sizeInput)  { showToast('Vui lòng chọn size!'); return; }
 
-            const comboLabels = {
-                'combo_3': { name: 'Combo Mua 3 Tặng 1', price: 199000 },
-                'combo_5': { name: 'Combo Mua 5 Tặng 2', price: 299000 }
+            const chosen = {
+                name: comboInput.dataset.name || comboInput.value,
+                price: parseInt(comboInput.dataset.price || '0', 10)
             };
-            const chosen = comboLabels[comboInput.value] || { name: comboInput.value, price: 0 };
             const existing = cart.find(i => i.name === chosen.name && i.size === sizeInput.value);
             if (existing) { existing.qty += 1; }
             else { cart.push({ productId: '', name: chosen.name, price: chosen.price, image: '', size: sizeInput.value, color: '', qty: 1 }); }

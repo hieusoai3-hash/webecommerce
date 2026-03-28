@@ -58,11 +58,25 @@ public class CouponService {
         return c.computeDiscount(subtotal);
     }
 
-    /** Increments usedCount when an order is actually placed. */
-    public void markUsed(String code) {
-        repo.findByCodeIgnoreCase(code).ifPresent(c -> {
-            c.setUsedCount(c.getUsedCount() + 1);
-            repo.save(c);
-        });
+    /**
+     * Atomically re-validates and increments usedCount in a single transaction
+     * with a pessimistic write lock to prevent concurrent overuse.
+     * Throws IllegalArgumentException if the coupon is no longer valid.
+     */
+    public void validateAndMark(String code, long subtotal) {
+        Coupon c = repo.findByCodeIgnoreCaseWithLock(code)
+                .orElseThrow(() -> new IllegalArgumentException("Mã giảm giá không tồn tại"));
+        if (!c.isActive())
+            throw new IllegalArgumentException("Mã đã bị vô hiệu hóa");
+        if (c.getExpiresAt() != null && java.time.LocalDate.now().isAfter(c.getExpiresAt()))
+            throw new IllegalArgumentException("Mã đã hết hạn sử dụng");
+        if (c.getMaxUses() > 0 && c.getUsedCount() >= c.getMaxUses())
+            throw new IllegalArgumentException("Mã đã được sử dụng hết lượt");
+        if (subtotal < c.getMinOrderValue()) {
+            String minFmt = String.format("%,d", c.getMinOrderValue()).replace(",", ".") + "₫";
+            throw new IllegalArgumentException("Đơn hàng tối thiểu " + minFmt + " mới áp dụng được mã này");
+        }
+        c.setUsedCount(c.getUsedCount() + 1);
+        repo.save(c);
     }
 }

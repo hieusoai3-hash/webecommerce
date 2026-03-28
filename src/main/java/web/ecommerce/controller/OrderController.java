@@ -1,7 +1,12 @@
 package web.ecommerce.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import web.ecommerce.config.IpRateLimiter;
+import web.ecommerce.config.LoginAttemptService;
 import web.ecommerce.model.Order;
 import web.ecommerce.service.CouponService;
 import web.ecommerce.service.OrderService;
@@ -14,16 +19,26 @@ public class OrderController {
 
     private final OrderService orderService;
     private final CouponService couponService;
+    private final IpRateLimiter rateLimiter;
 
-    public OrderController(OrderService orderService, CouponService couponService) {
+    public OrderController(OrderService orderService, CouponService couponService, IpRateLimiter rateLimiter) {
         this.orderService = orderService;
         this.couponService = couponService;
+        this.rateLimiter = rateLimiter;
     }
 
     @PostMapping
-    public ResponseEntity<Order> create(@RequestBody Order order) {
+    public ResponseEntity<?> create(@Valid @RequestBody Order order, HttpServletRequest request) {
+        if (!rateLimiter.allowOrder(LoginAttemptService.getClientIp(request))) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(java.util.Map.of("error", "Quá nhiều đơn hàng. Vui lòng thử lại sau."));
+        }
         if (order.getCouponCode() != null && !order.getCouponCode().isBlank()) {
-            couponService.markUsed(order.getCouponCode().trim());
+            try {
+                couponService.validateAndMark(order.getCouponCode().trim(), order.getTotal());
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(java.util.Map.of("error", e.getMessage()));
+            }
         }
         return ResponseEntity.ok(orderService.create(order));
     }

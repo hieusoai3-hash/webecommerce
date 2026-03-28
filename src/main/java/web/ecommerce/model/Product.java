@@ -71,7 +71,8 @@ public class Product {
     }
 
     public String getStars() {
-        return "★".repeat(rating) + "☆".repeat(5 - rating);
+        int r = Math.max(0, Math.min(5, rating));
+        return "★".repeat(r) + "☆".repeat(5 - r);
     }
 
     // ── Getters / Setters ────────────────────────────────────────────────

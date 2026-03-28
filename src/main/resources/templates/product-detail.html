@@ -34,10 +34,11 @@
             <div class="pd-gallery">
                 <div class="pd-main-image">
                     <img id="pd-main-img"
+                         th:if="${!#lists.isEmpty(product.colors)}"
                          th:src="@{/{url}(url=${product.colors[0].imageUrl})}"
                          th:alt="${product.name}">
                 </div>
-                <div class="pd-thumbs" id="pd-thumbs">
+                <div class="pd-thumbs" id="pd-thumbs" th:if="${!#lists.isEmpty(product.colors)}">
                     <img th:each="color : ${product.colors}"
                          th:src="@{/{url}(url=${color.imageUrl})}"
                          th:alt="${color.name}"
