@@ -289,6 +289,12 @@ button {
     font-size: 1.1em;
 }
 
+.logo-img {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+}
+
 .logo:hover {
     color: var(--color-accent);
 }
