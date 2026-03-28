@@ -83,13 +83,7 @@ public class PageController {
         return "combo-hot";
     }
 
-    @GetMapping("/ve-chung-toi")
-    public String veChungToi(Model model) {
-        model.addAttribute("activePage", "ve-chung-toi");
-        return "ve-chung-toi";
-    }
-
-    @GetMapping("/tra-don-hang")
+@GetMapping("/tra-don-hang")
     public String traDonHang(
             @RequestParam(required = false) String id,
             @RequestParam(required = false) String phone,

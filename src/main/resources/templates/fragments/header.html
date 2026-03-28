@@ -67,6 +67,15 @@
                                             <span class="mega-link-desc">Da bò thật 100%</span>
                                         </span>
                                     </a>
+                                    <a th:href="@{/combo-hot}" class="mega-link">
+                                        <span class="mega-link-icon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                        </span>
+                                        <span class="mega-link-text">
+                                            <span class="mega-link-name">Combo hot</span>
+                                            <span class="mega-link-desc">Mua nhiều giảm sâu</span>
+                                        </span>
+                                    </a>
                                     <a th:href="@{/san-pham}" class="mega-view-all">Xem tất cả sản phẩm &rarr;</a>
                                 </div>
                             </div>
@@ -76,7 +85,6 @@
                     <li class="nav-item">
                         <a th:href="@{/sale}" class="nav-link nav-sale" th:classappend="${activePage == 'sale'} ? ' active'">SALE</a>
                     </li>
-                    <li class="nav-item"><a th:href="@{/ve-chung-toi}" class="nav-link" th:classappend="${activePage == 've-chung-toi'} ? ' active'">VỀ CHÚNG TÔI</a></li>
                     <li class="nav-item"><a th:href="@{/tra-don-hang}" class="nav-link" th:classappend="${activePage == 'tra-don-hang'} ? ' active'">TRA CỨU ĐƠN</a></li>
                 </ul>
             </nav>
