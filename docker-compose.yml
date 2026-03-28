@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: ecommerce
-      POSTGRES_PASSWORD: Cxautrai@123
+      POSTGRES_PASSWORD: "Cxautrai123"
       POSTGRES_DB: ecommercedb
     volumes:
       - nb2-pgdata:/var/lib/postgresql/data
@@ -37,7 +37,7 @@ services:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ecommercedb
       SPRING_DATASOURCE_USERNAME: ecommerce
-      SPRING_DATASOURCE_PASSWORD: Cxautrai@123
+      SPRING_DATASOURCE_PASSWORD: "Cxautrai123"
       UPLOAD_DIR: /app/uploads
       # Set ADMIN_PASSWORD in your shell before running: export ADMIN_PASSWORD=your_secure_password
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
