@@ -1,9 +1,3 @@
-# Setup lần đầu (build image app + tạo container app, chưa chạy):
-#   docker compose build app
-#   docker compose create app
-# Sau đó vào Docker Desktop → bấm Start web-ban-xip thủ công.
-# (nb2-postgres tự chạy khi bật Docker Desktop vì restart: unless-stopped)
-
 services:
 
   postgres:
@@ -14,6 +8,7 @@ services:
       POSTGRES_USER: ecommerce
       POSTGRES_PASSWORD: "Cxautrai123"
       POSTGRES_DB: ecommercedb
+      POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - nb2-pgdata:/var/lib/postgresql/data
     ports:
@@ -27,7 +22,7 @@ services:
   app:
     build: .
     container_name: web-ban-xip
-    restart: unless-stopped
+    restart: "no"
     ports:
       - "8080:8080"
     depends_on:
@@ -39,8 +34,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ecommerce
       SPRING_DATASOURCE_PASSWORD: "Cxautrai123"
       UPLOAD_DIR: /app/uploads
-      # Set ADMIN_PASSWORD in your shell before running: export ADMIN_PASSWORD=your_secure_password
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
+      ADMIN_PASSWORD: admin123
     volumes:
       - nb2-uploads:/app/uploads
 
