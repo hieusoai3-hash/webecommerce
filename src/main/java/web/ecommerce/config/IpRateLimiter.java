@@ -14,26 +14,6 @@ public class IpRateLimiter {
     private final ConcurrentHashMap<String, long[]> buckets = new ConcurrentHashMap<>();
 
     /**
-     * @param key         unique scope key (e.g. "coupon:192.168.1.1")
-     * @param capacity    max tokens (burst)
-     * @param refillMs    time in ms to fully refill from 0 → capacity
-     * @return true if request is allowed
-     */
-    public boolean tryAcquire(String key, int capacity, long refillMs) {
-        long now = System.currentTimeMillis();
-        long[] bucket = buckets.compute(key, (k, b) -> {
-            if (b == null) return new long[]{capacity - 1, now}; // [tokens, lastRefillTime]
-            long elapsed  = now - b[1];
-            long refilled = (long) (elapsed * (double) capacity / refillMs);
-            long tokens   = Math.min(capacity, b[0] + refilled);
-            long newTime  = (refilled > 0) ? now : b[1];
-            if (tokens > 0) return new long[]{tokens - 1, newTime};
-            return new long[]{0, newTime}; // blocked — return 0 without consuming
-        });
-        return bucket[0] >= 0 && (bucket[0] > 0 || buckets.get(key)[0] >= 0);
-    }
-
-    /**
      * Returns true if the request is allowed.
      * Coupon validation: 15 requests per minute per IP.
      */

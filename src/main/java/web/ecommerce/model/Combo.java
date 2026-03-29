@@ -88,9 +88,6 @@ public class Combo {
     /** True if this is a pure quantity combo (buy N get N free) */
     public boolean isQuantityCombo() { return buyQuantity > 0 && freeQuantity > 0; }
 
-    /** True if this is a mixed product combo */
-    public boolean isMixCombo() { return comboItems != null && !comboItems.isBlank(); }
-
     public String getBadgeText() { return badgeText; }
     public void setBadgeText(String badgeText) { this.badgeText = badgeText; }
 
