@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra Cứu Đơn Hàng - NB2 Boxer Men</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        /* ── Page shell ── */
+        .tdh-page {
+            min-height: calc(100vh - 72px);
+            background: #f4f5f7;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+
+        /* ── Compact hero bar ── */
+        .tdh-bar {
+            background: linear-gradient(100deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+            padding: 32px 0 28px;
+            text-align: center;
+        }
+        .tdh-bar h1 { font-size: 1.6rem; font-weight: 900; color: #fff; margin-bottom: 4px; }
+        .tdh-bar p  { color: rgba(255,255,255,.55); font-size: .875rem; }
+
+        /* ── Main layout ── */
+        .tdh-layout {
+            max-width: 960px; margin: 0 auto; width: 100%;
+            padding: 28px 20px 60px;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 22px;
+            align-items: start;
+        }
+        .tdh-layout.no-result { grid-template-columns: 1fr; max-width: 540px; }
+
+        /* ── Search card ── */
+        .search-card {
+            background: #fff; border-radius: 14px;
+            box-shadow: 0 2px 16px rgba(0,0,0,.07);
+            overflow: hidden;
+        }
+
+        .track-tabs { display: flex; border-bottom: 1px solid #f0f0f0; }
+        .track-tab {
+            flex: 1; padding: 14px 10px; font-size: .82rem; font-weight: 600;
+            color: #9ca3af; cursor: pointer; border: none; background: none;
+            border-bottom: 2.5px solid transparent; margin-bottom: -1px;
+            transition: color .18s, border-color .18s; font-family: inherit;
+        }
+        .track-tab.active { color: #e94560; border-bottom-color: #e94560; }
+        .track-tab:hover:not(.active) { color: #374151; }
+
+        .search-body { padding: 20px; }
+
+        .track-row { display: flex; gap: 8px; }
+        .track-input {
+            flex: 1; height: 46px; padding: 0 14px;
+            border: 1.5px solid #e5e7eb; border-radius: 10px;
+            font-size: .93rem; font-family: inherit; outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .track-input:focus { border-color: #e94560; box-shadow: 0 0 0 3px rgba(233,69,96,.1); }
+        .track-btn {
+            height: 46px; padding: 0 18px; background: #e94560; color: #fff;
+            border: none; border-radius: 10px; font-size: .88rem; font-weight: 700;
+            font-family: inherit; cursor: pointer; white-space: nowrap; transition: background .18s;
+        }
+        .track-btn:hover { background: #d63851; }
+        .track-hint { font-size: .74rem; color: #9ca3af; margin-top: 8px; text-align: center; }
+
+        /* ── Not found ── */
+        .not-found { text-align: center; padding: 24px 0 8px; }
+        .not-found p { font-size: .84rem; color: #6b7280; line-height: 1.6; margin-top: 4px; }
+        .not-found strong { display: block; font-size: .95rem; color: #374151; margin-bottom: 4px; }
+
+        /* ── Result card ── */
+        .result-card {
+            background: #fff; border-radius: 14px;
+            box-shadow: 0 2px 16px rgba(0,0,0,.07);
+        }
+
+        .result-top {
+            padding: 18px 22px 16px;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+        }
+        .result-id   { font-size: 1.05rem; font-weight: 800; color: #1a1a2e; font-family: monospace; }
+        .result-date { font-size: .75rem; color: #9ca3af; margin-top: 2px; }
+
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 5px 13px; border-radius: 99px; font-size: .78rem; font-weight: 700; white-space: nowrap;
+        }
+        .status-PENDING   { background: #fef3c7; color: #d97706; }
+        .status-PAID      { background: #f5f3ff; color: #6d28d9; }
+        .status-SHIPPED   { background: #eff6ff; color: #3b82f6; }
+        .status-COMPLETED { background: #d1fae5; color: #059669; }
+        .status-CANCELLED { background: #fee2e2; color: #dc2626; }
+
+        /* Timeline */
+        .timeline { display: flex; padding: 18px 22px; border-bottom: 1px solid #f3f4f6; }
+        .tl-step { flex: 1; text-align: center; position: relative; }
+        .tl-step::before { content: ''; position: absolute; top: 14px; left: 50%; right: -50%;
+                           height: 2px; background: #e5e7eb; z-index: 0; }
+        .tl-step:last-child::before { display: none; }
+        .tl-dot { width: 28px; height: 28px; border-radius: 50%; background: #e5e7eb; color: #9ca3af;
+                  display: flex; align-items: center; justify-content: center;
+                  font-size: .78rem; margin: 0 auto 5px; position: relative; z-index: 1; font-weight: 700; }
+        .tl-dot.done   { background: #059669; color: #fff; }
+        .tl-dot.active { background: #e94560; color: #fff; }
+        .tl-lbl { font-size: .63rem; color: #9ca3af; font-weight: 500; line-height: 1.2; }
+        .tl-lbl.done   { color: #059669; font-weight: 700; }
+        .tl-lbl.active { color: #e94560; font-weight: 700; }
+
+        /* Info grid */
+        .result-body { padding: 18px 22px; display: flex; flex-direction: column; gap: 18px; }
+        .info-sec-title { font-size: .67rem; font-weight: 700; letter-spacing: .09em;
+                          text-transform: uppercase; color: #9ca3af; margin-bottom: 8px; }
+        .info-row { display: flex; justify-content: space-between; align-items: flex-start;
+                    padding: 7px 0; border-bottom: 1px solid #f9fafb; font-size: .86rem; gap: 10px; }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #6b7280; flex-shrink: 0; }
+        .info-value { font-weight: 600; color: #1a1a2e; text-align: right; }
+
+        /* Items */
+        .order-items { display: flex; flex-direction: column; gap: 7px; }
+        .order-item { display: flex; justify-content: space-between; align-items: center;
+                      padding: 9px 12px; background: #f9fafb; border-radius: 8px;
+                      font-size: .85rem; gap: 8px; }
+        .order-item-name { font-weight: 600; color: #1a1a2e; }
+        .order-item-meta { font-size: .74rem; color: #9ca3af; margin-top: 1px; }
+        .order-item-price { font-weight: 700; color: #1a1a2e; white-space: nowrap; }
+
+        .result-total { display: flex; justify-content: space-between; align-items: center;
+                        padding: 13px 22px; border-top: 1.5px solid #f3f4f6;
+                        background: #fafafa; border-radius: 0 0 14px 14px; }
+        .result-total-label { font-size: .9rem; font-weight: 700; color: #374151; }
+        .result-total-value { font-size: 1.2rem; font-weight: 900; color: #e94560; }
+
+        /* ── Phone results — order card list ── */
+        .orders-list { display: flex; flex-direction: column; gap: 10px; }
+        .order-count-row { font-size: .8rem; color: #6b7280; margin-bottom: 4px; }
+        .order-count-row strong { color: #1a1a2e; }
+
+        .oc { background: #fff; border-radius: 12px;
+              box-shadow: 0 1px 6px rgba(0,0,0,.06);
+              border: 1.5px solid #f0f0f0;
+              overflow: hidden; transition: border-color .18s, box-shadow .18s; }
+        .oc:hover { border-color: #e94560; box-shadow: 0 3px 14px rgba(233,69,96,.1); }
+
+        .oc-trigger {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 13px 16px; cursor: pointer; user-select: none; gap: 10px;
+        }
+        .oc-left { min-width: 0; }
+        .oc-id   { font-weight: 800; font-size: .92rem; color: #1a1a2e; font-family: monospace; }
+        .oc-meta { font-size: .73rem; color: #9ca3af; margin-top: 2px; }
+        .oc-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .oc-chevron { font-size: .7rem; color: #9ca3af; transition: transform .2s; }
+
+        .oc-summary { padding: 0 16px 12px;
+                      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+                      border-bottom: 1px solid #f5f5f5; }
+        .oc-items-text { font-size: .8rem; color: #6b7280; flex: 1; min-width: 0;
+                         white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .oc-total { font-weight: 800; font-size: .95rem; color: #e94560; white-space: nowrap; }
+
+        .oc-detail { display: none; padding: 14px 16px 16px; background: #fafafa;
+                     border-top: 1px solid #f0f0f0; }
+
+        .help-row { text-align: center; font-size: .78rem; color: #9ca3af; margin-top: 14px; }
+        .help-row a { color: #e94560; font-weight: 700; }
+
+        @media (max-width: 780px) {
+            .tdh-layout { grid-template-columns: 1fr; max-width: 540px; }
+        }
+        @media (max-width: 480px) {
+            .track-row { flex-direction: column; }
+            .track-btn { width: 100%; }
+            .tdh-bar h1 { font-size: 1.35rem; }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: top}"></div>
+
+<div class="tdh-page">
+
+    <div class="tdh-bar">
+        <h1>Tra Cứu Đơn Hàng</h1>
+        <p>Kiểm tra trạng thái đơn hàng bằng mã đơn hoặc số điện thoại</p>
+    </div>
+
+    <div th:class="${order != null or orders != null} ? 'tdh-layout' : 'tdh-layout no-result'">
+
+        <!-- ══ SEARCH CARD ══ -->
+        <div class="search-card">
+            <div class="track-tabs">
+                <button class="track-tab" id="tab-id"
+                        th:classappend="${searchType == 'phone'} ? '' : ' active'"
+                        onclick="switchTab('id')">Theo mã đơn hàng</button>
+                <button class="track-tab" id="tab-phone"
+                        th:classappend="${searchType == 'phone'} ? ' active' : ''"
+                        onclick="switchTab('phone')">Theo số điện thoại</button>
+            </div>
+
+            <div class="search-body">
+                <!-- by ID -->
+                <div id="form-id" th:style="${searchType == 'phone'} ? 'display:none' : ''">
+                    <form method="get" th:action="@{/tra-don-hang}">
+                        <div class="track-row">
+                            <input type="text" name="id" class="track-input"
+                                   placeholder="VD: CF55596F hoặc #CF55596F"
+                                   th:value="${searchType != 'phone' ? query : ''}"
+                                   autocomplete="off" spellcheck="false">
+                            <button type="submit" class="track-btn">Tra cứu</button>
+                        </div>
+                        <p class="track-hint">Mã 8 ký tự được gửi khi đặt hàng thành công</p>
+                    </form>
+                </div>
+                <!-- by Phone -->
+                <div id="form-phone" th:style="${searchType == 'phone'} ? '' : 'display:none'">
+                    <form method="get" th:action="@{/tra-don-hang}">
+                        <div class="track-row">
+                            <input type="tel" name="phone" class="track-input"
+                                   placeholder="Số điện thoại đặt hàng"
+                                   th:value="${searchType == 'phone' ? query : ''}"
+                                   autocomplete="tel" spellcheck="false">
+                            <button type="submit" class="track-btn">Tra cứu</button>
+                        </div>
+                        <p class="track-hint">Nhập đúng số điện thoại bạn dùng khi đặt hàng</p>
+                    </form>
+                </div>
+
+                <!-- Not found -->
+                <div th:if="${notFound}" class="not-found">
+                    <strong>Không tìm thấy đơn hàng</strong>
+                    <p th:if="${searchType == 'id'}">
+                        Mã "<b th:text="${query}"></b>" không tồn tại.<br>
+                        Thử tìm bằng số điện thoại hoặc liên hệ <a href="tel:0975481356" style="color:#e94560;">0975.481.356</a>
+                    </p>
+                    <p th:if="${searchType == 'phone'}">
+                        Không có đơn hàng nào với số "<b th:text="${query}"></b>".<br>
+                        Liên hệ hỗ trợ: <a href="tel:0975481356" style="color:#e94560;">0975.481.356</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ══ PHONE RESULTS — separate from any form ══ -->
+        <div th:if="${orders != null}">
+            <p class="order-count-row">
+                Tìm thấy <strong th:text="${#lists.size(orders)}"></strong> đơn với số
+                <strong th:text="${query}"></strong>
+            </p>
+            <div class="orders-list">
+                <div th:each="o, st : ${orders}" class="oc" onclick="toggleOC(this)" style="cursor:pointer;">
+                    <div class="oc-trigger">
+                        <div class="oc-left">
+                            <div class="oc-id" th:text="${o.id}"></div>
+                            <div class="oc-meta" th:text="${#temporals.format(o.createdAt, 'HH:mm · dd/MM/yyyy')}"></div>
+                        </div>
+                        <div class="oc-right">
+                            <span class="status-badge"
+                                  th:classappend="'status-' + ${o.status}"
+                                  th:text="${o.status == 'PENDING'} ? 'Chờ xử lý' :
+                                           (${o.status == 'PAID'} ? 'Đã thanh toán' :
+                                           (${o.status == 'SHIPPED'} ? 'Đang giao' :
+                                           (${o.status == 'COMPLETED'} ? 'Hoàn thành' : 'Đã hủy')))">
+                            </span>
+                            <span class="oc-chevron">▼</span>
+                        </div>
+                    </div>
+                    <div class="oc-summary">
+                        <div class="oc-items-text">
+                            <span th:each="item, ist : ${o.items}">
+                                <th:block th:if="${!ist.first}">, </th:block>
+                                <span th:text="${item.productName} + ' ×' + ${item.quantity}"></span>
+                            </span>
+                        </div>
+                        <div class="oc-total" th:text="${o.formattedTotal}"></div>
+                    </div>
+                    <div class="oc-detail">
+                        <div class="info-sec-title">Thông tin giao hàng</div>
+                        <div class="info-row">
+                            <span class="info-label">Địa chỉ</span>
+                            <span class="info-value" th:text="${o.customerAddress}"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Thanh toán</span>
+                            <span class="info-value"
+                                  th:text="${o.paymentMethod == 'cod'} ? 'COD – Khi nhận hàng' :
+                                           (${o.paymentMethod == 'momo'} ? 'Ví MoMo' :
+                                           (${o.paymentMethod == 'bank'} ? 'Chuyển khoản' : 'Thẻ VISA/Mastercard'))">
+                            </span>
+                        </div>
+                        <div th:if="${o.shippingCarrier != null and !#strings.isEmpty(o.shippingCarrier)}">
+                            <div class="info-sec-title" style="margin-top:12px;">Vận chuyển</div>
+                            <div class="info-row">
+                                <span class="info-label">Đơn vị</span>
+                                <span class="info-value" th:text="${o.shippingCarrier}"></span>
+                            </div>
+                            <div class="info-row" th:if="${o.trackingCode != null and !#strings.isEmpty(o.trackingCode)}">
+                                <span class="info-label">Mã vận đơn</span>
+                                <span class="info-value" style="font-family:monospace; color:#e94560;"
+                                      th:text="${o.trackingCode}"></span>
+                            </div>
+                        </div>
+                        <div class="info-sec-title" style="margin-top:12px;">Sản phẩm</div>
+                        <div class="order-items" style="margin-bottom:12px;">
+                            <div th:each="item : ${o.items}" class="order-item">
+                                <div>
+                                    <div class="order-item-name" th:text="${item.productName}"></div>
+                                    <div class="order-item-meta"
+                                         th:text="'Size ' + ${item.size} + ' × ' + ${item.quantity}"></div>
+                                </div>
+                                <div class="order-item-price"
+                                     th:text="${#numbers.formatInteger(item.price * item.quantity, 0, 'COMMA').replace(',','.')} + '₫'"></div>
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;
+                                    padding-top:10px; border-top:1.5px solid #e5e7eb;">
+                            <span style="font-weight:700; color:#374151;">Tổng cộng</span>
+                            <span style="font-size:1.1rem; font-weight:900; color:#e94560;"
+                                  th:text="${o.formattedTotal}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="help-row">Cần hỗ trợ? Gọi <a href="tel:0975481356">0975.481.356</a></p>
+        </div>
+
+        <!-- ══ SINGLE ORDER RESULT (by ID) ══ -->
+        <div th:if="${order != null}" class="result-card">
+            <div class="result-top">
+                <div>
+                    <div class="result-id" th:text="${order.id}"></div>
+                    <div class="result-date"
+                         th:text="'Đặt lúc ' + ${#temporals.format(order.createdAt, 'HH:mm dd/MM/yyyy')}"></div>
+                </div>
+                <span class="status-badge"
+                      th:classappend="'status-' + ${order.status}"
+                      th:text="${order.status == 'PENDING'} ? 'Chờ xử lý' :
+                               (${order.status == 'PAID'} ? 'Đã thanh toán' :
+                               (${order.status == 'SHIPPED'} ? 'Đang giao' :
+                               (${order.status == 'COMPLETED'} ? 'Hoàn thành' : 'Đã hủy')))">
+                </span>
+            </div>
+
+            <!-- Timeline -->
+            <div class="timeline">
+                <div class="tl-step">
+                    <div class="tl-dot done">✓</div>
+                    <div class="tl-lbl done">Đã đặt</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-dot"
+                         th:classappend="${order.status == 'PENDING'} ? 'active' :
+                                        (${order.status != 'CANCELLED'} ? 'done' : '')"
+                         th:text="${order.status != 'PENDING' and order.status != 'CANCELLED'} ? '✓' : '2'">2</div>
+                    <div class="tl-lbl"
+                         th:classappend="${order.status == 'PENDING'} ? 'active' :
+                                        (${order.status != 'CANCELLED'} ? 'done' : '')">Xác nhận</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-dot"
+                         th:classappend="${order.status == 'SHIPPED'} ? 'active' :
+                                        (${order.status == 'PAID' or order.status == 'COMPLETED'} ? 'done' : '')"
+                         th:text="${order.status == 'PAID' or order.status == 'COMPLETED'} ? '✓' : '3'">3</div>
+                    <div class="tl-lbl"
+                         th:classappend="${order.status == 'SHIPPED'} ? 'active' :
+                                        (${order.status == 'PAID' or order.status == 'COMPLETED'} ? 'done' : '')">Đang giao</div>
+                </div>
+                <div class="tl-step" th:if="${order.paymentMethod == 'cod'}">
+                    <div class="tl-dot"
+                         th:classappend="${order.status == 'PAID'} ? 'active' :
+                                        (${order.status == 'COMPLETED'} ? 'done' : '')"
+                         th:text="${order.status == 'COMPLETED'} ? '✓' : '4'">4</div>
+                    <div class="tl-lbl"
+                         th:classappend="${order.status == 'PAID'} ? 'active' :
+                                        (${order.status == 'COMPLETED'} ? 'done' : '')">Đã thanh toán</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-dot"
+                         th:classappend="${order.status == 'COMPLETED'} ? 'done' : ''"
+                         th:text="${order.status == 'COMPLETED'} ? '✓' :
+                                  (${order.paymentMethod == 'cod'} ? '5' : '4')">4</div>
+                    <div class="tl-lbl" th:classappend="${order.status == 'COMPLETED'} ? 'done' : ''">Hoàn thành</div>
+                </div>
+            </div>
+
+            <div class="result-body">
+                <!-- Customer -->
+                <div>
+                    <div class="info-sec-title">Thông tin giao hàng</div>
+                    <div class="info-row">
+                        <span class="info-label">Người nhận</span>
+                        <span class="info-value" th:text="${order.customerName}"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Điện thoại</span>
+                        <span class="info-value" th:text="${order.customerPhone}"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Địa chỉ</span>
+                        <span class="info-value" th:text="${order.customerAddress}"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Thanh toán</span>
+                        <span class="info-value"
+                              th:text="${order.paymentMethod == 'cod'} ? 'COD – Khi nhận hàng' :
+                                       (${order.paymentMethod == 'momo'} ? 'Ví MoMo' :
+                                       (${order.paymentMethod == 'bank'} ? 'Chuyển khoản' : 'Thẻ VISA/Mastercard'))">
+                        </span>
+                    </div>
+                </div>
+                <!-- Shipping -->
+                <div th:if="${order.shippingCarrier != null and !#strings.isEmpty(order.shippingCarrier)}">
+                    <div class="info-sec-title">Vận chuyển</div>
+                    <div class="info-row">
+                        <span class="info-label">Đơn vị</span>
+                        <span class="info-value" th:text="${order.shippingCarrier}"></span>
+                    </div>
+                    <div class="info-row" th:if="${order.trackingCode != null and !#strings.isEmpty(order.trackingCode)}">
+                        <span class="info-label">Mã vận đơn</span>
+                        <span class="info-value" style="font-family:monospace; color:#e94560; font-size:.95rem;"
+                              th:text="${order.trackingCode}"></span>
+                    </div>
+                </div>
+                <!-- Items -->
+                <div>
+                    <div class="info-sec-title">Sản phẩm đã đặt</div>
+                    <div class="order-items">
+                        <div th:each="item : ${order.items}" class="order-item">
+                            <div>
+                                <div class="order-item-name" th:text="${item.productName}"></div>
+                                <div class="order-item-meta"
+                                     th:text="'Size ' + ${item.size} + ' × ' + ${item.quantity}"></div>
+                            </div>
+                            <div class="order-item-price"
+                                 th:text="${#numbers.formatInteger(item.price * item.quantity, 0, 'COMMA').replace(',','.')} + '₫'"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-total">
+                <span class="result-total-label">Tổng cộng</span>
+                <span class="result-total-value" th:text="${order.formattedTotal}"></span>
+            </div>
+
+            <p class="help-row" style="padding:12px 0 16px;">
+                Cần hỗ trợ? Gọi <a href="tel:0975481356">0975.481.356</a>
+            </p>
+        </div>
+
+    </div><!-- /tdh-layout -->
+</div><!-- /tdh-page -->
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+<script th:src="@{/js/data/provinces.js}"></script>
+<script th:src="@{/js/script.js}"></script>
+<script>
+/* Tab switch */
+function switchTab(type) {
+    const phone = type === 'phone';
+    document.getElementById('tab-id').classList.toggle('active', !phone);
+    document.getElementById('tab-phone').classList.toggle('active', phone);
+    document.getElementById('form-id').style.display = phone ? 'none' : '';
+    document.getElementById('form-phone').style.display = phone ? '' : 'none';
+}
+
+/* Expand/collapse order cards */
+function toggleOC(card) {
+    var detail  = card.querySelector('.oc-detail');
+    var chevron = card.querySelector('.oc-chevron');
+    if (!detail) return;
+    var opening = detail.style.display !== 'block';
+    detail.style.display = opening ? 'block' : 'none';
+    if (chevron) chevron.style.transform = opening ? 'rotate(180deg)' : '';
+}
+</script>
+</body>
+</html>

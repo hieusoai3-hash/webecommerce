@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chính Sách Đổi Trả - NB2 Boxer Men</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: top}"></div>
+
+<section class="info-hero">
+    <div class="container">
+        <div class="breadcrumb">
+            <a th:href="@{/}">Trang chủ</a> <span>&#8250;</span>
+            <span style="color:#fff;">Chính sách đổi trả</span>
+        </div>
+        <h1 class="info-hero-title">Chính Sách Đổi Trả 60 Ngày</h1>
+        <p class="info-hero-sub">Áp dụng cho ví da &amp; thắt lưng — Mua hàng an tâm, đổi trả dễ dàng</p>
+    </div>
+</section>
+
+<section class="info-content">
+    <div class="container">
+        <div class="info-body">
+
+            <div class="info-highlight">
+                <strong>Cam kết NB2:</strong> Chúng tôi bảo đảm 60 ngày đổi trả miễn phí cho tất cả sản phẩm ví da và thắt lưng nếu có lỗi từ nhà sản xuất.
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-section-title">Điều kiện đổi trả</h2>
+                <ul>
+                    <li>Sản phẩm còn nguyên tem, nhãn, hộp đựng đi kèm</li>
+                    <li>Không bị hư hỏng do tác động vật lý từ phía người dùng</li>
+                    <li>Có hóa đơn mua hàng hoặc mã đơn hàng</li>
+                    <li>Trong vòng 60 ngày kể từ ngày nhận hàng</li>
+                    <li>Chưa qua giặt, ngâm nước hoặc tiếp xúc hóa chất</li>
+                </ul>
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-section-title">Trường hợp được đổi trả</h2>
+                <ul>
+                    <li>Sản phẩm bị lỗi kỹ thuật từ nhà sản xuất (đường chỉ, khóa, bề mặt da)</li>
+                    <li>Sai sản phẩm, sai màu so với đơn hàng</li>
+                    <li>Sản phẩm bị hư hỏng trong quá trình vận chuyển</li>
+                    <li>Không vừa size (áp dụng đổi size 1 lần miễn phí)</li>
+                </ul>
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-section-title">Trường hợp không áp dụng</h2>
+                <ul>
+                    <li>Sản phẩm đã qua sử dụng, có vết bẩn hoặc mùi lạ</li>
+                    <li>Hư hỏng do người dùng: trầy xước, ngâm nước, uốn gãy</li>
+                    <li>Không còn hóa đơn hoặc tem nhãn</li>
+                    <li>Quần sịp nam (vì lý do vệ sinh)</li>
+                </ul>
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-section-title">Quy trình đổi trả</h2>
+                <div class="info-steps">
+                    <div class="info-step">
+                        <div class="info-step-num">1</div>
+                        <div class="info-step-body">
+                            <strong>Liên hệ NB2</strong>
+                            Gọi <a href="tel:0975481356">0975.481.356</a> hoặc nhắn tin Facebook/Zalo trong giờ hành chính để thông báo yêu cầu đổi trả.
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <div class="info-step-num">2</div>
+                        <div class="info-step-body">
+                            <strong>Gửi hàng về NB2</strong>
+                            Đóng gói sản phẩm cẩn thận kèm hóa đơn và gửi về địa chỉ: 72 Nguyễn Trãi, Thanh Xuân, Hà Nội. NB2 hỗ trợ phí ship chiều về.
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <div class="info-step-num">3</div>
+                        <div class="info-step-body">
+                            <strong>Kiểm tra &amp; xử lý</strong>
+                            NB2 kiểm tra sản phẩm trong 1–2 ngày làm việc. Nếu đủ điều kiện, chúng tôi gửi hàng mới hoặc hoàn tiền trong 3–5 ngày.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-section-title">Liên hệ hỗ trợ</h2>
+                <p>Hotline: <a href="tel:0975481356">0975.481.356</a> (8:00 – 21:00, Thứ 2 – Chủ nhật)</p>
+                <p>Email: <a href="mailto:nb2boxermen@gmail.com">nb2boxermen@gmail.com</a></p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+<script th:src="@{/js/data/provinces.js}"></script>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

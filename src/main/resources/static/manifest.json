@@ -1,0 +1,16 @@
+{
+  "name": "NB2 Boxer Men",
+  "short_name": "NB2",
+  "description": "Thương hiệu đồ lót nam cao cấp",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "icons": [
+    {
+      "src": "/images/logo.jpeg",
+      "sizes": "any",
+      "type": "image/jpeg"
+    }
+  ]
+}

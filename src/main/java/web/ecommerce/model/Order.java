@@ -1,6 +1,6 @@
 package web.ecommerce.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -47,9 +47,9 @@ public class Order {
     @Column(length = 500)
     private String cancelReason;
 
-    /** Honeypot — not persisted. Should always be blank; bots fill it. */
+    /** Honeypot — not persisted. Deserialized from request but never serialized in responses. */
     @Transient
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String honeypot;
 
     public Order() {

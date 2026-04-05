@@ -30,7 +30,7 @@ public class PageController {
         model.addAttribute("products", productService.getAll());
         model.addAttribute("combos", comboService.getActive());
         model.addAttribute("activePage", "home");
-        return "index";
+        return "pages/index";
     }
 
     @GetMapping("/san-pham")
@@ -45,42 +45,42 @@ public class PageController {
             model.addAttribute("pageDesc", "Khám phá toàn bộ sản phẩm NB2 Boxer Men.");
         }
         model.addAttribute("activePage", "san-pham");
-        return "san-pham";
+        return "pages/san-pham";
     }
 
     @GetMapping("/quan-sip")
     public String quanSip(Model model) {
         model.addAttribute("products", productService.getByCategory("quan-sip"));
         model.addAttribute("activePage", "quan-sip");
-        return "quan-sip";
+        return "pages/quan-sip";
     }
 
     @GetMapping("/vi-da")
     public String viDa(Model model) {
         model.addAttribute("products", productService.getByCategory("vi-da"));
         model.addAttribute("activePage", "vi-da");
-        return "vi-da";
+        return "pages/vi-da";
     }
 
     @GetMapping("/that-lung")
     public String thatLung(Model model) {
         model.addAttribute("products", productService.getByCategory("that-lung"));
         model.addAttribute("activePage", "that-lung");
-        return "that-lung";
+        return "pages/that-lung";
     }
 
     @GetMapping("/sale")
     public String sale(Model model) {
         model.addAttribute("products", productService.getOnSale());
         model.addAttribute("activePage", "sale");
-        return "sale";
+        return "pages/sale";
     }
 
     @GetMapping("/combo-hot")
     public String comboHot(Model model) {
         model.addAttribute("combos", comboService.getActive());
         model.addAttribute("activePage", "combo-hot");
-        return "combo-hot";
+        return "pages/combo-hot";
     }
 
 @GetMapping("/tra-don-hang")
@@ -107,7 +107,7 @@ public class PageController {
             model.addAttribute("searchType", "phone");
         }
         model.addAttribute("activePage", "tra-don-hang");
-        return "tra-don-hang";
+        return "pages/tra-don-hang";
     }
 
     @GetMapping("/search")
@@ -115,22 +115,22 @@ public class PageController {
         model.addAttribute("products", productService.search(q));
         model.addAttribute("query", q != null ? q : "");
         model.addAttribute("activePage", "san-pham");
-        return "search";
+        return "pages/search";
     }
 
     // ── Static info pages ──────────────────────────────────────────────────
-    @GetMapping("/chinh-sach-doi-tra")   public String csDoiTra()    { return "chinh-sach-doi-tra"; }
-    @GetMapping("/chinh-sach-bao-mat")   public String csBaoMat()    { return "chinh-sach-bao-mat"; }
-    @GetMapping("/chinh-sach-giao-hang") public String csGiaoHang()  { return "chinh-sach-giao-hang"; }
-    @GetMapping("/chinh-sach-khuyen-mai")public String csKhuyenMai() { return "chinh-sach-khuyen-mai"; }
-    @GetMapping("/huong-dan-chon-size")  public String hdChonSize()  { return "huong-dan-chon-size"; }
-    @GetMapping("/hoi-dap")              public String hoiDap()      { return "hoi-dap"; }
-    @GetMapping("/huong-dan-mua-hang")   public String hdMuaHang()   { return "huong-dan-mua-hang"; }
-    @GetMapping("/trai-nghiem-mua-sam")  public String traiNghiem()  { return "trai-nghiem-mua-sam"; }
-    @GetMapping("/cau-chuyen-thuong-hieu")public String cauChuyen()  { return "cau-chuyen-thuong-hieu"; }
-    @GetMapping("/nha-may-san-xuat")     public String nhaMay()      { return "nha-may-san-xuat"; }
-    @GetMapping("/tuyen-dung")           public String tuyenDung()   { return "tuyen-dung"; }
-    @GetMapping("/lien-he-hop-tac")      public String lienHeHopTac(){ return "lien-he-hop-tac"; }
+    @GetMapping("/chinh-sach-doi-tra")   public String csDoiTra()    { return "pages/chinh-sach-doi-tra"; }
+    @GetMapping("/chinh-sach-bao-mat")   public String csBaoMat()    { return "pages/chinh-sach-bao-mat"; }
+    @GetMapping("/chinh-sach-giao-hang") public String csGiaoHang()  { return "pages/chinh-sach-giao-hang"; }
+    @GetMapping("/chinh-sach-khuyen-mai")public String csKhuyenMai() { return "pages/chinh-sach-khuyen-mai"; }
+    @GetMapping("/huong-dan-chon-size")  public String hdChonSize()  { return "pages/huong-dan-chon-size"; }
+    @GetMapping("/hoi-dap")              public String hoiDap()      { return "pages/hoi-dap"; }
+    @GetMapping("/huong-dan-mua-hang")   public String hdMuaHang()   { return "pages/huong-dan-mua-hang"; }
+    @GetMapping("/trai-nghiem-mua-sam")  public String traiNghiem()  { return "pages/trai-nghiem-mua-sam"; }
+    @GetMapping("/cau-chuyen-thuong-hieu")public String cauChuyen()  { return "pages/cau-chuyen-thuong-hieu"; }
+    @GetMapping("/nha-may-san-xuat")     public String nhaMay()      { return "pages/nha-may-san-xuat"; }
+    @GetMapping("/tuyen-dung")           public String tuyenDung()   { return "pages/tuyen-dung"; }
+    @GetMapping("/lien-he-hop-tac")      public String lienHeHopTac(){ return "pages/lien-he-hop-tac"; }
 
     @GetMapping("/product-detail")
     public String productDetail(@RequestParam String id, Model model) {
@@ -144,6 +144,6 @@ public class PageController {
         model.addAttribute("product", product);
         model.addAttribute("related", related);
         model.addAttribute("activePage", "san-pham");
-        return "product-detail";
+        return "pages/product-detail";
     }
 }

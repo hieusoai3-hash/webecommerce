@@ -1,0 +1,413 @@
+/* === Responsive Design === */
+@media (max-width: 1024px) {
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .footer-brand {
+        grid-column: 1 / -1;
+    }
+
+    /* Show mobile menu earlier */
+    .mobile-menu-btn { display: flex; }
+
+    .main-nav {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100vh;
+        background: var(--color-white);
+        z-index: 1001;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transform: translateX(-100%);
+        transition: transform var(--transition-slow);
+    }
+    .main-nav.active { transform: translateX(0); }
+
+    /* Close button — only visible in mobile nav panel */
+    .nav-close-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 44px;
+        height: 44px;
+        background: var(--color-gray-100);
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        color: var(--color-primary);
+        transition: background .15s, color .15s;
+        z-index: 10;
+    }
+    .nav-close-btn:hover {
+        background: var(--color-accent);
+        color: #fff;
+    }
+
+    .nav-list { flex-direction: column; gap: var(--space-2); }
+    .nav-link { font-size: var(--font-size-2xl); padding: var(--space-3) var(--space-6); }
+    .mega-menu { display: none; }
+    .search-bar { display: none; }
+
+    /* Hero */
+    .hero-title { font-size: var(--font-size-4xl); }
+
+    /* Category grid → 2 cols */
+    .category-grid { grid-template-columns: repeat(2, 1fr); }
+
+    /* Checkout body → stack */
+    .checkout-body { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --header-height: 60px;
+    }
+
+    .announcement-bar {
+        height: auto;
+        min-height: 36px;
+        padding: 8px 44px 8px 16px;
+        font-size: var(--font-size-xs);
+        line-height: 1.4;
+    }
+
+    .mobile-menu-btn {
+        display: flex;
+    }
+
+    .main-nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: var(--color-white);
+        z-index: 1001;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transform: translateX(-100%);
+        transition: transform var(--transition-slow);
+    }
+
+    .main-nav.active {
+        transform: translateX(0);
+    }
+
+    .nav-list {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .nav-link {
+        font-size: var(--font-size-2xl);
+        padding: var(--space-3) var(--space-6);
+    }
+
+    .mega-menu {
+        display: none;
+    }
+
+    .search-bar {
+        display: none;
+    }
+
+    .hero-title {
+        font-size: var(--font-size-3xl);
+    }
+
+    .hero-description {
+        font-size: var(--font-size-base);
+    }
+
+    .hero-stats {
+        gap: var(--space-4);
+    }
+
+    .stat-number {
+        font-size: var(--font-size-xl);
+    }
+
+    .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .category-combo {
+        height: 140px;
+        padding: 0 var(--space-6);
+        gap: var(--space-5);
+    }
+
+    .combo-num {
+        font-size: 3rem;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4);
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .promo-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .promo-text h2 {
+        font-size: var(--font-size-3xl);
+    }
+
+    .promo-circle {
+        width: 150px;
+        height: 150px;
+    }
+
+    .promo-big-text {
+        font-size: var(--font-size-3xl);
+    }
+
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-6);
+    }
+
+    .footer-brand {
+        grid-column: 1 / -1;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .cart-sidebar {
+        width: 100%;
+    }
+
+    .container {
+        padding: 0 var(--space-4);
+    }
+
+    .categories,
+    .products,
+    .features,
+    .promo-banner,
+    .testimonials {
+        padding: var(--space-8) 0;
+    }
+
+    .section-header {
+        margin-bottom: var(--space-6);
+    }
+
+    .hero-content {
+        padding: 0 var(--space-4);
+    }
+
+    .stat-divider {
+        display: none;
+    }
+
+    .section-title {
+        font-size: var(--font-size-2xl);
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        min-height: 500px;
+    }
+
+    .hero-title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
+    }
+
+    /* Combo card fills the 4th grid slot — matches other category cards */
+    .category-combo {
+        grid-column: auto;
+        aspect-ratio: 3/4;
+        height: auto;
+        /* Override inline gradient with a lighter overlay so image shows through */
+        background: linear-gradient(to bottom, rgba(0,0,0,.18) 0%, rgba(0,0,0,.62) 100%),
+                    url('/images/banners/combo_banner.jpg') !important;
+        background-size: cover !important;
+        background-position: center !important;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-end;
+        padding: var(--space-4);
+        gap: var(--space-1);
+        text-align: left;
+    }
+
+    .combo-num {
+        font-size: 2rem;
+        line-height: 1;
+    }
+
+    .combo-label {
+        font-size: .6rem;
+        margin-top: 2px;
+    }
+
+    .combo-badge-block {
+        margin-bottom: 4px;
+    }
+
+    .combo-divider {
+        display: none;
+    }
+
+    .combo-body h3 {
+        font-size: 1rem;
+        margin-bottom: 6px;
+    }
+
+    .combo-body p {
+        display: none;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
+    }
+
+    .product-info {
+        padding: var(--space-3);
+    }
+
+    .product-name {
+        font-size: var(--font-size-xs);
+    }
+
+    .price-current {
+        font-size: var(--font-size-base);
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        padding: 0 var(--space-3);
+    }
+
+    .categories,
+    .products,
+    .features,
+    .promo-banner,
+    .testimonials {
+        padding: var(--space-6) 0;
+    }
+
+    .hero-stats {
+        display: none;
+    }
+
+    .hero-description {
+        font-size: var(--font-size-sm);
+        margin-bottom: var(--space-8);
+    }
+
+    .hero-actions {
+        gap: var(--space-3);
+    }
+
+    .btn-lg {
+        padding: var(--space-3) var(--space-5);
+        font-size: var(--font-size-sm);
+    }
+
+    .section-header {
+        margin-bottom: var(--space-6);
+    }
+
+    /* ── Product card: hide image hover overlay on mobile ── */
+    /* Size selection happens via "Mua ngay" popup instead */
+    .quick-add { display: none !important; }
+
+    /* ── Product card buy row: stack price then full-width buttons ── */
+    .product-price-row {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+    }
+    .card-buy-row {
+        flex-direction: row;
+        align-items: stretch;
+        width: 100%;
+        gap: 6px;
+    }
+    .card-buy-btn {
+        flex: 1;
+        font-size: .75rem;
+        padding: 10px 8px;
+        text-align: center;
+        white-space: nowrap;
+        border-radius: 8px;
+    }
+    .card-cart-row { flex-shrink: 0; display: flex; }
+    .card-cart-btn {
+        width: 44px;
+        min-height: 0;
+        padding: 0;
+        border-radius: 8px;
+        align-self: stretch;
+    }
+    .card-cart-btn svg {
+        width: 17px;
+        height: 17px;
+    }
+
+    /* ── Card size picker popups (mobile) ── */
+    .card-size-picker,
+    .card-cart-size-picker {
+        left: 0;
+        right: 0;
+        bottom: calc(100% + 6px);
+        flex-wrap: wrap;
+        gap: 5px;
+        padding: 8px 10px;
+        z-index: 30;
+    }
+    .card-size-opt,
+    .card-cart-size-opt {
+        padding: 5px 9px;
+        font-size: .75rem;
+    }
+    .card-size-picker-label {
+        width: 100%;
+        margin-bottom: 2px;
+    }
+}
+

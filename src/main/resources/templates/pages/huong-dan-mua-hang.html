@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hướng Dẫn Mua Hàng - NB2 Boxer Men</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: top}"></div>
+
+<section class="info-hero">
+    <div class="container">
+        <div class="breadcrumb">
+            <a th:href="@{/}">Trang chủ</a> <span>&#8250;</span>
+            <span style="color:#fff;">Hướng dẫn mua hàng</span>
+        </div>
+        <h1 class="info-hero-title">Hướng Dẫn Mua Hàng</h1>
+        <p class="info-hero-sub">Đặt hàng nhanh chóng, dễ dàng trong vài bước đơn giản</p>
+    </div>
+</section>
+
+<section class="info-content">
+    <div class="container">
+        <div class="info-body">
+
+            <div class="info-section">
+                <h2 class="info-section-title">Mua hàng trên Website</h2>
+                <div class="info-steps">
+                    <div class="info-step">
+                        <div class="info-step-num">1</div>
+                        <div class="info-step-body">
+                            <strong>Chọn sản phẩm</strong>
+                            Duyệt sản phẩm theo danh mục (Quần Sịp, Ví Da, Thắt Lưng) hoặc dùng thanh tìm kiếm. Xem ảnh, mô tả và bảng size để chọn đúng sản phẩm.
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <div class="info-step-num">2</div>
+                        <div class="info-step-body">
+                            <strong>Chọn size &amp; màu sắc</strong>
+                            Tham khảo bảng hướng dẫn size để chọn đúng. Chọn màu yêu thích và nhấn <em>"Thêm vào giỏ"</em> hoặc <em>"Mua ngay"</em>.
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <div class="info-step-num">3</div>
+                        <div class="info-step-body">
+                            <strong>Kiểm tra giỏ hàng</strong>
+                            Nhấn biểu tượng giỏ hàng để xem lại đơn hàng, điều chỉnh số lượng hoặc xóa sản phẩm không cần thiết.
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <div class="info-step-num">4</div>
+                        <div class="info-step-body">
+                            <strong>Điền thông tin giao hàng</strong>
+                            Nhập họ tên, số điện thoại và địa chỉ giao hàng chính xác. Chọn hình thức thanh toán (COD, chuyển khoản, MoMo, thẻ).
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <div class="info-step-num">5</div>
+                        <div class="info-step-body">
+                            <strong>Xác nhận &amp; theo dõi đơn hàng</strong>
+                            Nhấn <em>"Đặt hàng"</em>. NB2 sẽ gọi xác nhận trong 30 phút – 2 giờ. Tra cứu trạng thái đơn tại <a th:href="@{/tra-don-hang}">Tra đơn hàng</a>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2 class="info-section-title">Mua hàng qua Zalo / Facebook</h2>
+                <p>Bạn cũng có thể nhắn tin trực tiếp cho NB2 qua:</p>
+                <ul>
+                    <li>Zalo: <a href="tel:0975481356">0975.481.356</a></li>
+                    <li>Facebook: <a href="https://www.facebook.com/profile.php?id=61564259851853" target="_blank">NB2 Boxer Men</a></li>
+                </ul>
+                <p>Nhân viên sẽ hỗ trợ chọn sản phẩm, tư vấn size và xử lý đơn hàng nhanh nhất.</p>
+            </div>
+
+            <div class="info-highlight">
+                <strong>Mẹo:</strong> Nếu bạn không chắc về size, hãy chọn <em>"Mua ngay"</em> và ghi chú yêu cầu trong phần ghi chú đơn hàng. NB2 sẽ tư vấn trước khi gửi hàng.
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+<script th:src="@{/js/data/provinces.js}"></script>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

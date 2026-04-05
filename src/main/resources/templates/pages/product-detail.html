@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.name} + ' - NB2 Boxer Men'">Chi Tiết Sản Phẩm - NB2 Boxer Men</title>
+    <meta name="description" th:content="${product.description}">
+    <!-- Open Graph -->
+    <meta property="og:type" content="product">
+    <meta property="og:title" th:content="${product.name} + ' - NB2 Boxer Men'">
+    <meta property="og:description" th:content="${product.description}">
+    <meta property="og:image" th:content="${!#lists.isEmpty(product.colors)} ? @{/{url}(url=${product.colors[0].imageUrl})} : '/images/logo.jpeg'">
+    <meta property="og:url" th:content="'https://nb2boxer.com/product-detail?id=' + ${product.id}">
+    <meta property="og:site_name" content="NB2 Boxer Men">
+    <!-- JSON-LD Product Schema -->
+    <script type="application/ld+json" th:inline="javascript">
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": /*[[${product.name}]]*/ "",
+      "description": /*[[${product.description}]]*/ "",
+      "image": /*[[${!#lists.isEmpty(product.colors)} ? @{/{url}(url=${product.colors[0].imageUrl})} : '/images/logo.jpeg']]*/ "",
+      "brand": { "@type": "Brand", "name": "NB2 Boxer Men" },
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "VND",
+        "price": /*[[${product.price}]]*/ 0,
+        "availability": "https://schema.org/InStock",
+        "url": /*[['https://nb2boxer.com/product-detail?id=' + ${product.id}]]*/ ""
+      }
+    }
+    </script>
+    <!-- PWA & Favicon -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/images/logo.jpeg" type="image/jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: top}"></div>
+
+<!-- Product Detail -->
+<section class="pd-wrapper">
+    <div class="container">
+        <button class="pd-back-btn" onclick="history.back()" aria-label="Quay lại">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5m7-7-7 7 7 7"/>
+            </svg>
+            Quay lại
+        </button>
+
+        <div class="pd-breadcrumb">
+            <a th:href="@{/}">Trang chủ</a> <span>&#8250;</span>
+            <a th:href="@{/san-pham}">Sản phẩm</a> <span>&#8250;</span>
+            <span th:text="${product.name}" style="color:#333;"></span>
+        </div>
+        <div class="pd-layout">
+            <!-- Gallery -->
+            <div class="pd-gallery">
+                <div class="pd-main-image">
+                    <img id="pd-main-img"
+                         th:if="${!#lists.isEmpty(product.colors)}"
+                         th:src="@{/{url}(url=${product.colors[0].imageUrl})}"
+                         th:alt="${product.name}">
+                </div>
+                <div class="pd-thumbs" id="pd-thumbs" th:if="${!#lists.isEmpty(product.colors)}">
+                    <img th:each="color : ${product.colors}"
+                         th:src="@{/{url}(url=${color.imageUrl})}"
+                         th:alt="${color.name}"
+                         th:title="${color.name}"
+                         th:data-img="@{/{url}(url=${color.imageUrl})}"
+                         class="pd-thumb" loading="lazy">
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div class="pd-info">
+                <span class="pd-category" th:text="${product.category == 'quan-sip'} ? 'Quần Sịp Nam' : (${product.category == 'vi-da'} ? 'Ví Da Nam' : 'Thắt Lưng Nam')"></span>
+                <h1 class="pd-title" th:text="${product.name}"></h1>
+                <p class="pd-material" th:text="'Chất liệu: ' + ${product.material}"></p>
+
+                <div class="pd-rating-row">
+                    <span class="pd-stars" th:text="${product.stars}"></span>
+                    <span class="pd-review-count" th:text="'(' + ${product.formattedReviews} + ' đánh giá)'"></span>
+                </div>
+
+                <div class="pd-price-row">
+                    <span class="pd-price" th:text="${product.formattedPrice}"></span>
+                    <span class="pd-original" th:if="${product.onSale}" th:text="${product.formattedOriginalPrice}"></span>
+                    <span class="pd-discount-tag" th:if="${product.onSale}" th:text="'-' + ${product.discount} + '%'"></span>
+                </div>
+
+                <!-- Colors -->
+                <p class="pd-section-label">Màu sắc</p>
+                <div class="pd-colors" id="pd-colors">
+                    <button th:each="color, stat : ${product.colors}"
+                            class="pd-color-btn color-swatch"
+                            th:classappend="${stat.first} ? ' active'"
+                            th:style="'background:' + ${color.hex}"
+                            th:title="${color.name}"
+                            th:data-color="${color.name}"
+                            th:data-img="@{/{url}(url=${color.imageUrl})}"></button>
+                </div>
+
+                <!-- Sizes -->
+                <p class="pd-section-label">Size</p>
+                <div class="pd-sizes" id="pd-sizes">
+                    <button th:each="size : ${product.sizes}"
+                            class="pd-size-btn"
+                            th:data-size="${size}"
+                            th:text="${size}"></button>
+                </div>
+                <div class="sg-trigger-wrap">
+                    <button class="sg-trigger" onclick="openSgModal()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 12h18M3 17h10"/><rect x="15" y="14" width="6" height="6" rx="1"/></svg>
+                        Hướng dẫn chọn size
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                </div>
+
+                <!-- Actions -->
+                <div class="pd-actions">
+                    <button class="pd-add-cart" id="pd-add-cart"
+                            th:data-product-id="${product.id}"
+                            th:data-product-name="${product.name}"
+                            th:data-product-price="${product.price}">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <path d="M16 10a4 4 0 0 1-8 0"></path>
+                        </svg>
+                        THÊM VÀO GIỎ
+                    </button>
+                    <button class="pd-buy-now" id="pd-buy-now"
+                            th:data-product-id="${product.id}"
+                            th:data-product-price="${product.price}">MUA NGAY</button>
+                </div>
+
+                <!-- Features -->
+                <div class="pd-features" id="pd-features">
+                    <ul>
+                        <li th:each="feature : ${product.features}" th:text="${feature}"></li>
+                    </ul>
+                </div>
+
+                <!-- Description -->
+                <div class="pd-desc" id="pd-desc">
+                    <p th:text="${product.description}"></p>
+                </div>
+
+                <!-- Trust Bar -->
+                <div class="pd-trust-bar">
+                    <div class="pd-trust-item">
+                        <div class="pd-trust-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/>
+                                <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                            </svg>
+                        </div>
+                        <div class="pd-trust-text">
+                            <span class="pd-trust-title">Miễn Phí Giao Hàng</span>
+                            <span class="pd-trust-desc">Đơn hàng từ 299.000₫</span>
+                        </div>
+                    </div>
+                    <div class="pd-trust-item">
+                        <div class="pd-trust-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                <path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>
+                            </svg>
+                        </div>
+                        <div class="pd-trust-text">
+                            <span class="pd-trust-title">Đổi Trả 60 Ngày</span>
+                            <span class="pd-trust-desc">Vì bất kỳ lý do gì</span>
+                        </div>
+                    </div>
+                    <div class="pd-trust-item">
+                        <div class="pd-trust-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.8a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                        </div>
+                        <div class="pd-trust-text">
+                            <span class="pd-trust-title">Hotline 0975.481.356</span>
+                            <span class="pd-trust-desc">8:30 – 22:00 hàng ngày</span>
+                        </div>
+                    </div>
+                    <div class="pd-trust-item">
+                        <div class="pd-trust-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                <polyline points="9 12 11 14 15 10"/>
+                            </svg>
+                        </div>
+                        <div class="pd-trust-text">
+                            <span class="pd-trust-title">Hoàn Tiền 100%</span>
+                            <span class="pd-trust-desc">Nhận tại nhà, hoàn tiền 2–3 ngày</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Products -->
+<section class="pd-related" th:if="${!#lists.isEmpty(related)}">
+    <div class="container">
+        <h2 class="pd-related-title">Sản Phẩm Liên Quan</h2>
+        <div class="product-grid" id="pd-related-grid">
+            <th:block th:each="product : ${related}">
+                <div th:replace="~{fragments/product-card :: card(product=${product})}"></div>
+            </th:block>
+        </div>
+        <div class="pd-related-more">
+            <a th:href="@{'/' + ${product.category}}" class="btn-related-more">Xem thêm sản phẩm</a>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: bottom}"></div>
+
+<!-- Size guide modal -->
+<div th:replace="~{fragments/size-guide :: modal(${product.category})}"></div>
+
+<script th:src="@{/js/data/provinces.js}"></script>
+<script th:src="@{/js/script.js}"></script>
+<script>
+function openSgModal()  { document.getElementById('sg-modal').classList.add('open'); }
+function closeSgModal() { document.getElementById('sg-modal').classList.remove('open'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSgModal(); });
+</script>
+</body>
+</html>
