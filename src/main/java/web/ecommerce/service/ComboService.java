@@ -1,5 +1,7 @@
 package web.ecommerce.service;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import web.ecommerce.model.Combo;
 import web.ecommerce.repository.ComboRepository;
@@ -16,10 +18,12 @@ public class ComboService {
         this.repo = repo;
     }
 
+    @Cacheable(value = "combos", key = "'all'")
     public List<Combo> getAll() {
         return repo.findAllByOrderBySortOrderAscIdAsc();
     }
 
+    @Cacheable(value = "combos", key = "'active'")
     public List<Combo> getActive() {
         return repo.findByActiveTrueOrderBySortOrderAscIdAsc();
     }
@@ -28,10 +32,12 @@ public class ComboService {
         return repo.findById(id);
     }
 
+    @CacheEvict(value = "combos", allEntries = true)
     public Combo save(Combo combo) {
         return repo.save(combo);
     }
 
+    @CacheEvict(value = "combos", allEntries = true)
     public void delete(Long id) {
         repo.deleteById(id);
     }

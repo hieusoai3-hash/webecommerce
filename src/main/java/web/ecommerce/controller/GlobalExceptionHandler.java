@@ -38,11 +38,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ModelAndView handleAllExceptions(Exception ex, HttpServletRequest request) {
-        logger.error("GlobalExceptionHandler caught exception for URI: {}", request.getRequestURI(), ex);
+        logger.error("Unhandled exception [{} {}]: {}", request.getMethod(), request.getRequestURI(), ex.getMessage(), ex);
         ModelAndView mav = new ModelAndView("error");
-        mav.addObject("status", 500);
-        if (ex instanceof MaxUploadSizeExceededException || ex.getMessage().contains("SizeLimitExceeded") || ex.getMessage().contains("413") || ex.getMessage().toLowerCase().contains("too large")) {
+        String msg = ex.getMessage() != null ? ex.getMessage().toLowerCase() : "";
+        if (ex instanceof MaxUploadSizeExceededException
+                || msg.contains("sizelimitexceeded")
+                || msg.contains("413")
+                || msg.contains("too large")) {
             mav.addObject("status", 413);
+        } else {
+            mav.addObject("status", 500);
         }
         return mav;
     }

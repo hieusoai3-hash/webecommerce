@@ -37,6 +37,9 @@ public class SecurityConfig {
     @Autowired
     private LoginAttemptService loginAttemptService;
 
+    @Autowired
+    private IpRateLimiter ipRateLimiter;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -55,6 +58,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            .addFilterBefore(generalRateLimitFilter(), UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(loginBruteForceFilter(), UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/admin/login").permitAll()
@@ -62,6 +66,9 @@ public class SecurityConfig {
                 // Order API: only POST (checkout) is public; list/get/update require ADMIN
                 .requestMatchers(HttpMethod.POST, "/api/orders").permitAll()
                 .requestMatchers("/api/orders", "/api/orders/**").hasRole("ADMIN")
+                // Actuator: health is public, everything else requires ADMIN
+                .requestMatchers("/actuator/health").permitAll()
+                .requestMatchers("/actuator/**").hasRole("ADMIN")
                 .anyRequest().permitAll()
             )
             .formLogin(form -> form
@@ -99,6 +106,23 @@ public class SecurityConfig {
             );
 
         return http.build();
+    }
+
+    /** Blocks IPs exceeding 200 requests per minute across all endpoints. */
+    private OncePerRequestFilter generalRateLimitFilter() {
+        return new OncePerRequestFilter() {
+            @Override
+            protected void doFilterInternal(HttpServletRequest request,
+                                            HttpServletResponse response,
+                                            FilterChain chain) throws ServletException, IOException {
+                String ip = LoginAttemptService.getClientIp(request);
+                if (!ipRateLimiter.allowGeneral(ip)) {
+                    response.sendError(429, "Quá nhiều yêu cầu. Vui lòng thử lại sau.");
+                    return;
+                }
+                chain.doFilter(request, response);
+            }
+        };
     }
 
     /** Blocks IPs that have too many failed login attempts before Spring Security processes the form. */

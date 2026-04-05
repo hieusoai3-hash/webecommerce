@@ -1,13 +1,25 @@
 services:
 
+  redis:
+    image: redis:7-alpine
+    container_name: nb2-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   postgres:
     image: postgres:16
     container_name: nb2-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ecommerce
-      POSTGRES_PASSWORD: "Cxautrai123"
-      POSTGRES_DB: ecommercedb
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - nb2-pgdata:/var/lib/postgresql/data
@@ -15,7 +27,7 @@ services:
     ports:
       - "9000:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ecommerce -d ecommercedb"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -29,16 +41,54 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ecommercedb
-      SPRING_DATASOURCE_USERNAME: ecommerce
-      SPRING_DATASOURCE_PASSWORD: "Cxautrai123"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       UPLOAD_DIR: /app/uploads
-      ADMIN_PASSWORD: admin123
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SPRING_DATA_REDIS_HOST: redis
     volumes:
       - nb2-uploads:/app/uploads
+
+  backup:
+    image: postgres:16
+    container_name: nb2-backup
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - nb2-backups:/backups
+    command: >
+      sh -c "while true; do
+        pg_dump -h postgres -U $$POSTGRES_USER $$POSTGRES_DB > /backups/backup_$$(date +%Y%m%d_%H%M%S).sql &&
+        find /backups -name '*.sql' -mtime +7 -delete;
+        sleep 86400;
+      done"
+
+  nginx:
+    image: nginx:alpine
+    container_name: nb2-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - app
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - nb2-certbot:/etc/letsencrypt:ro
 
 volumes:
   nb2-pgdata:
   nb2-uploads:
+  nb2-backups:
+  nb2-certbot:

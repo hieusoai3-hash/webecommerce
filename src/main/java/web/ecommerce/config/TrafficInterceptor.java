@@ -4,18 +4,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-import web.ecommerce.model.PageView;
-import web.ecommerce.repository.PageViewRepository;
-
-import java.time.LocalDateTime;
 
 @Component
 public class TrafficInterceptor implements HandlerInterceptor {
 
-    private final PageViewRepository pageViewRepository;
+    private final AsyncPageViewService asyncPageViewService;
 
-    public TrafficInterceptor(PageViewRepository pageViewRepository) {
-        this.pageViewRepository = pageViewRepository;
+    public TrafficInterceptor(AsyncPageViewService asyncPageViewService) {
+        this.asyncPageViewService = asyncPageViewService;
     }
 
     @Override
@@ -40,7 +36,7 @@ public class TrafficInterceptor implements HandlerInterceptor {
             if ("/product-detail".equals(path)) {
                 productId = request.getParameter("id");
             }
-            pageViewRepository.save(new PageView(LocalDateTime.now(), productId));
+            asyncPageViewService.record(productId);
         }
         return true;
     }

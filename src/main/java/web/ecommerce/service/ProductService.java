@@ -1,5 +1,8 @@
 package web.ecommerce.service;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,26 +28,31 @@ public class ProductService {
         this.repo = repo;
     }
 
+    @Cacheable("products")
     @Transactional(readOnly = true)
     public List<Product> getAll() {
         return repo.findAll();
     }
 
+    @Cacheable(value = "products", key = "'category:' + #category")
     @Transactional(readOnly = true)
     public List<Product> getByCategory(String category) {
         return repo.findByCategory(category);
     }
 
+    @Cacheable(value = "products", key = "'onSale'")
     @Transactional(readOnly = true)
     public List<Product> getOnSale() {
         return repo.findByDiscountGreaterThan(0);
     }
 
+    @Cacheable(value = "products", key = "'hot'")
     @Transactional(readOnly = true)
     public List<Product> getHot() {
         return repo.findByHotTrue();
     }
 
+    @Cacheable(value = "product", key = "#id")
     @Transactional(readOnly = true)
     public Optional<Product> getById(String id) {
         return repo.findById(id);
@@ -56,10 +64,18 @@ public class ProductService {
         return repo.searchByKeyword(q.trim());
     }
 
+    @Caching(evict = {
+        @CacheEvict(value = "products", allEntries = true),
+        @CacheEvict(value = "product", key = "#product.id")
+    })
     public Product save(Product product) {
         return repo.save(product);
     }
 
+    @Caching(evict = {
+        @CacheEvict(value = "products", allEntries = true),
+        @CacheEvict(value = "product", key = "#id")
+    })
     public void delete(String id) {
         repo.deleteById(id);
     }

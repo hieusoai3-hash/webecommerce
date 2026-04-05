@@ -1,5 +1,6 @@
 package web.ecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -7,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
@@ -44,6 +46,11 @@ public class Order {
     private String trackingCode;
     @Column(length = 500)
     private String cancelReason;
+
+    /** Honeypot — not persisted. Should always be blank; bots fill it. */
+    @Transient
+    @JsonIgnore
+    private String honeypot;
 
     public Order() {
         this.createdAt = LocalDateTime.now();
@@ -94,6 +101,9 @@ public class Order {
 
     public String getCancelReason() { return cancelReason; }
     public void setCancelReason(String cancelReason) { this.cancelReason = cancelReason; }
+
+    public String getHoneypot() { return honeypot; }
+    public void setHoneypot(String honeypot) { this.honeypot = honeypot; }
 
     public String getFormattedTotal() {
         return String.format("%,d", total).replace(",", ".") + "₫";

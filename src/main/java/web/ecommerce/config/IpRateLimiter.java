@@ -15,6 +15,14 @@ public class IpRateLimiter {
 
     /**
      * Returns true if the request is allowed.
+     * General public traffic: 200 requests per minute per IP.
+     */
+    public boolean allowGeneral(String ip) {
+        return allow("general:" + ip, 200, 60_000L);
+    }
+
+    /**
+     * Returns true if the request is allowed.
      * Coupon validation: 15 requests per minute per IP.
      */
     public boolean allowCoupon(String ip) {

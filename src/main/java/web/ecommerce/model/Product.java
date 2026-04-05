@@ -5,12 +5,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import java.util.List;
 
 @Entity
-@Table(name = "products")
+@Table(name = "products", indexes = {
+    @Index(name = "idx_product_category", columnList = "category"),
+    @Index(name = "idx_product_hot", columnList = "hot"),
+    @Index(name = "idx_product_discount", columnList = "discount")
+})
 public class Product {
 
     @Id

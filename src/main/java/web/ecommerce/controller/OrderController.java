@@ -29,6 +29,11 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody Order order, HttpServletRequest request) {
+        // Honeypot: bots often fill hidden fields — reject if present
+        if (order.getHoneypot() != null && !order.getHoneypot().isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(java.util.Map.of("error", "Yêu cầu không hợp lệ."));
+        }
         if (!rateLimiter.allowOrder(LoginAttemptService.getClientIp(request))) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
                     .body(java.util.Map.of("error", "Quá nhiều đơn hàng. Vui lòng thử lại sau."));
